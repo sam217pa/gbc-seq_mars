@@ -4,3 +4,17 @@
 Ce dossier contient les séquences des plaques obtenus avec les
 constructions SW et WS, envoyées à séquencer le [2016-03-15 Tue]. 
 
+* Dossiers et fichiers
+Les données brutes au format .zip sont dans le dossier =raw=. Elles
+sont extraites dans le dossier =data=, séparé en =ws= et =sw= pour les
+analyses. Rien ne doit toucher au dossier =raw=. 
+
+J'ai ensuite utilisé le script [[./src/sort_into_dir.sh]] pour classer les
+fichiers selon leur extension. 
+
+* Contrôle qualité
+Après avoir reçu les séquences, j'ai voulu connaître la qualité
+globale des séquences. Je les ai donc converti en fastq avec le script
+[[./src/ab1_to_fastq.sh]], et j'ai utilisé ~fastqc~ pour représenter la
+qualité globale via le script [[./src/quality_control.sh]]. 
+

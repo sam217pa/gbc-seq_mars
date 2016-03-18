@@ -2,11 +2,15 @@
 
 .PHONY: clean
 
+anl/sw_per_base_qual.png: data/sw/sw_untrimmed.fastq
+		bash src/quality_control.sh
 
+data/sw/sw_untrimmed.fastq:
+		bash src/ab1_to_fastq.sh
 
 # met en place la structure de dossier
 raw/dir: clean
-		mkdir data anl data/ws data/sw data/csv
+		mkdir -p data/{ws,sw,csv} anl
 		unzip -qq -o raw/1582203.zip -d data/ws/
 		unzip -qq -o raw/1582443.zip -d data/sw/
 		bash src/sort_into_dir.sh
