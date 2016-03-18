@@ -1,0 +1,6 @@
+
+#+title: Séquençage WS et SW
+
+Ce dossier contient les séquences des plaques obtenus avec les
+constructions SW et WS, envoyées à séquencer le [2016-03-15 Tue]. 
+
