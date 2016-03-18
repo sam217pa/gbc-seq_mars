@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-03-18 Fri 15:31 -->
+<!-- 2016-03-18 Fri 18:51 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -228,9 +228,9 @@ fichiers selon leur extension.
 <div class="outline-text-2" id="text-2">
 <p>
 Après avoir reçu les séquences, j'ai voulu connaître la qualité
-globale des séquences. Je les ai donc converti en fastq avec le script
-<a href="./src/ab1_to_fastq.sh">./src/ab1_to_fastq.sh</a>, et j'ai utilisé <code>fastqc</code> pour représenter la
-qualité globale via le script <a href="./src/quality_control.sh">./src/quality_control.sh</a>. 
+globale des séquences. Je les ai donc converties en fastq avec le
+script <a href="./src/ab1_to_fastq.sh">./src/ab1_to_fastq.sh</a>, et j'ai utilisé <code>fastqc</code> pour
+représenter la qualité globale via le script <a href="./src/quality_control.sh">./src/quality_control.sh</a>.
 </p>
 
 <p>
@@ -240,18 +240,36 @@ dans le fichier <a href="./data/qc/sw/sw_untrimmed_fastqc.html">./data/qc/sw/sw_
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Analyse rapide du SNP calling de GATC</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+J'ai rapidement analysé la sortie du SNP calling effectué par GATC,
+mais il manque des données. Je vais refaire le SNP calling moi-même,
+en utilisant polySNP pour screener la présence éventuelle de double
+pics. 
+</p>
+
+<p>
+Le script est là dossier <a href="./anl/snp_call/snp_call.r">./anl/snp_call/snp_call.r</a>, les sorties en
+html là <a href="./anl/snp_call/snp_call.html/">./anl/snp_call/snp_call.html/</a>.
+</p>
+</div>
+</div>
 </div><div class="col-md-3"><nav id="table-of-contents">
 <div id="text-table-of-contents" class="bs-docs-sidebar">
 <ul class="nav">
 <li><a href="#sec-1">1. Dossiers et fichiers</a></li>
 <li><a href="#sec-2">2. Contrôle qualité</a></li>
+<li><a href="#sec-3">3. Analyse rapide du SNP calling de GATC</a></li>
 </ul>
 </div>
 </nav>
 </div></div></div>
 <footer id="postamble" class="">
-<div><p class="author">Auteur: Samuel Barreto</p>
-<p class="date">Created: 2016-03-18 Fri 15:31</p>
+<div><p class="author">Author: Samuel Barreto</p>
+<p class="date">Created: 2016-03-18 Fri 18:51</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>

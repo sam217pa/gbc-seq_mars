@@ -20,8 +20,6 @@ library(ggplot2)
 library(readr)
 library(viridis)
 
-## quand en session interactive, utiliser ce code :
-## setwd("../../")
 #' Lecture des données et combinaison dans un seul tableur. 
 ws <- read_delim("../../data/csv/1582203.SNP.csv", delim = ";")
 sw <- read_delim("../../data/csv/1582443.SNP.csv", delim = ";")
@@ -43,12 +41,10 @@ find_transition <- function(ref, base) {
   else stop("Base ", ref, " or base ", base, " is not a DNA base.", call. = FALSE)
 }
 
-data <- rbind(ws, sw)
-colnames(data) <-
-  c("ref", "pos", "ref.base", "alt.base", "qual", "query", "qpos",
-    "qlen", "type")
-
-data <- mutate(data, query = gsub("-1073bis", "", query))
+data <- rbind(ws, sw) # lie les deux jeux de données
+colnames(data) <-  c("ref", "pos", "ref.base", "alt.base", "qual",
+                     "query", "qpos", "qlen", "type") # change les noms de colonne
+data <- mutate(data, query = gsub("-1073bis", "", query)) # supprime le nom de l'amorce
 
 ## ggplot default theme
 theme_set(theme_minimal(base_size = 10, base_family = "Courier"))

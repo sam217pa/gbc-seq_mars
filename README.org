@@ -14,10 +14,19 @@ fichiers selon leur extension.
 
 * Contrôle qualité
 Après avoir reçu les séquences, j'ai voulu connaître la qualité
-globale des séquences. Je les ai donc converti en fastq avec le script
-[[./src/ab1_to_fastq.sh]], et j'ai utilisé ~fastqc~ pour représenter la
-qualité globale via le script [[./src/quality_control.sh]]. 
+globale des séquences. Je les ai donc converties en fastq avec le
+script [[./src/ab1_to_fastq.sh]], et j'ai utilisé ~fastqc~ pour
+représenter la qualité globale via le script [[./src/quality_control.sh]].
 
 À priori les séquences sont plutôt de bonne qualité. Voir le résumé
 dans le fichier [[./data/qc/sw/sw_untrimmed_fastqc.html]] et
 [[./data/qc/ws/ws_untrimmed_fastqc.html]]. 
+
+* Analyse rapide du SNP calling de GATC
+J'ai rapidement analysé la sortie du SNP calling effectué par GATC,
+mais il manque des données. Je vais refaire le SNP calling moi-même,
+en utilisant polySNP pour screener la présence éventuelle de double
+pics. 
+
+Le script est là dossier [[./anl/snp_call/snp_call.r]], les sorties en
+html là [[./anl/snp_call/snp_call.html/]].
