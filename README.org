@@ -18,3 +18,6 @@ globale des séquences. Je les ai donc converti en fastq avec le script
 [[./src/ab1_to_fastq.sh]], et j'ai utilisé ~fastqc~ pour représenter la
 qualité globale via le script [[./src/quality_control.sh]]. 
 
+À priori les séquences sont plutôt de bonne qualité. Voir le résumé
+dans le fichier [[./data/qc/sw/sw_untrimmed_fastqc.html]] et
+[[./data/qc/ws/ws_untrimmed_fastqc.html]]. 
