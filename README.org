@@ -128,7 +128,7 @@ mais il manque des données. Je vais refaire le SNP calling moi-même,
 en utilisant polySNP pour screener la présence éventuelle de double
 pics.
 
-#+BEGIN_SRC R :tangle anl/snp_call/snp_call.r
+#+BEGIN_SRC R :tangle anl/gatc_snpcall/snp_call.r
   #' ---
   #' title: "Rapide analyse des SNP"
   #' author: "Samuel BARRETO"
