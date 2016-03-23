@@ -160,9 +160,10 @@ pics.
   ws$type <- "ws"
   sw$type <- "sw"
 
+  #' ## Définition des transitions
+  #'
   ## #' une fonction qui définit le type de transition, de la référence
   ## #' à la séquence observée.
-
   find_transition <- function(ref, base) {
     stopifnot(typeof(ref) == "character", typeof(base) == "character")
 
@@ -187,8 +188,9 @@ pics.
   ## ggplot default theme
   theme_set(theme_minimal(base_size = 10, base_family = "Courier"))
 
+  #' # Distribution des SNP
   #' Je regarde la distribution des SNP sur les séquences
-  ,#+ distrisnp
+  ,#+distrisnp
   data %>%
     ggplot(aes(x = pos, fill = type)) +
     geom_histogram(binwidth = 10) +
@@ -196,6 +198,8 @@ pics.
     xlab("Position sur la reference") +
       ylab("Nombre de SNP")
 
+  #' ## Alignement des séquences
+  #'
   #' Je fais rapidement un petit alignement des séquences
   #'
   data %>%
@@ -211,6 +215,8 @@ pics.
 
   data %>% select(query) %>% unique()
 
+  #' ## Problème avec les séquences
+  #'
   #' Il n'y a que 127 séquences analysées dans ce tableau. Ça ne va pas.
   #' On devrait s'attendre à 192 séquences normalement. Il manque du
   #' signal. Je vais faire l'analyse moi-même.
