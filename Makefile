@@ -1,5 +1,5 @@
 # range les fichiers classés par extension
-vpath %.sh src
+vpath %.sh src test
 vpath %.py src
 vpath %.png anl
 
@@ -8,6 +8,20 @@ vpath %.png anl
 .PHONY: all
 all: check_qual gatc_snpcall
 
+## snp calling via ssahaSNP
+.PHONY: snp_call
+snp_call: qtrim
+
+
+## quality trim
+.PHONY: qtrim
+qtrim: data/sw/sw_untrimmed.fastq.trim
+
+data/sw/sw_untrimmed.fastq.trim: qtrim.sh data/sw/sw_untrimmed.fastq
+	bash $<
+
+
+## SNP calling de gatc
 .PHONY: gatc_snpcall
 gatc_snpcall: tangle | data
 	R --vanilla -e "rmarkdown::render('anl/gatc_snpcall/snp_call.r')"
@@ -21,12 +35,11 @@ sw_per_base_qual.png: quality_control.sh data/sw/sw_untrimmed.fastq
 	bash $<
 
 # converti les spectrogrammes en fastq
-data/sw/sw_untrimmed.fastq: ab1_to_fastq.sh sort_into_dir
+data/sw/sw_untrimmed.fastq: ab1_to_fastq.sh data/sw/seq
 	bash $<
 
 # met en place la structure de dossier
-.PHONY: sort_into_dir
-sort_into_dir: sort_into_dir.sh | data
+data/sw/seq: sort_into_dir.sh | data
 	bash $<
 
 .PHONY: tangle
@@ -39,9 +52,12 @@ data:
 	unzip -qq -o raw/1582443.zip -d data/sw/
 	find data/ -name "*.pdf" -maxdepth 2 -exec mv {} anl/ \;
 
-src/*.sh: tangle
-*.r:  tangle
+%.sh: tangle
+%.r:  tangle
 
+.PHONY: test
+test: test.sh
+	bash $<
 
 .PHONY: commit
 commit:

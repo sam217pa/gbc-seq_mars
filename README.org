@@ -125,10 +125,9 @@ dans le fichier [[./data/qc/sw/sw_untrimmed_fastqc.html]] et
 * Analyse rapide du SNP calling de GATC
 J'ai rapidement analysé la sortie du SNP calling effectué par GATC,
 mais il manque des données. Je vais refaire le SNP calling moi-même,
-en utilisant polySNP pour screener la présence éventuelle de double
-pics.
+en utilisant dans un premier temps ssaha2.
 
-#+BEGIN_SRC R :tangle anl/gatc_snpcall/snp_call.r
+#+BEGIN_SRC R :tangle anl/gatc_snpcall/snp_call.r :exports none
   #' ---
   #' title: "Rapide analyse des SNP"
   #' author: "Samuel BARRETO"
@@ -226,14 +225,106 @@ pics.
     unique()
 #+END_SRC
 
-Le script est là [[./anl/snp_call/snp_call.r]], les sorties en
-html là [[./anl/snp_call/snp_call.html]].
+Le script est là [[./anl/gatc_snpcall/snp_call.r]], les sorties en
+html là [[./anl/gatc_snpcall/snp_call.html]].
 
-* SNP Calling via polySNP
-J'utilise le programme polySNP comme précédemment pour analyser les
-positions de SNP, et décrire éventuellement les positions qui
-montreraient des doubles pics.
+* SNP calling global
+Dans un premier temps je veux utiliser ssahaSNP pour analyser les
+positions de SNP sur l'ensemble des séquences, en trimmant sur la base
+de la qualité comme pour les séquences des plaques S et W.
 
-#+BEGIN_SRC sh :tangle src/snp_call.sh
+** trimming des séquences
 
+J'ai utilisé le programme bbduk pour trimmer les séquences de faible
+qualité.
+
+#+BEGIN_SRC sh :tangle src/qtrim.sh
+  #!/usr/local/bin/bash
+
+  #' -qtrim=rl : quality trim right and left
+  #' -trimq=28 : trim if quality < 28 (sanger encoding, illumina 1.9)
+  #' -minlen=620 : keep only seq with length > 620, after trimming.
+  #' -Xmx1g : tells bbduk / java to use 1G of RAM
+
+  FASTQ="data/sw/sw_untrimmed.fastq
+  data/ws/ws_untrimmed.fastq
+  "
+
+  for f in $FASTQ
+  do
+      out=$f.trim
+      bin/bbmap/bbduk.sh -Xmx1g \
+                         -in=$f \
+                         -out=$f.qtrim \
+                         -qtrim=rl \
+                         -trimq=28 \
+                         -minlen=600
+
+      ## convertit les bases d'une qualité inférieure à 20 en N.
+      seqtk seq \
+            -q20 \
+            -nN \
+            $f.qtrim > $out
+
+      ## convertit le fastq en fasta
+      seqret \
+          -sformat fastq \
+          -osformat fasta \
+          -auto -stdout \
+          -sequence $out > $f.fasta
+
+      rm $f.qtrim
+  done
+#+END_SRC
+
+* Tests
+
+La fonction /assert/ provient de là :
+[[http://tldp.org/LDP/abs/html/debugging.html#ASSERT]]
+
+Le script en question vient de là : https://github.com/lehmannro/assert.sh
+
+#+BEGIN_SRC sh
+wget https://raw.github.com/lehmannro/assert.sh/v1.1/assert.sh -O test/assert.sh
+chmod +x test/assert.sh
+#+END_SRC
+
+#+begin_src sh :tangle test/test.sh
+  #!/bin/bash
+
+  # cette fonction renvoit le nombre de séquence dans un fichier fastq poolé.
+  # elle divise le nombre de ligne par 4 pour connaître le nombre de séquence.
+  check_fastq_length () {
+      cat $1 | echo $((`wc -l` / 4))
+  }
+
+  set -e
+
+  . ./test/assert.sh
+
+  # vérifie qu'il y ait bien 95 séquence dans le fastq SW et 96 dans le fastq WS
+  assert "echo `check_fastq_length data/sw/sw_untrimmed.fastq`" "95"
+  assert "echo `check_fastq_length data/ws/ws_untrimmed.fastq`" "96"
+
+  # vérifie qu'yl y ait bien 95 séquences dans le fastq SW trimmé et 96
+  # dans le fastq WS trimmé
+  assert "echo `check_fastq_length data/sw/sw_untrimmed.fastq.trim`" "90"
+  assert "echo `check_fastq_length data/ws/ws_untrimmed.fastq.trim`" "90"
+
+  assert_end demo
+#+end_src
+
+* Dépendances
+
+** BBmap
+Le site de téléchargement est là :
+https://sourceforge.net/projects/bbmap
+
+Pour installer bbduk :
+
+#+BEGIN_SRC sh
+  wget https://sourceforge.net/projects/bbmap/files/latest/download \
+       -o bin/bbmap.tar.gz
+  cd bin
+  tar xzf bin/bbmap.tar.gz
 #+END_SRC
