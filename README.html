@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-03-18 Fri 18:51 -->
+<!-- 2016-03-20 Sun 15:56 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -203,7 +203,7 @@ $(function() {
 <div id="content" class="container">
 <div class="row"><div class="col-md-9"><h1 class="title">Séquençage WS et SW</h1>
 <p>
-Ce dossier contient les séquences des plaques obtenus avec les
+Ce dossier contient les séquences des plaques obtenues avec les
 constructions SW et WS, envoyées à séquencer le <span class="timestamp-wrapper"><span class="timestamp">[2016-03-15 Tue]</span></span>. 
 </p>
 
@@ -220,6 +220,30 @@ analyses. Rien ne doit toucher au dossier <code>raw</code>.
 J'ai ensuite utilisé le script <a href="./src/sort_into_dir.sh">./src/sort_into_dir.sh</a> pour classer les
 fichiers selon leur extension. 
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> data/ws
+
+mkdir fasta spectro seq
+
+find . -name <span style="color: #2aa198;">"*.fas"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./fasta/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.ab1"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./spectro/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.seq"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./seq/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.csv"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ../csv/ <span style="color: #2aa198;">\;</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> ../sw
+
+mkdir fasta spectro seq
+
+find . -name <span style="color: #2aa198;">"*.fas"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./fasta/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.ab1"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./spectro/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.seq"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./seq/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.csv"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ../csv/ <span style="color: #2aa198;">\;</span>
+</pre>
+</div>
 </div>
 </div>
 
@@ -232,6 +256,85 @@ globale des séquences. Je les ai donc converties en fastq avec le
 script <a href="./src/ab1_to_fastq.sh">./src/ab1_to_fastq.sh</a>, et j'ai utilisé <code>fastqc</code> pour
 représenter la qualité globale via le script <a href="./src/quality_control.sh">./src/quality_control.sh</a>.
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transforme en fastq</span>
+<span style="color: #839496; font-weight: bold;">cd</span> data/ws
+
+touch ws_untrimmed.fastq
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    seqret <span style="color: #b58900; font-weight: bold;">\</span>
+        -sformat abi <span style="color: #b58900; font-weight: bold;">\</span>
+        -osformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
+        -auto <span style="color: #b58900; font-weight: bold;">\</span>
+        -stdout <span style="color: #b58900; font-weight: bold;">\</span>
+        -sequence $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+        &gt;&gt; ws_untrimmed.fastq
+<span style="color: #859900; font-weight: bold;">done</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> ../sw
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
+rm spectro/psw76-1073bis.ab1
+
+touch sw_untrimmed.fastq
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    seqret <span style="color: #b58900; font-weight: bold;">\</span>
+        -sformat abi <span style="color: #b58900; font-weight: bold;">\</span>
+        -osformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
+        -auto <span style="color: #b58900; font-weight: bold;">\</span>
+        -stdout <span style="color: #b58900; font-weight: bold;">\</span>
+        -sequence $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+        &gt;&gt; sw_untrimmed.fastq
+<span style="color: #859900; font-weight: bold;">done</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">contr&#244;le qualit&#233; des s&#233;quences.</span>
+<span style="color: #839496; font-weight: bold;">cd</span> data
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">cr&#233;e un dossier qc de quality control pour ws et sw</span>
+mkdir -p qc/<span style="color: #2aa198;">{</span>ws,sw<span style="color: #2aa198;">}</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">fastqc sortie dasn le dossier appropri&#233;</span>
+fastqc ws/ws_untrimmed.fastq -o qc/ws
+fastqc sw/sw_untrimmed.fastq -o qc/sw
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -qq : very quiet</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -o  : overwrite without warning</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -d  : out dir</span>
+unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
+      qc/sw/sw_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
+      sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+      -d ../anl/ <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; mv ../anl/sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+          ../anl/sw_per_base_qual.png <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; rm -r ../anl/sw_untrimmed_fastqc
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
+unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
+      qc/ws/ws_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
+      ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+      -d ../anl/ <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; mv ../anl/ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+          ../anl/ws_per_base_qual.png <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; rm -r ../anl/ws_untrimmed_fastqc
+</pre>
+</div>
 
 <p>
 À priori les séquences sont plutôt de bonne qualité. Voir le résumé
@@ -251,9 +354,92 @@ en utilisant polySNP pour screener la présence éventuelle de double
 pics. 
 </p>
 
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> ---</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> title: "Rapide analyse des SNP"</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> author: "Samuel BARRETO"</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> date: "31 janvier 2016"</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> output:</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;">   html_document:</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;">     highlight: tango</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;">     theme: journal</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;">     toc: yes</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> ---</span>
+
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> # Lecture des donn&#233;es</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> Les donn&#233;es sont les tableurs de snp calling que GATC nous a fait</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> gratuitement. Ce script n'est que pr&#233;liminaire, je referai le snp</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> calling comme il faut par la suite.</span>
+
+<span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>dplyr<span style="color: #2aa198; font-weight: bold;">)</span>
+<span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>ggplot2<span style="color: #2aa198; font-weight: bold;">)</span>
+<span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>readr<span style="color: #2aa198; font-weight: bold;">)</span>
+<span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>viridis<span style="color: #2aa198; font-weight: bold;">)</span>
+
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> Lecture des donn&#233;es et combinaison dans un seul tableur. </span>
+ws <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #268bd2;">read_delim</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"../../data/csv/1582203.SNP.csv"</span>, delim <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #2aa198;">";"</span><span style="color: #2aa198; font-weight: bold;">)</span>
+sw <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #268bd2;">read_delim</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"../../data/csv/1582443.SNP.csv"</span>, delim <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #2aa198;">";"</span><span style="color: #2aa198; font-weight: bold;">)</span>
+ws$type <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #2aa198;">"ws"</span>
+sw$type <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #2aa198;">"sw"</span>
+
+<span style="color: #586e75;">## </span><span style="color: #586e75;">#' une fonction qui d&#233;finit le type de transition, de la r&#233;f&#233;rence &#224; la s&#233;quence observ&#233;e. </span>
+<span style="color: #268bd2;">find_transition</span> <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #859900; font-weight: bold;">function</span><span style="color: #2aa198; font-weight: bold;">(</span>ref, base<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #2aa198; font-weight: bold;">{</span>
+  <span style="color: #268bd2;">stopifnot</span><span style="color: #b58900; font-weight: bold;">(</span><span style="color: #268bd2;">typeof</span><span style="color: #268bd2; font-weight: bold;">(</span>ref<span style="color: #268bd2; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"character"</span>,
+            <span style="color: #268bd2;">typeof</span><span style="color: #268bd2; font-weight: bold;">(</span>base<span style="color: #268bd2; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"character"</span><span style="color: #b58900; font-weight: bold;">)</span>
+
+  <span style="color: #268bd2;">is_W</span> <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #859900; font-weight: bold;">function</span><span style="color: #b58900; font-weight: bold;">(</span>base<span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #268bd2;">ifelse</span><span style="color: #b58900; font-weight: bold;">(</span>base <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"A"</span> || base <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"T"</span>, <span style="color: #b58900;">TRUE</span>, <span style="color: #b58900;">FALSE</span><span style="color: #b58900; font-weight: bold;">)</span>
+  <span style="color: #268bd2;">is_S</span> <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #859900; font-weight: bold;">function</span><span style="color: #b58900; font-weight: bold;">(</span>base<span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #268bd2;">ifelse</span><span style="color: #b58900; font-weight: bold;">(</span>base <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"C"</span> || base <span style="color: #268bd2; font-weight: bold;">==</span> <span style="color: #2aa198;">"G"</span>, <span style="color: #b58900;">TRUE</span>, <span style="color: #b58900;">FALSE</span><span style="color: #b58900; font-weight: bold;">)</span>
+
+  <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900; font-weight: bold;">(</span><span style="color: #268bd2;">is_W</span><span style="color: #268bd2; font-weight: bold;">(</span>ref<span style="color: #268bd2; font-weight: bold;">)</span> &amp; <span style="color: #268bd2;">is_S</span><span style="color: #268bd2; font-weight: bold;">(</span>base<span style="color: #268bd2; font-weight: bold;">)</span><span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #2aa198;">"ws"</span>
+  <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900; font-weight: bold;">(</span><span style="color: #268bd2;">is_S</span><span style="color: #268bd2; font-weight: bold;">(</span>ref<span style="color: #268bd2; font-weight: bold;">)</span> &amp; <span style="color: #268bd2;">is_W</span><span style="color: #268bd2; font-weight: bold;">(</span>base<span style="color: #268bd2; font-weight: bold;">)</span><span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #2aa198;">"sw"</span>
+  <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900; font-weight: bold;">(</span><span style="color: #268bd2;">is_S</span><span style="color: #268bd2; font-weight: bold;">(</span>ref<span style="color: #268bd2; font-weight: bold;">)</span> &amp; <span style="color: #268bd2;">is_S</span><span style="color: #268bd2; font-weight: bold;">(</span>base<span style="color: #268bd2; font-weight: bold;">)</span><span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #2aa198;">"ss"</span>
+  <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #b58900; font-weight: bold;">(</span><span style="color: #268bd2;">is_W</span><span style="color: #268bd2; font-weight: bold;">(</span>ref<span style="color: #268bd2; font-weight: bold;">)</span> &amp; <span style="color: #268bd2;">is_W</span><span style="color: #268bd2; font-weight: bold;">(</span>base<span style="color: #268bd2; font-weight: bold;">)</span><span style="color: #b58900; font-weight: bold;">)</span> <span style="color: #2aa198;">"ww"</span>
+  <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #859900; font-weight: bold;">stop</span><span style="color: #b58900; font-weight: bold;">(</span><span style="color: #2aa198;">"Base "</span>, ref, <span style="color: #2aa198;">" or base "</span>, base, <span style="color: #2aa198;">" is not a DNA base."</span>, call. <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #b58900;">FALSE</span><span style="color: #b58900; font-weight: bold;">)</span>
+<span style="color: #2aa198; font-weight: bold;">}</span>
+
+data <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #268bd2;">rbind</span><span style="color: #2aa198; font-weight: bold;">(</span>ws, sw<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #586e75;"># </span><span style="color: #586e75;">lie les deux jeux de donn&#233;es</span>
+<span style="color: #268bd2;">colnames</span><span style="color: #2aa198; font-weight: bold;">(</span>data<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">&lt;-</span>  <span style="color: #268bd2;">c</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"ref"</span>, <span style="color: #2aa198;">"pos"</span>, <span style="color: #2aa198;">"ref.base"</span>, <span style="color: #2aa198;">"alt.base"</span>, <span style="color: #2aa198;">"qual"</span>,
+                     <span style="color: #2aa198;">"query"</span>, <span style="color: #2aa198;">"qpos"</span>, <span style="color: #2aa198;">"qlen"</span>, <span style="color: #2aa198;">"type"</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #586e75;"># </span><span style="color: #586e75;">change les noms de colonne</span>
+data <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #268bd2;">mutate</span><span style="color: #2aa198; font-weight: bold;">(</span>data, query <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #268bd2;">gsub</span><span style="color: #b58900; font-weight: bold;">(</span><span style="color: #2aa198;">"-1073bis"</span>, <span style="color: #2aa198;">""</span>, query<span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #586e75;"># </span><span style="color: #586e75;">supprime le nom de l'amorce</span>
+
+<span style="color: #586e75;">## </span><span style="color: #586e75;">ggplot default theme</span>
+<span style="color: #268bd2;">theme_set</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #268bd2;">theme_minimal</span><span style="color: #b58900; font-weight: bold;">(</span>base_size <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #b58900;">10</span>, base_family <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #2aa198;">"Courier"</span><span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span>
+
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> Je regarde la distribution des SNP sur les s&#233;quences</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">+ distrisnp</span>
+data <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">ggplot</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #268bd2;">aes</span><span style="color: #b58900; font-weight: bold;">(</span>x <span style="color: #268bd2; font-weight: bold;">=</span> pos, fill <span style="color: #268bd2; font-weight: bold;">=</span> type<span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #268bd2;">geom_histogram</span><span style="color: #2aa198; font-weight: bold;">(</span>binwidth <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #b58900;">10</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #268bd2;">facet_grid</span><span style="color: #2aa198; font-weight: bold;">(</span>type~.<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #268bd2;">xlab</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"Position sur la reference"</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #268bd2;">ylab</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"Nombre de SNP"</span><span style="color: #2aa198; font-weight: bold;">)</span>
+
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> Je fais rapidement un petit alignement des s&#233;quences</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span>
+data <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">ggplot</span><span style="color: #2aa198; font-weight: bold;">(</span>data <span style="color: #268bd2; font-weight: bold;">=</span> ., <span style="color: #268bd2;">aes</span><span style="color: #b58900; font-weight: bold;">(</span>x <span style="color: #268bd2; font-weight: bold;">=</span> pos, y  <span style="color: #268bd2; font-weight: bold;">=</span> query <span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #586e75;">## </span><span style="color: #586e75;">geom_text(aes(label = alt.base)) +</span>
+  <span style="color: #268bd2;">geom_point</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #268bd2;">aes</span><span style="color: #b58900; font-weight: bold;">(</span>color <span style="color: #268bd2; font-weight: bold;">=</span> alt.base<span style="color: #b58900; font-weight: bold;">)</span>, alpha <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #b58900;">0.4</span><span style="color: #2aa198; font-weight: bold;">)</span>
+
+data <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">group_by</span><span style="color: #2aa198; font-weight: bold;">(</span>query<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">summarise</span><span style="color: #2aa198; font-weight: bold;">(</span>end.tc <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #268bd2;">max</span><span style="color: #b58900; font-weight: bold;">(</span>pos<span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">ggplot</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #268bd2;">aes</span><span style="color: #b58900; font-weight: bold;">(</span>x <span style="color: #268bd2; font-weight: bold;">=</span> end.tc<span style="color: #b58900; font-weight: bold;">)</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">+</span>
+  <span style="color: #268bd2;">geom_histogram</span><span style="color: #2aa198; font-weight: bold;">()</span>
+
+data <span style="color: #268bd2; font-weight: bold;">%&gt;%</span> <span style="color: #268bd2;">select</span><span style="color: #2aa198; font-weight: bold;">(</span>query<span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">%&gt;%</span> <span style="color: #268bd2;">unique</span><span style="color: #2aa198; font-weight: bold;">()</span>
+
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> Il n'y a que 127 s&#233;quences analys&#233;es dans ce tableau. &#199;a ne va pas.</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> On devrait s'attendre &#224; 192 s&#233;quences normalement. Il manque du</span>
+<span style="color: #586e75; font-weight: bold;">#</span><span style="color: #586e75; font-weight: bold;">'</span><span style="color: #586e75;"> signal. Je vais faire l'analyse moi-m&#234;me.</span>
+</pre>
+</div>
+
 <p>
-Le script est là dossier <a href="./anl/snp_call/snp_call.r">./anl/snp_call/snp_call.r</a>, les sorties en
-html là <a href="./anl/snp_call/snp_call.html/">./anl/snp_call/snp_call.html/</a>.
+Le script est là <a href="./anl/snp_call/snp_call.r">./anl/snp_call/snp_call.r</a>, les sorties en
+html là <a href="./anl/snp_call/snp_call.html">./anl/snp_call/snp_call.html</a>.
 </p>
 </div>
 </div>
@@ -268,8 +454,8 @@ html là <a href="./anl/snp_call/snp_call.html/">./anl/snp_call/snp_call.html/</
 </nav>
 </div></div></div>
 <footer id="postamble" class="">
-<div><p class="author">Author: Samuel Barreto</p>
-<p class="date">Created: 2016-03-18 Fri 18:51</p>
+<div><p class="author">Auteur: Samuel Barreto</p>
+<p class="date">Created: 2016-03-20 Sun 15:56</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>
