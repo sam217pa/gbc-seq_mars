@@ -9,9 +9,12 @@ vpath %.png anl
 all: check_qual gatc_snpcall
 
 ## snp calling via ssahaSNP
-.PHONY: snp_call
-snp_call: qtrim
+# .PHONY: snp_call
+# snp_call: qtrim
 
+data/qtrim_qc: qtrim_qc.sh data/sw/sw_untrimmed.fastq.trim
+	bash $<
+	git stage -f data/qtrim_qc/*.html
 
 ## quality trim
 .PHONY: qtrim
@@ -39,8 +42,8 @@ data/sw/sw_untrimmed.fastq: ab1_to_fastq.sh data/sw/seq
 	bash $<
 
 # met en place la structure de dossier
-data/sw/seq: sort_into_dir.sh | data
-	bash $<
+data/sw/seq: | sort_into_dir.sh data
+	bash src/sort_into_dir.sh
 
 .PHONY: tangle
 tangle: README.org | data

@@ -62,7 +62,7 @@ done
 cd ../sw
 
 # TEMPORAIRE, élimine le fichier .ab1 tendancieux pour l'instant
-rm spectro/psw76-1073bis.ab1
+# rm spectro/psw76-1073bis.ab1
 
 touch sw_untrimmed.fastq
 
@@ -147,7 +147,6 @@ en utilisant dans un premier temps ssaha2.
   #' Les données sont les tableurs de snp calling que GATC nous a fait
   #' gratuitement. Ce script n'est que préliminaire, je referai le snp
   #' calling comme il faut par la suite.
-
   library(dplyr)
   library(ggplot2)
   library(readr)
@@ -189,13 +188,13 @@ en utilisant dans un premier temps ssaha2.
 
   #' # Distribution des SNP
   #' Je regarde la distribution des SNP sur les séquences
-  ,#+distrisnp
+                                          ,#+distrisnp
   data %>%
     ggplot(aes(x = pos, fill = type)) +
     geom_histogram(binwidth = 10) +
     facet_grid(type~.) +
     xlab("Position sur la reference") +
-      ylab("Nombre de SNP")
+    ylab("Nombre de SNP")
 
   #' ## Alignement des séquences
   #'
@@ -239,7 +238,7 @@ J'ai utilisé le programme bbduk pour trimmer les séquences de faible
 qualité.
 
 #+BEGIN_SRC sh :tangle src/qtrim.sh
-  #!/usr/local/bin/bash
+  #!/bin/bash
 
   #' -qtrim=rl : quality trim right and left
   #' -trimq=28 : trim if quality < 28 (sanger encoding, illumina 1.9)
@@ -277,6 +276,26 @@ qualité.
   done
 #+END_SRC
 
+** Contrôle qualité des séquences trimmées
+
+#+begin_src sh :tangle src/qtrim_qc.sh
+  #!/usr/bin/env bash
+
+  cd data
+
+  TRIM="ws/ws_untrimmed.fastq.trim sw/sw_untrimmed.fastq.trim"
+
+  mkdir qtrim_qc
+
+  for f in $TRIM
+  do
+      fastqc $f -o qtrim_qc
+  done
+#+end_src
+
+Le script est là [[./src/qtrim_qc.sh]] et les sorties sont là
+[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html]] et là
+[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/ws_untrimmed.fastq.trim_fastqc.html]].
 * Tests
 
 La fonction /assert/ provient de là :
@@ -314,8 +333,8 @@ chmod +x test/assert.sh
   assert_end demo
 #+end_src
 
-* Dépendances
 
+* Dépendances
 ** BBmap
 Le site de téléchargement est là :
 https://sourceforge.net/projects/bbmap
@@ -328,3 +347,12 @@ Pour installer bbduk :
   cd bin
   tar xzf bin/bbmap.tar.gz
 #+END_SRC
+
+** R markdown
+Il faut une version récente du package =rmarkdown=.
+
+#+begin_src R :tangle no
+install.package('rmarkdown', type = "source")
+#+end_src
+
+* Config                                                           :noexport:
