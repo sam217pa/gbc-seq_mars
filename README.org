@@ -294,8 +294,141 @@ qualité.
 #+end_src
 
 Le script est là [[./src/qtrim_qc.sh]] et les sorties sont là
-[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html]] et là
-[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/ws_untrimmed.fastq.trim_fastqc.html]].
+[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][./data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html]] et là
+[[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][./data/qtrim_qc/ws_untrimmed.fastq.trim_fastqc.html]].
+
+Les séquences sont nettement raccourcies par rapport aux séquences non trimmées. Mais l'ensemble des
+bases qu'on veut analyser sont de bonne qualité. C'est donc plutôt bon signe.
+
+** Pooling des séquences dans un seul fastq
+
+#+BEGIN_SRC sh :tangle src/pool_trim.sh
+  #!/usr/bin/env bash
+
+  cat data/sw/sw_untrimmed.fastq.trim data/ws/ws_untrimmed.fastq.trim > data/trimmed.fastq
+#+END_SRC
+
+[[./src/pool_trim.sh]]
+** snp calling via ssahaSNP
+
+Pour installer ssahaSNP voir les instructions là :
+ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/.
+
+Il est très important que les fichiers fasta de référence soit formattés de la
+bonne façon, sinon ssahaSNP ne sort pas les bonnes valeurs dans les lignes de
+tableau.
+
+#+begin_src sh :tangle src/snp_call.sh
+   #!/usr/bin/env bash
+
+   # Variant calling using ssaha2 and ssahaSNP
+
+   if [ ! -e data/snp_call ]
+   then
+       mkdir data/snp_call
+   fi
+
+   cd data/snp_call
+
+   if [[ ! -e trimmed.fastq && ! -e ref.fasta ]]
+   then
+       ln -s    ../trimmed.fastq .
+       ln -s ../../raw/ref/reference1073bis-1392.fasta ref.fasta
+   fi
+
+   ## alignement à la séquence de référence
+   #' -output psl :             format de sortie psl
+   #' reference_reverse.fasta : séquence de référence
+   #' trimmed.fastq :           séquence à aligner
+   #' output.psl :              fichier de sortie
+   ../../bin/ssahaSNP/ssaha2 -output psl ref.fasta trimmed.fastq > output.psl
+
+   ## column annotation based on
+   ## ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/readme,
+   ## part (6) some further information
+   # la première ligne du fichier .dat, afin d'être lu dans R
+   cat \
+       <( echo "match subject_name index_of_subject read_name s_base q_base s_qual q_qual offset_on_subject offset_on_read length_of_snp start_match_of_read end_match_of_read match_direction length_of_subject" ) \
+       <( ../../bin/ssahaSNP/ssahaSNP ref.fasta trimmed.fastq | \
+                egrep ssaha:SNP | \
+                awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15}') \
+       > snp_calling.dat
+#+end_src
+
+Le script est là : [[./src/snp_call.sh]]
+** création de la table d'identification des clones
+
+Les spectrogrammes contiennent l'info permettant de relier à un identifiant de
+séquence le nom expérimental qu'on lui a attribué.
+
+#+BEGIN_SRC python :tangle src/make_id_table.py
+  #!/usr/bin/env python
+
+  from Bio import SeqIO
+  from glob import glob
+  from os.path import basename
+
+  def sw_or_ws(mutant_name):
+      """
+      Determine si le mutant est SW ou WS
+      """
+      if 'sw' in mutant_name:
+          return 'sw'
+      else:
+          return 'ws'
+
+  # en tete de colonne
+  print "id name mutant"
+
+  def print_seq_id(dna_seq):
+      with open(dna_seq, "rb") as spectro:
+          sequence = list(SeqIO.parse(spectro, "abi"))
+          print sequence[0].id + " " + sequence[0].name + " " + sw_or_ws(sequence[0].name)
+
+  for file in glob("data/sw/spectro/*.ab1"):
+      if basename(file) != "psw76-1073bis.ab1": # exclut la sequence qui pose probleme
+          print_seq_id(file)
+
+  for file in glob("data/ws/spectro/*.ab1"):
+      print_seq_id(file)
+#+END_SRC
+
+
+** Analyses des résultats de snp calling
+
+#+begin_src R :tangle anl/snp_call/snp_call.r :exports none
+  #' ---
+  #' title: Analyse globale des SNP
+  #' author: Samuel BARRETO"
+  #' date:
+  #' output:
+  #'   html_document:
+  #'     highlight: tango
+  #'     theme: paper
+  #'     code_folding: hide
+  #'     toc: true
+  #'     toc_depth: 2
+  #'     toc_float: true
+  #' ---
+
+  #' # Lecture des données et nettoyage
+  #'
+  #' Il faut dans un premier temps lire les données, les nettoyer et associer à
+  #' chaque séquence la catégorie de plasmide transformeur.
+  #'
+  #' La table des identifiants est faite par le script python.
+  #'
+
+  library(dplyr)
+  library(ggplot2)
+  library(readr)
+  library(viridis)
+
+  data_location <- "../../data/snp_call/snp_calling.dat"
+
+  snp <- read_delim(file = data_location, delim = " ")
+#+end_src
+
 
 * Tests
 
@@ -309,7 +442,9 @@ wget https://raw.github.com/lehmannro/assert.sh/v1.1/assert.sh -O test/assert.sh
 chmod +x test/assert.sh
 #+END_SRC
 
-#+begin_src sh :tangle test/test.sh
+Le script pour tester les résultats, via =make test=.
+
+#+BEGIN_SRC sh :tangle test/test.sh
   #!/bin/bash
 
   # cette fonction renvoit le nombre de séquence dans un fichier fastq poolé.
@@ -330,10 +465,10 @@ chmod +x test/assert.sh
   # dans le fastq WS trimmé
   assert "echo `check_fastq_length data/sw/sw_untrimmed.fastq.trim`" "90"
   assert "echo `check_fastq_length data/ws/ws_untrimmed.fastq.trim`" "90"
+  assert "echo `wc -l data/snp_call/snp_calling.dat | awk '{print $1}'`" "1875"
 
-  assert_end demo
-#+end_src
-
+  assert_end results
+#+END_SRC
 
 * Dépendances
 ** BBmap

@@ -12,6 +12,15 @@ all: check_qual gatc_snpcall
 # .PHONY: snp_call
 # snp_call: qtrim
 
+data/id_table.dat: make_id_table.py data/sw/seq
+	python $< > $@
+
+data/snp_call/snp_calling.dat: snp_call.sh data/trimmed.fastq
+	bash $<
+
+data/trimmed.fastq: pool_trim.sh data/sw/sw_untrimmed.fastq.trim
+	bash $<
+
 data/qtrim_qc: qtrim_qc.sh data/sw/sw_untrimmed.fastq.trim
 	bash $<
 	git stage -f data/qtrim_qc/*.html
