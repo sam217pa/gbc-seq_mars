@@ -296,6 +296,7 @@ qualité.
 Le script est là [[./src/qtrim_qc.sh]] et les sorties sont là
 [[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html]] et là
 [[file:data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html][data/qtrim_qc/ws_untrimmed.fastq.trim_fastqc.html]].
+
 * Tests
 
 La fonction /assert/ provient de là :

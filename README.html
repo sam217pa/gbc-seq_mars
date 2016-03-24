@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-03-23 Wed 20:43 -->
+<!-- 2016-03-24 Thu 13:33 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -271,7 +271,7 @@ touch ws_untrimmed.fastq
 <span style="color: #839496; font-weight: bold;">cd</span> ../sw
 
 <span style="color: #586e75;"># </span><span style="color: #586e75;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
-rm spectro/psw76-1073bis.ab1
+<span style="color: #586e75;"># </span><span style="color: #586e75;">rm spectro/psw76-1073bis.ab1</span>
 
 touch sw_untrimmed.fastq
 
@@ -376,7 +376,7 @@ qualité.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/local/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
 <span style="color: #586e75;">#</span><span style="color: #586e75;">' -qtrim=rl : quality trim right and left</span>
 <span style="color: #586e75;">#</span><span style="color: #586e75;">' -trimq=28 : trim if quality &lt; 28 (sanger encoding, illumina 1.9)</span>
@@ -414,6 +414,34 @@ qualité.
 <span style="color: #859900; font-weight: bold;">done</span>
 </pre>
 </div>
+</div>
+</div>
+
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Contrôle qualité des séquences trimmées</h3>
+<div class="outline-text-3" id="text-4-2">
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/</span><span style="color: #859900; font-weight: bold;">env</span><span style="color: #586e75;"> bash</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> data
+
+<span style="color: #268bd2;">TRIM</span>=<span style="color: #2aa198;">"ws/ws_untrimmed.fastq.trim sw/sw_untrimmed.fastq.trim"</span>
+
+mkdir qtrim_qc
+
+<span style="color: #859900; font-weight: bold;">for</span> f<span style="color: #859900; font-weight: bold;"> in</span> $<span style="color: #268bd2;">TRIM</span>
+<span style="color: #859900; font-weight: bold;">do</span>
+    fastqc $<span style="color: #268bd2;">f</span> -o qtrim_qc
+<span style="color: #859900; font-weight: bold;">done</span>
+</pre>
+</div>
+
+<p>
+Le script est là <a href="./src/qtrim_qc.sh">./src/qtrim_qc.sh</a> et les sorties sont là
+<a href="data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html">data/qtrim<sub>qc</sub>/sw<sub>untrimmed.fastq.trim</sub><sub>fastqc.html</sub></a> et là
+<a href="data/qtrim_qc/sw_untrimmed.fastq.trim_fastqc.html">data/qtrim<sub>qc</sub>/ws<sub>untrimmed.fastq.trim</sub><sub>fastqc.html</sub></a>.
+</p>
 </div>
 </div>
 </div>
@@ -466,6 +494,7 @@ assert_end demo
 </div>
 </div>
 
+
 <div id="outline-container-sec-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> Dépendances</h2>
 <div class="outline-text-2" id="text-6">
@@ -491,6 +520,21 @@ tar xzf bin/bbmap.tar.gz
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-6-2" class="outline-3">
+<h3 id="sec-6-2"><span class="section-number-3">6.2</span> R markdown</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+Il faut une version récente du package <code>rmarkdown</code>.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-R"><span style="color: #268bd2;">install.package</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">'rmarkdown'</span>, type <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #2aa198;">"source"</span><span style="color: #2aa198; font-weight: bold;">)</span>
+</pre>
+</div>
+</div>
+</div>
 </div>
 </div><div class="col-md-3"><nav id="table-of-contents">
 <div id="text-table-of-contents" class="bs-docs-sidebar">
@@ -501,12 +545,14 @@ tar xzf bin/bbmap.tar.gz
 <li><a href="#sec-4">4. SNP calling global</a>
 <ul class="nav">
 <li><a href="#sec-4-1">4.1. trimming des séquences</a></li>
+<li><a href="#sec-4-2">4.2. Contrôle qualité des séquences trimmées</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5. Tests</a></li>
 <li><a href="#sec-6">6. Dépendances</a>
 <ul class="nav">
 <li><a href="#sec-6-1">6.1. BBmap</a></li>
+<li><a href="#sec-6-2">6.2. R markdown</a></li>
 </ul>
 </li>
 </ul>
@@ -515,7 +561,7 @@ tar xzf bin/bbmap.tar.gz
 </div></div></div>
 <footer id="postamble" class="">
 <div><p class="author">Author: Samuel Barreto</p>
-<p class="date">Created: 2016-03-23 Wed 20:43</p>
+<p class="date">Created: 2016-03-24 Thu 13:33</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>
