@@ -11,11 +11,18 @@ all: check_qual gatc_snpcall
 ## snp calling via ssahaSNP
 # .PHONY: snp_call
 # snp_call: qtrim
+.PHONY: snp_call
+snp_call: anl/snp_call/snp_call.r data/snp_call/snp_calling.dat data/id_table.dat
+	R --vanilla -e "rmarkdown::render('$<')"
+	git stage $<
 
 data/id_table.dat: make_id_table.py data/sw/seq
 	python $< > $@
 
 data/snp_call/snp_calling.dat: snp_call.sh data/trimmed.fastq
+	bash $<
+
+data/trimmed.fasta: trim_to_fasta.sh data/trimmed.fastq
 	bash $<
 
 data/trimmed.fastq: pool_trim.sh data/sw/sw_untrimmed.fastq.trim
