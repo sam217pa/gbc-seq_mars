@@ -321,14 +321,14 @@ fastx_reverse_complement \
 
 #+END_SRC
 
-[[.src/trim_to_fasta.sh]]
+[[./src/trim_to_fasta.sh]]
 
 J'ai placé les différentes analyses graphiques via seaview dans le
 dossier [[./anl/align]].
 
 Différents alignements :
-- l'alignement global : [[anl/align/trimmed.mase][anl/align/trimmed.mase]]
-- l'alignement avec seulement les sites variables : [[anl/align/variable_site.mase]]
+- l'alignement global : [[./anl/align/trimmed.mase][./anl/align/trimmed.mase]]
+- l'alignement avec seulement les sites variables : [[./anl/align/variable_site.mase]]
 
 Sur l'alignement global, j'ai repéré quelques cas de traces complexes,
 où des séquences avaient ‘gardé’ leur allèle sauvage, quand les deux
