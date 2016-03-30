@@ -45,7 +45,7 @@ fte_theme <- function() {
           axis.ticks=element_blank(),
           ## Format the legend, but hide by default
           legend.position="none",
-          legend.background = element_rect(fill=color.background),
+          legend.background = element_rect(fill = scales::alpha(color.background, 0.3)),
           legend.text = element_text(size=7,color=color.axis.title),
           ## Set title and axis labels, and format these and tick marks
           plot.title=element_text(color=color.title, size=14,
@@ -57,6 +57,8 @@ fte_theme <- function() {
           ## Plot margins
           plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm"))
 }
+
+legend_position <- function(x, y) theme(legend.position = c(x, y))
 
 #+ setup2, include = TRUE
 library(dplyr)
@@ -96,6 +98,10 @@ snp <- inner_join(
     dir = match_direction) %>%
   mutate(name = gsub("-1073bis", "", name))
 
+#' J'ai déterminé les positions des SNP qui nous intéressent dans les
+#' deux variables suivantes ^[Le code suivant aurait pu inclure les
+#' néomutations. Mais à priori, il n'y en a pas.].
+
 snppos_sw <- filter(snp, mutant == "sw") %>%
   select(refp) %>%
   distinct() %>%
@@ -134,13 +140,36 @@ snp %>%
   ggplot(aes(x = count)) +
   geom_density(adjust = 0.4, fill = "gray", alpha = 0.5) +
   labs(x = "Nombre de SNP",
-       y = "Densite",
+       y = "Densité",
        title = "Distribution du nombre de SNP" )
 
-
 #' ## Distribution de la qualité des SNP
+#'
+#' J'ai regardé globalement la distribution de la qualité des SNPs.
 
-#+ spark, cache=TRUE, fig.width=15, fig.height=7, fig.fullwidth=TRUE
+#+ qual1, fig.margin=TRUE
+qplot(data = snp, base_q, geom = "density",
+      xlab = "Qualité de la base", ylab = "",
+      main = "Distribution de la qualité")
+
+#' Si on regarde par globalement comment évolue la qualité des SNPs par séquence :
+
+#+ qual2, fig.margin=TRUE
+snp %>%
+  ggplot(aes(x = refp, y = base_q, color = base_q)) +
+  geom_line(aes(group = read), alpha = 1/5) +
+  geom_point(alpha = 1/10, size = 1/10) +
+  scale_color_viridis(begin = 0, end = 0.8) +
+  geom_segment(aes(x = max(refp), xend = max(refp) - 20, y = 41.2, yend = 41.2),
+               arrow = arrow(length = unit(0.1, "cm")),
+               color = "red") +
+  annotate("text", x = 668, y = 41.4, label = "1073", size = 2, color = "red") +
+  labs(x = "Position", y = "Qualité",
+       title = "Évolution de la qualité\nau long de la séquence")
+
+#' Si on regarde cette qualité par séquence :
+
+#+ qual3, cache=TRUE, fig.width=15, fig.height=7, fig.fullwidth=TRUE
 snp %>%
   ggplot(aes(x = refp, y = base_q)) +
   geom_point(alpha = 1/5, size = 0.1) +
@@ -149,27 +178,32 @@ snp %>%
   theme(strip.background = element_blank(),
         strip.text = element_text(size= 6),
         axis.text = element_text(size = 5),
-        panel.margin = unit(0.1, "lines"))
+        panel.margin = unit(0.1, "lines")) +
+  labs(x = "Position", y = "Qualité", title = "Qualité par position\n par séquence")
+
+#' La qualité diminue en fin de séquence. C'est masqué pour l'instant
+#' par le fait que j'ai artificiellement appelé N les bases d'une
+#' qualité inférieure à $X$ .
 
 #' # Répartition des SNP sur les séquences
 #'
 #' J'ai voulu regarder globalement la distribution des SNP sur les
 #' séquences.
 
-#+ repar, cache=FALSE, fig.margin=TRUE
+#+ repar, cache=FALSE, fig.margin=TRUE, fig.cap="La distribution des SNP en fréquence"
 snp %>%
   ggplot(aes(x = refp, fill = mutant )) +
   geom_histogram(binwidth = 10) +
   facet_grid(mutant~.) +
   labs(x = "Position", y = "")
 
-#+ repar2, cache=FALSE, fig.margin=FALSE
+#+ repar2, cache=FALSE, fig.margin=FALSE, fig.cap="La distribution des SNP en densité"
 snp %>%
   ggplot(aes(x = refp, fill = mutant )) +
   geom_density(aes(group = mutant), adjust = 1/3, alpha = 1/2) +
   geom_vline(xintercept = snppos_sw, alpha = 0.1) +
   labs(x = "Position",
-       y = "Densite",
+       y = "Densité",
        title = "Distribution des SNPs sur les reads",
        fill = "Transformant") +
   theme(panel.grid.major.x = element_blank(),
@@ -177,8 +211,9 @@ snp %>%
 
 #' ## Définition des transitions
 
-#' J'ai définit une fonction qui permet de déterminer le type de
-#' mutation, de strong à weak (`sw`), de weak à strong (`ws`) ou autre.
+#' J'ai défini une fonction qui permet de déterminer le type de
+#' mutation, de strong à weak (`sw`), de weak à strong (`ws`) ou
+#' autre.
 
 ## #' une fonction qui définit le type de transition, de la référence
 ## #' à la séquence observée.
@@ -188,7 +223,7 @@ find_transition <- function(ref, base) {
   is_W <- function(base) ifelse(base == "A" || base == "T", TRUE, FALSE)
   is_S <- function(base) ifelse(base == "C" || base == "G", TRUE, FALSE)
 
-  if (is_W(ref) & is_S(base)) "ws"
+  if      (is_W(ref) & is_S(base)) "ws"
   else if (is_S(ref) & is_W(base)) "sw"
   else if (is_S(ref) & is_S(base)) "ss"
   else if (is_W(ref) & is_W(base)) "ww"
@@ -196,8 +231,9 @@ find_transition <- function(ref, base) {
             call. = FALSE)
 }
 
-#' J'ai donc regardé si on avait des SNPs improbables, *ie* des
+#' J'ai d'abord regardé si on avait des SNPs improbables, *ie* des
 #' mutations de W à W (`ww`) ou de S à S (`ss`).
+
 snp %>%
   rowwise() %>%
   mutate(trans = find_transition(refb, readb)) %>%
@@ -206,10 +242,10 @@ snp %>%
 
 #' Il n'y en a pas. Plutôt une bonne nouvelle !
 #'
-#' ## Distribution par type de substitutions
+#' ## Distribution par type de mutation
 #'
-#' J'ai voulu voir si les différents types de substitutions ont des
-#' répartitions différentes.
+#' J'ai voulu voir si les mutations S->W et les mutations W->S étaient
+#' réparties différemment sur les séquences.
 
 snp %>%
   rowwise() %>%
@@ -220,9 +256,9 @@ snp %>%
   theme(panel.grid.major.x = element_blank()) +
   labs(x = "Position",
        y = "Densité",
-       fill = "Transition",
-       title = "Distribution des substitutions") +
-  theme(legend.position = c(0.8, 0.8))
+       fill = "Mutation",
+       title = "Distribution des mutations") +
+  legend_position(0.8, 0.8)
 
 snp %>%
   rowwise() %>%
@@ -231,10 +267,10 @@ snp %>%
   geom_histogram(aes(fill = trans, color = trans), binwidth = 10,
                  position = "dodge" ) +
   labs(x = "Position", y = "",
-       title = "Distribution des transitions",
-       fill = "Transition",
-       color = "Transition") +
-  theme(legend.position = c(0.75, 0.85))
+       title = "Distribution des mutations",
+       fill = "mutation",
+       color = "mutation") +
+  legend_position(0.75, 0.85)
 
 #' # Trace de conversion
 #'
@@ -251,6 +287,18 @@ snp %>%
   labs(x = "Longueur de trace de conversion",
        y = "",
        title = "Distribution de la longueur\nde trace de conversion" )
+
+#' ##
+#'
+
+snp %>%
+  group_by(read, mutant) %>%
+  summarise(max = max(refp)) %>%
+  inner_join(x = snp, y = .) %>%
+  filter(refp == max) %>%
+  ggplot(aes(x = refp)) +
+  geom_histogram(binwidth = 10)
+
 
 #' À première vue, le dernier SNP est souvent dans la partie 3' du
 #' gène. Cette distribution là n'est pas celle qu'on avait avec les
@@ -273,7 +321,7 @@ snp %>%
   summarise(max = max(refp)) %>%
   ggplot(aes(x = max, fill = mutant, color = mutant)) +
   geom_density(adjust = 1/3, alpha = 0.5) +
-  labs(y = "Densite", x = "Position du point de basculement",
+  labs(y = "Densité", x = "Position du point de basculement",
        title = "Position du point de basculement") +
   theme(legend.position = c(0.2, 0.81))
 
@@ -289,7 +337,7 @@ snp %>%
   mutate(trans = find_transition(refb, readb)) %>%
   ggplot(aes(x = max)) +
   geom_histogram(aes(fill = trans, color = trans), position = "dodge", binwidth = 10) +
-  theme(legend.position = c(0.2, 0.8)) +
+  legend_position(0.2, 0.5) +
   labs(x = "Position du point de basculement",
        y = "",
        fill = "Mutation",
@@ -325,8 +373,43 @@ snp %>%
   ggplot(aes(x = count)) +
   geom_histogram(binwidth = 1) +
   geom_vline(xintercept = 5, color = "red") +
-  labs(x = "Nombre de SNP", y = "", title = "Distribution du nombre de SNP par position")
+  annotate("text", label = "x = 5", color = "red", x = 8, y = -0.1) +
+  labs(x = "Nombre de SNP",
+       y = "",
+       title = "Distribution du nombre de SNP par position")
 
 #' En fait aucune position de SNP calibrée ne génère moins de 5
 #' mutations. On peut donc en conclure qu'il n'y a pas de néomutations
 #' dans cette manip.
+#'
+
+#' [ ] échantillonne autant de positions aléatoirement dans les
+#' groupes sw et ws. $856$ est le nombre de positions maximum pour
+#' équilibrer le plan.
+#'
+#'
+#+ wip, echo=FALSE
+
+                                        # WIP
+snp %>%
+  rowwise() %>%
+  mutate(trans = find_transition(refb, readb)) %>%
+  ungroup() %>%
+  group_by(mutant) %>%
+  ## (X) filter(base_q > 40 ) %>%
+  sample_n(856, FALSE) %>%              # échantillonne autant de positions dans les deux groupes.
+  ggplot(aes(x = refp, fill = trans )) +
+  geom_histogram(position = "dodge", binwidth = 10) +
+  ## geom_density(aes(group = mutant), adjust = 1/5, alpha = 1/2) +
+  legend_position(0.8, 0.8)
+
+sapply(1:10, function(i) snp %>% group_by(mutant) %>% sample_n(856) )
+
+                                        # END WIP
+
+test_snp <- apply(
+  sapply(1:3, function(i) snp %>% group_by(mutant) %>% sample_n(856)),
+  2, as_data_frame
+)
+
+test_snp[[1]]
