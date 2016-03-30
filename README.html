@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-03-30 Wed 12:26 -->
+<!-- 2016-03-30 Wed 17:38 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -214,9 +214,9 @@ fichiers selon leur extension.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #839496; font-weight: bold;">cd</span> data/ws
+<span style="color: #657b83; font-weight: bold;">cd</span> data/ws
 
 mkdir fasta spectro seq
 
@@ -225,7 +225,7 @@ find . -name <span style="color: #2aa198;">"*.ab1"</span>  -maxdepth 1 -exec mv 
 find . -name <span style="color: #2aa198;">"*.seq"</span>  -maxdepth 1 -exec mv <span style="color: #2aa198;">{}</span> ./seq/ <span style="color: #2aa198;">\;</span>
 find . -name <span style="color: #2aa198;">"*.csv"</span>  -maxdepth 1 -exec mv <span style="color: #2aa198;">{}</span> ../csv/ <span style="color: #2aa198;">\;</span>
 
-<span style="color: #839496; font-weight: bold;">cd</span> ../sw
+<span style="color: #657b83; font-weight: bold;">cd</span> ../sw
 
 mkdir fasta spectro seq
 
@@ -250,10 +250,10 @@ représenter la qualité globale via le script <a href="./src/quality_control.sh
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">transforme en fastq</span>
-<span style="color: #839496; font-weight: bold;">cd</span> data/ws
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">transforme en fastq</span>
+<span style="color: #657b83; font-weight: bold;">cd</span> data/ws
 
 touch ws_untrimmed.fastq
 
@@ -268,10 +268,10 @@ touch ws_untrimmed.fastq
         &gt;&gt; ws_untrimmed.fastq
 <span style="color: #859900; font-weight: bold;">done</span>
 
-<span style="color: #839496; font-weight: bold;">cd</span> ../sw
+<span style="color: #657b83; font-weight: bold;">cd</span> ../sw
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
-<span style="color: #586e75;"># </span><span style="color: #586e75;">rm spectro/psw76-1073bis.ab1</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">rm spectro/psw76-1073bis.ab1</span>
 
 touch sw_untrimmed.fastq
 
@@ -295,23 +295,23 @@ script <a href="./src/quality_control.sh">./src/quality_control.sh</a>.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">contr&#244;le qualit&#233; des s&#233;quences.</span>
-<span style="color: #839496; font-weight: bold;">cd</span> data
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">contr&#244;le qualit&#233; des s&#233;quences.</span>
+<span style="color: #657b83; font-weight: bold;">cd</span> data
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">cr&#233;e un dossier qc de quality control pour ws et sw</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">cr&#233;e un dossier qc de quality control pour ws et sw</span>
 mkdir -p qc/<span style="color: #2aa198;">{</span>ws,sw<span style="color: #2aa198;">}</span>
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">fastqc sortie dasn le dossier appropri&#233;</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">fastqc sortie dasn le dossier appropri&#233;</span>
 fastqc ws/ws_untrimmed.fastq -o qc/ws
 fastqc sw/sw_untrimmed.fastq -o qc/sw
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
-<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
-<span style="color: #586e75;">#</span><span style="color: #586e75;">' -qq : very quiet</span>
-<span style="color: #586e75;">#</span><span style="color: #586e75;">' -o  : overwrite without warning</span>
-<span style="color: #586e75;">#</span><span style="color: #586e75;">' -d  : out dir</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">et suppression des dossiers inutiles</span>
+<span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -qq : very quiet</span>
+<span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -o  : overwrite without warning</span>
+<span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -d  : out dir</span>
 unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
       qc/sw/sw_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
       sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
@@ -320,8 +320,8 @@ unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
           ../anl/sw_per_base_qual.png <span style="color: #b58900; font-weight: bold;">\</span>
     &amp;&amp; rm -r ../anl/sw_untrimmed_fastqc
 
-<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
-<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">et suppression des dossiers inutiles</span>
 unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
       qc/ws/ws_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
       ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
@@ -369,12 +369,12 @@ qualité.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/bash</span>
+<pre class="src src-sh">  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/bin/bash</span>
 
-  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -qtrim=rl : quality trim right and left</span>
-  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -trimq=28 : trim if quality &lt; 28 (sanger encoding, illumina 1.9)</span>
-  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -minlen=620 : keep only seq with length &gt; 620, after trimming.</span>
-  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -Xmx1g : tells bbduk / java to use 1G of RAM</span>
+  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -qtrim=rl : quality trim right and left</span>
+  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -trimq=28 : trim if quality &lt; 28 (sanger encoding, illumina 1.9)</span>
+  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -minlen=620 : keep only seq with length &gt; 620, after trimming.</span>
+  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -Xmx1g : tells bbduk / java to use 1G of RAM</span>
 
   <span style="color: #268bd2;">FASTQ</span>=<span style="color: #2aa198;">"data/sw/sw_untrimmed.fastq</span>
 <span style="color: #2aa198;">  data/ws/ws_untrimmed.fastq</span>
@@ -390,13 +390,13 @@ qualité.
                          -trimq=28 <span style="color: #b58900; font-weight: bold;">\</span>
                          -minlen=600
 
-      <span style="color: #586e75;">## </span><span style="color: #586e75;">convertit les bases d'une qualit&#233; inf&#233;rieure &#224; 20 en N.</span>
+      <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">convertit les bases d'une qualit&#233; inf&#233;rieure &#224; 20 en N.</span>
       seqtk seq <span style="color: #b58900; font-weight: bold;">\</span>
             -q20 <span style="color: #b58900; font-weight: bold;">\</span>
             -nN <span style="color: #b58900; font-weight: bold;">\</span>
             $<span style="color: #268bd2;">f</span>.qtrim &gt; $<span style="color: #268bd2;">out</span>
 
-      <span style="color: #586e75;">## </span><span style="color: #586e75;">convertit le fastq en fasta</span>
+      <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">convertit le fastq en fasta</span>
       seqret <span style="color: #b58900; font-weight: bold;">\</span>
           -sformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
           -osformat fasta <span style="color: #b58900; font-weight: bold;">\</span>
@@ -415,9 +415,9 @@ qualité.
 <div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
+<pre class="src src-sh">  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/usr/bin/env bash</span>
 
-  <span style="color: #839496; font-weight: bold;">cd</span> data
+  <span style="color: #657b83; font-weight: bold;">cd</span> data
 
   <span style="color: #268bd2;">TRIM</span>=<span style="color: #2aa198;">"ws/ws_untrimmed.fastq.trim sw/sw_untrimmed.fastq.trim"</span>
 
@@ -448,7 +448,7 @@ bases qu'on veut analyser sont de bonne qualité. C'est donc plutôt bon signe.
 <div class="outline-text-3" id="text-4-3">
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
+<pre class="src src-sh">  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/usr/bin/env bash</span>
 
   cat data/sw/sw_untrimmed.fastq.trim data/ws/ws_untrimmed.fastq.trim &gt; data/trimmed.fastq
 </pre>
@@ -470,7 +470,7 @@ ajoute la référence.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/</span><span style="color: #859900; font-weight: bold;">env</span><span style="color: #586e75;"> bash</span>
+<pre class="src src-sh"><span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/usr/bin/</span><span style="color: #859900; font-weight: bold;">env</span><span style="color: #93a1a1;"> bash</span>
 
 seqret -sformat fastq -osformat fasta -auto -stdout <span style="color: #b58900; font-weight: bold;">\</span>
        -sequence data/trimmed.fastq &gt; data/trimmed.fasta
@@ -524,16 +524,16 @@ tableau.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">   <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
+<pre class="src src-sh">   <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/usr/bin/env bash</span>
 
-   <span style="color: #586e75;"># </span><span style="color: #586e75;">Variant calling using ssaha2 and ssahaSNP</span>
+   <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">Variant calling using ssaha2 and ssahaSNP</span>
 
    <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #2aa198;">[</span> <span style="color: #b58900; font-weight: bold;">!</span> -e data/snp_call <span style="color: #2aa198;">]</span>
    <span style="color: #859900; font-weight: bold;">then</span>
        mkdir data/snp_call
    <span style="color: #859900; font-weight: bold;">fi</span>
 
-   <span style="color: #839496; font-weight: bold;">cd</span> data/snp_call
+   <span style="color: #657b83; font-weight: bold;">cd</span> data/snp_call
 
    <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #2aa198;">[</span><span style="color: #b58900;">[</span> <span style="color: #b58900; font-weight: bold;">!</span> -e trimmed.fastq &amp;&amp; <span style="color: #b58900; font-weight: bold;">!</span> -e ref.fasta <span style="color: #b58900;">]</span><span style="color: #2aa198;">]</span>
    <span style="color: #859900; font-weight: bold;">then</span>
@@ -541,19 +541,19 @@ tableau.
        ln -s ../../raw/ref/reference1073bis-1392.fasta ref.fasta
    <span style="color: #859900; font-weight: bold;">fi</span>
 
-   <span style="color: #586e75;">## </span><span style="color: #586e75;">alignement &#224; la s&#233;quence de r&#233;f&#233;rence</span>
-   <span style="color: #586e75;">#</span><span style="color: #586e75;">' -output psl :             format de sortie psl</span>
-   <span style="color: #586e75;">#</span><span style="color: #586e75;">' reference_reverse.fasta : s&#233;quence de r&#233;f&#233;rence</span>
-   <span style="color: #586e75;">#</span><span style="color: #586e75;">' trimmed.fastq :           s&#233;quence &#224; aligner</span>
-   <span style="color: #586e75;">#</span><span style="color: #586e75;">' output.psl :              fichier de sortie</span>
+   <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">alignement &#224; la s&#233;quence de r&#233;f&#233;rence</span>
+   <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' -output psl :             format de sortie psl</span>
+   <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' reference_reverse.fasta : s&#233;quence de r&#233;f&#233;rence</span>
+   <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' trimmed.fastq :           s&#233;quence &#224; aligner</span>
+   <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">' output.psl :              fichier de sortie</span>
    ../../bin/ssahaSNP/ssaha2 -output psl ref.fasta trimmed.fastq &gt; output.psl
 
-   <span style="color: #586e75;">## </span><span style="color: #586e75;">column annotation based on</span>
-   <span style="color: #586e75;">## </span><span style="color: #586e75;">ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/readme,</span>
-   <span style="color: #586e75;">## </span><span style="color: #586e75;">part (6) some further information</span>
-   <span style="color: #586e75;"># </span><span style="color: #586e75;">la premi&#232;re ligne du fichier .dat, afin d'&#234;tre lu dans R</span>
+   <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">column annotation based on</span>
+   <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/readme,</span>
+   <span style="color: #93a1a1;">## </span><span style="color: #93a1a1;">part (6) some further information</span>
+   <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">la premi&#232;re ligne du fichier .dat, afin d'&#234;tre lu dans R</span>
    cat <span style="color: #b58900; font-weight: bold;">\</span>
-       &lt;<span style="color: #2aa198;">(</span> <span style="color: #839496; font-weight: bold;">echo</span> <span style="color: #2aa198;">"match subject_name index_of_subject read_name s_base q_base s_qual q_qual offset_on_</span><span style="color: #d33682;">subject offset_on_read length_of_snp start_match_of_read end_match_of_read match_direction length_of_subject"</span><span style="color: #d33682;"> </span><span style="color: #2aa198;">)</span><span style="color: #d33682;"> </span><span style="color: #d33682; font-weight: bold;">\</span>
+       &lt;<span style="color: #2aa198;">(</span> <span style="color: #657b83; font-weight: bold;">echo</span> <span style="color: #2aa198;">"match subject_name index_of_subject read_name s_base q_base s_qual q_qual offset_on_</span><span style="color: #d33682;">subject offset_on_read length_of_snp start_match_of_read end_match_of_read match_direction length_of_subject"</span><span style="color: #d33682;"> </span><span style="color: #2aa198;">)</span><span style="color: #d33682;"> </span><span style="color: #d33682; font-weight: bold;">\</span>
        &lt;<span style="color: #2aa198;">(</span> ../../bin/ssahaSNP/ssahaSNP ref.fasta trimmed.fastq | <span style="color: #b58900; font-weight: bold;">\</span>
                 egrep ssaha:SNP | <span style="color: #b58900; font-weight: bold;">\</span>
                 awk <span style="color: #2aa198;">'{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15}'</span><span style="color: #2aa198;">)</span> <span style="color: #b58900; font-weight: bold;">\</span>
@@ -577,7 +577,7 @@ identifiant de séquence le nom expérimental qu'on lui a attribué.
 
 <div class="org-src-container">
 
-<pre class="src src-python">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env python</span>
+<pre class="src src-python">  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/usr/bin/env python</span>
 
   <span style="color: #859900; font-weight: bold;">from</span> Bio <span style="color: #859900; font-weight: bold;">import</span> SeqIO
   <span style="color: #859900; font-weight: bold;">from</span> glob <span style="color: #859900; font-weight: bold;">import</span> glob
@@ -592,20 +592,20 @@ identifiant de séquence le nom expérimental qu'on lui a attribué.
       <span style="color: #859900; font-weight: bold;">else</span>:
           <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'ws'</span>
 
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">en tete de colonne</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">en tete de colonne</span>
   <span style="color: #859900; font-weight: bold;">print</span> <span style="color: #2aa198;">"id name mutant"</span>
 
   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">print_seq_id</span><span style="color: #2aa198;">(</span>dna_seq<span style="color: #2aa198;">)</span>:
-      <span style="color: #859900; font-weight: bold;">with</span> <span style="color: #839496; font-weight: bold;">open</span><span style="color: #2aa198;">(</span>dna_seq, <span style="color: #2aa198;">"rb"</span><span style="color: #2aa198;">)</span> <span style="color: #859900; font-weight: bold;">as</span> spectro:
-          <span style="color: #268bd2;">sequence</span> = <span style="color: #839496; font-weight: bold;">list</span><span style="color: #2aa198;">(</span>SeqIO.parse<span style="color: #b58900;">(</span>spectro, <span style="color: #2aa198;">"abi"</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
-          <span style="color: #859900; font-weight: bold;">print</span> sequence<span style="color: #2aa198;">[</span>0<span style="color: #2aa198;">]</span>.<span style="color: #839496; font-weight: bold;">id</span> + <span style="color: #2aa198;">" "</span> + sequence<span style="color: #2aa198;">[</span>0<span style="color: #2aa198;">]</span>.name + <span style="color: #2aa198;">" "</span> + sw_or_ws<span style="color: #2aa198;">(</span>sequence<span style="color: #b58900;">[</span>0<span style="color: #b58900;">]</span>.name<span style="color: #2aa198;">)</span>
+      <span style="color: #859900; font-weight: bold;">with</span> <span style="color: #657b83; font-weight: bold;">open</span><span style="color: #2aa198;">(</span>dna_seq, <span style="color: #2aa198;">"rb"</span><span style="color: #2aa198;">)</span> <span style="color: #859900; font-weight: bold;">as</span> spectro:
+          <span style="color: #268bd2;">sequence</span> = <span style="color: #657b83; font-weight: bold;">list</span><span style="color: #2aa198;">(</span>SeqIO.parse<span style="color: #b58900;">(</span>spectro, <span style="color: #2aa198;">"abi"</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
+          <span style="color: #859900; font-weight: bold;">print</span> sequence<span style="color: #2aa198;">[</span>0<span style="color: #2aa198;">]</span>.<span style="color: #657b83; font-weight: bold;">id</span> + <span style="color: #2aa198;">" "</span> + sequence<span style="color: #2aa198;">[</span>0<span style="color: #2aa198;">]</span>.name + <span style="color: #2aa198;">" "</span> + sw_or_ws<span style="color: #2aa198;">(</span>sequence<span style="color: #b58900;">[</span>0<span style="color: #b58900;">]</span>.name<span style="color: #2aa198;">)</span>
 
-  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #839496; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/sw/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
-      <span style="color: #859900; font-weight: bold;">if</span> basename<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span> != <span style="color: #2aa198;">"psw76-1073bis.ab1"</span>: <span style="color: #586e75;"># </span><span style="color: #586e75;">exclut la sequence qui pose probleme</span>
-          print_seq_id<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
+  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #657b83; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/sw/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
+      <span style="color: #859900; font-weight: bold;">if</span> basename<span style="color: #2aa198;">(</span><span style="color: #657b83; font-weight: bold;">file</span><span style="color: #2aa198;">)</span> != <span style="color: #2aa198;">"psw76-1073bis.ab1"</span>: <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">exclut la sequence qui pose probleme</span>
+          print_seq_id<span style="color: #2aa198;">(</span><span style="color: #657b83; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
 
-  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #839496; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/ws/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
-      print_seq_id<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
+  <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #657b83; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/ws/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
+      print_seq_id<span style="color: #2aa198;">(</span><span style="color: #657b83; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
 </pre>
 </div>
 </div>
@@ -640,24 +640,24 @@ Le script pour tester les résultats, via <code>make test</code>.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/bash</span>
+<pre class="src src-sh">  <span style="color: #93a1a1;">#</span><span style="color: #93a1a1;">!/bin/bash</span>
 
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">cette fonction renvoit le nombre de s&#233;quence dans un fichier fastq pool&#233;.</span>
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">elle divise le nombre de ligne par 4 pour conna&#238;tre le nombre de s&#233;quence.</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">cette fonction renvoit le nombre de s&#233;quence dans un fichier fastq pool&#233;.</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">elle divise le nombre de ligne par 4 pour conna&#238;tre le nombre de s&#233;quence.</span>
   check_fastq_length <span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
-      cat $<span style="color: #268bd2;">1</span> | <span style="color: #839496; font-weight: bold;">echo</span> $<span style="color: #b58900;">(</span><span style="color: #268bd2;">(</span><span style="color: #6c71c4; font-weight: bold;">`wc -l`</span> / 4<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>
+      cat $<span style="color: #268bd2;">1</span> | <span style="color: #657b83; font-weight: bold;">echo</span> $<span style="color: #b58900;">(</span><span style="color: #268bd2;">(</span><span style="color: #6c71c4; font-weight: bold;">`wc -l`</span> / 4<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>
   <span style="color: #2aa198;">}</span>
 
-  <span style="color: #839496; font-weight: bold;">set</span> -e
+  <span style="color: #657b83; font-weight: bold;">set</span> -e
 
-  <span style="color: #839496; font-weight: bold;">.</span> ./test/assert.sh
+  <span style="color: #657b83; font-weight: bold;">.</span> ./test/assert.sh
 
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">v&#233;rifie qu'il y ait bien 95 s&#233;quence dans le fastq SW et 96 dans le fastq WS</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">v&#233;rifie qu'il y ait bien 95 s&#233;quence dans le fastq SW et 96 dans le fastq WS</span>
   assert <span style="color: #2aa198;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq`"</span> <span style="color: #2aa198;">"95"</span>
   assert <span style="color: #2aa198;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq`"</span> <span style="color: #2aa198;">"96"</span>
 
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">v&#233;rifie qu'yl y ait bien 95 s&#233;quences dans le fastq SW trimm&#233; et 96</span>
-  <span style="color: #586e75;"># </span><span style="color: #586e75;">dans le fastq WS trimm&#233;</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">v&#233;rifie qu'yl y ait bien 95 s&#233;quences dans le fastq SW trimm&#233; et 96</span>
+  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">dans le fastq WS trimm&#233;</span>
   assert <span style="color: #2aa198;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq.trim`"</span> <span style="color: #2aa198;">"90"</span>
   assert <span style="color: #2aa198;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq.trim`"</span> <span style="color: #2aa198;">"90"</span>
   assert <span style="color: #2aa198;">"echo `wc -l data/snp_call/snp_calling.dat | awk '{print $1}'`"</span> <span style="color: #2aa198;">"1875"</span>
@@ -687,7 +687,7 @@ Pour installer bbduk :
 
 <pre class="src src-sh">  wget https://sourceforge.net/projects/bbmap/files/latest/download <span style="color: #b58900; font-weight: bold;">\</span>
        -o bin/bbmap.tar.gz
-  <span style="color: #839496; font-weight: bold;">cd</span> bin
+  <span style="color: #657b83; font-weight: bold;">cd</span> bin
   tar xzf bin/bbmap.tar.gz
 </pre>
 </div>
@@ -739,7 +739,7 @@ Il faut une version récente du package <code>rmarkdown</code>.
 </div></div></div>
 <footer id="postamble" class="">
 <div><p class="author">Auteur: Samuel Barreto</p>
-<p class="date">Created: 2016-03-30 Wed 12:26</p>
+<p class="date">Created: 2016-03-30 Wed 17:38</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>

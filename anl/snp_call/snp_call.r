@@ -337,12 +337,13 @@ snp %>%
   mutate(trans = find_transition(refb, readb)) %>%
   ggplot(aes(x = max)) +
   geom_histogram(aes(fill = trans, color = trans), position = "dodge", binwidth = 10) +
-  legend_position(0.2, 0.5) +
+  legend_position(0.2, 0.3) +
   labs(x = "Position du point de basculement",
        y = "",
        fill = "Mutation",
        color = "Mutation",
-       title = "Type de mutation au point de switch")
+       title = "Type de mutation au point de switch") +
+  facet_grid( mutant ~ .)
 
 #' # En(-)quête de néo-mutations…
 #'
@@ -369,7 +370,7 @@ snp %>%
 snp %>%
   group_by(refp) %>%
   summarise(count = n()) %>%
-  ## filter(count < 5) %>%
+  ## (X) filter(count < 5) %>%
   ggplot(aes(x = count)) +
   geom_histogram(binwidth = 1) +
   geom_vline(xintercept = 5, color = "red") +
@@ -381,35 +382,51 @@ snp %>%
 #' En fait aucune position de SNP calibrée ne génère moins de 5
 #' mutations. On peut donc en conclure qu'il n'y a pas de néomutations
 #' dans cette manip.
-#'
 
-#' [ ] échantillonne autant de positions aléatoirement dans les
-#' groupes sw et ws. $856$ est le nombre de positions maximum pour
-#' équilibrer le plan.
-#'
-#'
-#+ wip, echo=FALSE
+## (X) #' [ ] échantillonne autant de positions aléatoirement dans les
+## (X) #' groupes sw et ws. $856$ est le nombre de positions maximum pour
+## (X) #' équilibrer le plan.
+## (X) #'
+## (X) #'
+## (X) #+ wip, echo=FALSE
 
-                                        # WIP
-snp %>%
-  rowwise() %>%
-  mutate(trans = find_transition(refb, readb)) %>%
-  ungroup() %>%
-  group_by(mutant) %>%
-  ## (X) filter(base_q > 40 ) %>%
-  sample_n(856, FALSE) %>%              # échantillonne autant de positions dans les deux groupes.
-  ggplot(aes(x = refp, fill = trans )) +
-  geom_histogram(position = "dodge", binwidth = 10) +
-  ## geom_density(aes(group = mutant), adjust = 1/5, alpha = 1/2) +
-  legend_position(0.8, 0.8)
+## (X)                                         # WIP
+## (X) snp %>%
+## (X)   rowwise() %>%
+## (X)   mutate(trans = find_transition(refb, readb)) %>%
+## (X)   ungroup() %>%
+## (X)   group_by(mutant) %>%
+## (X)   ## (X) filter(base_q > 40 ) %>%
+## (X)   sample_n(856, FALSE) %>%              # échantillonne autant de positions dans les deux groupes.
+## (X)   ggplot(aes(x = refp, fill = trans )) +
+## (X)   geom_histogram(position = "dodge", binwidth = 10) +
+## (X)   ## geom_density(aes(group = mutant), adjust = 1/5, alpha = 1/2) +
+## (X)   legend_position(0.8, 0.8)
 
-sapply(1:10, function(i) snp %>% group_by(mutant) %>% sample_n(856) )
+## (X) sapply(1:10, function(i) snp %>% group_by(mutant) %>% sample_n(856) )
 
-                                        # END WIP
+## (X)                                         # END WIP
 
-test_snp <- apply(
-  sapply(1:3, function(i) snp %>% group_by(mutant) %>% sample_n(856)),
-  2, as_data_frame
-)
+## (X) ## (X) test_snp <- apply(
+## (X) ## (X)   sapply(1:3, function(i) snp %>% group_by(mutant) %>% sample_n(856)),
+## (X) ## (X)   2, as_data_frame
+## (X) ## (X) )
 
-test_snp[[1]]
+## (X) ## (X) test_snp[[1]]
+
+## (X) snp %>%
+## (X)   group_by(read, mutant) %>%
+## (X)   summarise(max = max(refp)) %>%
+## (X)   inner_join(x = snp, y = .) %>%
+## (X)   filter(refp == max) %>%
+## (X)   rowwise() %>%
+## (X)   mutate(trans = find_transition(refb, readb)) %>%
+## (X)   ggplot(aes(x = max)) +
+## (X)   geom_histogram(aes(fill = trans, color = trans), position = "dodge", binwidth = 10) +
+## (X)   ## legend_position(0.2, 0.5) +
+## (X)   labs(x = "Position du point de basculement",
+## (X)        y = "",
+## (X)        fill = "Mutation",
+## (X)        color = "Mutation",
+## (X)        title = "Type de mutation au point de switch") +
+## (X)   facet_grid( mutant )
