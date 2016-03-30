@@ -15,6 +15,7 @@ all: check_qual gatc_snpcall
 snp_call: anl/snp_call/snp_call.r data/snp_call/snp_calling.dat data/id_table.dat
 	R --vanilla -e "rmarkdown::render('$<')"
 	git stage $<
+	git stage anl/snp_call/snp_call.html
 
 data/id_table.dat: make_id_table.py data/sw/seq
 	python $< > $@
