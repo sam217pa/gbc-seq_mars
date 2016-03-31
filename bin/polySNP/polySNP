@@ -1,0 +1,780 @@
+#!/usr/bin/perl
+
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+##
+### This is a modified version of the polySNP software, freely available at #
+### http://www.nybg.org/files/scientists/dlittle/polySNP.html. Modification were #
+### made on 2016-01-29 by Samuel BARRETO. You may contact me at #
+### samuel.barret8atgmail.com for further inquisition. #
+###
+## Copyright 2006 Damon P. Little
+##
+## Little, D. P. and Hall, G. S. Submitted. polySNP: an analysis tool
+## for quantitative sequencing. Program distributed by the authors.
+
+
+
+## INCLUDE
+use Cwd;
+## this line can be commented out if you do not have Bio::SCF
+## installed and use only -p 0 or -p 1
+# use Bio::SCF
+
+
+## START UP
+$path = cwd();
+chomp($path);
+$tempFile = "$path" . "/" . "temporary-file-do-not-use.txt";
+
+
+## DETERMINE OPTIONS AND ANALYSIS TYPE
+$r = ();
+$t = ();
+$s = ();
+$l = 0;
+$a = 0;
+$c = 0.10;
+$p = 0;
+$go = 0;
+
+for($k = 0; $k <= $#ARGV; $k++){
+    if($ARGV[$k] eq "-r"){
+        $r = $ARGV[$k+1];
+        if(-e "$r"){
+            $go++;
+        }
+    }
+    if($ARGV[$k] eq "-t"){
+        $t = $ARGV[$k+1];
+        if(-e "$t"){
+            $go++;
+        }
+    }
+    if($ARGV[$k] eq "-s"){
+        $s = $ARGV[$k+1];
+    }
+    if($ARGV[$k] eq "-l"){
+        $l = 1;
+    }
+    if($ARGV[$k] eq "-a"){
+        $a = 1;
+    }
+    if($ARGV[$k] eq "-c"){
+        $c = $ARGV[$k+1];
+        if(($c > 1) || ($c < 0) || (!($c =~ m/[0-9]/)) || ($c =~ m/[a-z]/i)){
+            $c = "0.10";
+        }
+    }
+    if($ARGV[$k] eq "-p"){
+        $p = $ARGV[$k+1];
+        if(!($p =~ m/[0-3]/)){
+            $p = 0;
+        }
+    }
+}
+
+
+
+if ($go == 2){ ## IF BOTH INPUT FILES EXIST
+
+
+
+    ## QUALITY START (WHEN PHRED IS NOT USED)
+    $QL = 0;
+
+
+
+    ## GET SEQUENCE FROM CHROMATOGRAM
+    if(($p == 0) || ($p == 1) || ($p == 2)){ ## RUN PHRED
+        open(TEMPFILE, ">$tempFile") || die("Could not open temporary output file!");
+        print TEMPFILE "$t\n";
+        close(TEMPFILE);
+        $phred = "phred -st fasta -trim_alt \"\" -trim_cutoff $c -trim_out -c $t.scf -s -d -p -if $tempFile";
+        qx/$phred/;
+        unlink $tempFile;
+
+    } elsif($p == 3){ ## CONVERT TRACE
+        open(TEMPFILE, ">$tempFile") || die("Could not open temporary output file!");
+        print TEMPFILE "$t $t.scf\n";
+        close(TEMPFILE);
+
+        $convert_trace = "convert_trace -fofn $tempFile -out_format SCF";
+        qx/$convert_trace/;
+        unlink $tempFile;
+
+        open(TEMPFILE, ">$tempFile") || die("Could not open temporary output file!");
+        print TEMPFILE "$t.scf $t.exp\n";
+        close(TEMPFILE);
+
+        $convert_trace = "convert_trace -fofn $tempFile -out_format EXP";
+        qx/$convert_trace/;
+        unlink $tempFile;
+        $qclip = "qclip -n $t.exp";
+        qx/$qclip/;
+
+        open(INFILE, "$t.exp") || die("Could not open exp file!");
+        $read = 0;
+        $seq = ();
+        $QL = 0;
+        $QR = 0;
+        foreach $line (<INFILE>){
+            chomp($line);
+            if($read == 2){
+                if ($line =~ m/QL/){
+                    $line =~ tr/[0-9]//cd;
+                    $QL = $line;
+                } elsif ($line =~ m/QR/){
+                    $line =~ tr/[0-9]//cd;
+                    $QR = $line;
+                }
+            }
+            if($line =~ m/\/\//){
+                $read = 2;
+            }
+            if($read == 1){
+                $line = uc($line);
+                $line =~ tr/\-/N/;
+                $line =~ tr/ACGTNVDBHWMRKSY\-//cd;
+                $seq .= $line;
+            }
+            if($line =~ m/SQ/){
+                $read = 1;
+            }
+        }
+        close(INFILE);
+
+        $buffer = ">$t\n";
+        @bases = split(//, $seq);
+        $k = 1;
+        $j = 0;
+        foreach $base(@bases){
+            if(($k > $QL) && ($k < $QR)){
+                $buffer .= $base;
+                if(($j % 80) == 0){
+                    $buffer .= "\n";
+                }
+                $j++;
+            }
+            $k++;
+        }
+
+        open(TEMPFILE, ">$t.seq") || die("Could not open seq output file!");
+        print TEMPFILE "$buffer";
+        close(TEMPFILE);
+    }
+
+
+
+    ## RUN MUSCLE
+    $muscle = "muscle -profile -objscore ps -maxmb 50 -quiet -in1 $r -in2 $t.seq -out $tempFile";
+    qx/$muscle/;
+
+
+
+    ## READ FASTA
+    open(INFILE, "$tempFile") || die("Could not open reference file!");
+    $terms = 0;
+    @sequences = ();
+    @terminals = ();
+    $seq = ();
+    foreach $line (<INFILE>){
+        if(length($line)){
+            chomp($line);
+            @letter = split("", $line);
+            if($letter[0] eq ">"){ #if label
+                $terminals[$terms] = $line;
+                if(length($seq) > 1){ #deposit buffer if there is one
+                    $sequences[$terms-1] = $seq;
+                    $seq = ();
+                }
+                $terms++;
+            } else {
+                $seq .= $line;
+            }
+        }
+    }
+    $sequences[$terms-1] = $seq;
+    close(INFILE);
+
+
+
+    ## CONVERT SEQUENCE FROM IUPAC TO INT
+    @matrix = ();
+    $k = 0;                     # k compte le nombre de séquences
+    $length = 0;                # length compte la longueur des séquences alignées.
+    foreach $seq(@sequences){   # pour chaque séquence dans la matrice de séquence
+        $seq = uc($seq);        # uppercase it
+        $seq =~ tr/ACGTNVDBHWMRKSY\-//cd; # supprime toutes les bases qui ne sont pas IUPAC
+        @bases = split("", $seq);         # convertit en liste
+        $j = 0;                           # j iterate through the @bases array.
+        foreach $value(@bases){           # pour chaque base
+            $matrix->[$k][$j] = returnInt($value); # convertit la base en code int
+            $j++;                                  # va à la base suivante
+        }
+        if($j > $length){       # si j est plus grand que la longueur de la séquence
+            $length = $j;       # alors la longueur de séquence vaut j.
+        }
+        $k++;                   # k compte le nombre de séquences
+    }
+
+
+
+    ## MAKE CONSENSUS
+    @consensus = ();
+    for($j = $length; $j >= 0; $j--){ # j va de la longueur de la séquence à 1
+        $consensus[$j] = $matrix->[0][$j]; # consensus à l'indice j vaut la valeur de la matrice
+        for $k (1 .. ($#{$matrix} - 1)){   # de k = 1 à k = indice du dernier élément de la matrice - 1
+            ## in most cases just the loop is only run once (on sequence 1)
+            # reconstruit une matrice dans laquelle les lignes
+            # correspondent aux séquences et les colonnes aux bases
+            $consensus[$j] = $consensus[$j] | $matrix->[$k][$j];
+        }
+    }
+
+
+
+    ## FIND SNPs
+
+    # Ce bloc de code parcours les séquences dans la matrice
+    # @consensus pour déterminer les positions de SNP dans
+    # l'alignement qui nous intéresse, afin de les retrouver dans les
+    # fic
+
+    @SNP = ();                  # initialise la matrice
+    $unaligned = -1;            # unaligned reference QUOI ?
+    $original = -1;             # original référence QUOI ?
+    $i = 0;                     # i référence le nombre de SNP ?
+    for($j = 0; $j < $length; $j++){ # de 0 à la longueur des séquences alignées
+        if($matrix->[$#{$matrix}][$j] != 0) {  $unaligned++;  } # si la matrice à l'élément j est différent de 0,
+        if($matrix->[0][$j] != 0)           {  $original++;   } # si la matrice ligne 0 colonne j est différent de 0,
+        for $k (1 .. ($#{$matrix} - 1)){ # in most cases just the loop is only run once (on sequence 1)
+            if(($consensus[$j] != $matrix->[$k][$j]) && ($matrix->[$#{$matrix}][$j] != 0)){
+
+                $SNP->[$i][0] = $unaligned + $QL;
+                $SNP->[$i][1] = $j; # aligned
+                $SNP->[$i][2] = $original;
+
+                ## include before
+                if(($matrix->[$#{$matrix}][$j-1] == 0) || ($consensus[$j-1] != 0)){ #either a gap in the expermental or no gap in reference
+                    $SNP->[$i][3] = $unaligned;
+                } else { # find end of gap
+                    $u = $unaligned - 1;
+                    for($q = $j-1; $q >= 0; $q--){
+                        $u--;
+                        if(($consensus[$q] != 0) || ($matrix->[$#{$matrix}][$q] == 0)){
+                            $SNP->[$i][3] = $u;
+                            last;
+                        }
+                    }
+                }
+
+                ## include after
+                if(($matrix->[$#{$matrix}][$j+1] == 0) || ($consensus[$j+1] != 0)){ #either a gap in the expermental or no gap in reference
+                    $SNP->[$i][4] = $unaligned;
+                } else { # find end of gap
+                    $u = $unaligned + 1;
+                    for($q = $j+1; $q < $length; $q++){
+                        $u++;
+                        if(($consensus[$q] != 0) || ($matrix->[$#{$matrix}][$q] == 0)){
+                            $SNP->[$i][4] = $u;
+                            last;
+                        }
+                    }
+                }
+                $i++;
+                last;
+            }
+        }
+    }
+    $SNPCount = $i;
+
+
+    if($SNPCount > 0){ ## IF THERE ARE SNPs
+        if(($p == 0) || ($p == 1)){ ## PHRED
+            ## PARSE PHRED: PHD
+            open(INFILE, "$t.phd.1") || die("Could not open phd.1 file!");
+            $i = 0;
+            $unaligned = 0;
+            $start = 0;
+            foreach $line (<INFILE>){ # pour chaque ligne dans le fichier phd.
+                if(length($line)){    # si la ligne a une longueur non nulle
+                    chomp($line);     # supprime le caractère \n dans la ligne
+                    if($start == 0){  # si on est au dessus de BEGIN_DNA
+                        if($line eq "BEGIN_DNA"){ # mais que la ligne est justement BEGIN_DNA
+                            $start = 1;           # commence le scanning
+                        }
+                    } else {    # sinon, quand on est après BEGIN_DNA
+                        if($unaligned == $SNP->[$i][3]){ #
+                            @blocks = split(/ /, $line); # la matrice @blocks vaut la ligne phd splittée par espace
+                            $SNP->[$i][5] = $blocks[2]; # start scan
+                        }
+                        if($unaligned == $SNP->[$i][4]){
+                            @blocks = split(/ /, $line);
+                            $SNP->[$i][6] = $blocks[2]; # end scan
+                            $i++;
+                            if($i > $#{$SNP}){
+                                last;
+                            }
+                        }
+                        $unaligned++;
+                    }
+                }
+            }
+            close(INFILE);
+        }
+    }
+            print @blocks;
+
+            ## PARSE PHRED: POLY
+
+            # (X) open(INFILE, "$t.poly") || die("Could not open poly file!");
+            # (X) $i = 0;
+            # (X) foreach $line (<INFILE>){
+            # (X)     if(length($line)){
+            # (X)         chomp($line);
+            # (X)         $line =~ s/  / /g;
+            # (X)         @blocks = split(/ /, $line);
+            # (X)         # 0. the primary base
+            # (X)         # 1. the location of the peak corresponding to the primary base (matched in the phd file).
+            # (X)         # 2. area under the primary peak
+            # (X)         # 3. area under the primary peak relative to surrounding peaks
+            # (X)         # 4. the secondary base
+            # (X)         # 5. the location of the peak corresponding to the secondary base
+            # (X)         # 6. area under the secondary peak
+            # (X)         # 7. area under the secondary peak relative to surrounding peaks
+            # (X)         # 8. height of the A peak at the primary peak location
+            # (X)         # 9. height of the C peak at the primary peak location
+            # (X)         # 10. height of the G peak at the primary peak location
+            # (X)         # 11. height of the T peak at the primary peak location
+            # (X)         if(($SNP->[$i][5] <= $blocks[1]) && ($SNP->[$i][6] >= $blocks[1])){
+            # (X)             if((returnInt($blocks[0]) | $consensus[$SNP->[$i][1]]) == $consensus[$SNP->[$i][1]]){ #if primary is compatible with the consensus
+            # (X)                 if($p == 0){ ## PEAK AREA
+            # (X)                     if((returnInt($blocks[4]) | $consensus[$SNP->[$i][1]]) == $consensus[$SNP->[$i][1]]){ #if secondary is compatible with the consensus
+            # (X)                         $SNP->[$i][7] = returnInt($blocks[0]); #the primary base
+            # (X)                         $SNP->[$i][8] = $blocks[2]; #area under the primary peak
+            # (X)                         $SNP->[$i][9] = returnInt($blocks[4]); #the secondary base
+            # (X)                         $SNP->[$i][10] = $blocks[6]; #area under the secondary peak
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1]; ## added by sam217pa on 29.01.16
+            # (X)                     } elsif($blocks[4] eq "N"){
+            # (X)                         $SNP->[$i][7] = returnInt($blocks[0]); #the primary base
+            # (X)                         $SNP->[$i][8] = $blocks[2]; #area under the primary peak
+            # (X)                         $SNP->[$i][9] = 0;
+            # (X)                         $SNP->[$i][10] = 0;
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     } else { #put in errors (not expected to be triggered)
+            # (X)                         $SNP->[$i][7] = 0;
+            # (X)                         $SNP->[$i][8] = 0;
+            # (X)                         $SNP->[$i][9] = 0;
+            # (X)                         $SNP->[$i][10] = 0;
+            # (X)                         $SNP->[$i][11] = "WARNING: bases could not be matched";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                 } elsif($p == 1){ ## PEAK HEIGHT
+            # (X)                     if(($consensus[$SNP->[$i][1]] == 1) || ($consensus[$SNP->[$i][1]] == 2) || ($consensus[$SNP->[$i][1]] == 4) || ($consensus[$SNP->[$i][1]] == 8)){ #if 'novel' SNP
+            # (X)                         $SNP->[$i][7] = returnInt($blocks[0]);
+            # (X)                         if($consensus[$SNP->[$i][1]] == 1){
+            # (X)                             $SNP->[$i][8] = $blocks[8];
+            # (X)                         } elsif($consensus[$SNP->[$i][1]] == 2){
+            # (X)                             $SNP->[$i][8] = $blocks[9];
+            # (X)                         } elsif($consensus[$SNP->[$i][1]] == 4){
+            # (X)                             $SNP->[$i][8] = $blocks[10];
+            # (X)                         } elsif($consensus[$SNP->[$i][1]] == 8){
+            # (X)                             $SNP->[$i][8] = $blocks[11];
+            # (X)                         }
+            # (X)                         $SNP->[$i][9] = returnInt("-");
+            # (X)                         $SNP->[$i][10] = 0;
+            # (X)                         $SNP->[$i][11] = "WARNING: primary peak does not match the reference";
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 3){
+            # (X)                         $SNP->[$i][7] = returnInt("A");
+            # (X)                         $SNP->[$i][8] = $blocks[8];
+            # (X)                         $SNP->[$i][9] = returnInt("C");
+            # (X)                         $SNP->[$i][10] = $blocks[9];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 5){
+            # (X)                         $SNP->[$i][7] = returnInt("A");
+            # (X)                         $SNP->[$i][8] = $blocks[8];
+            # (X)                         $SNP->[$i][9] = returnInt("G");
+            # (X)                         $SNP->[$i][10] = $blocks[10];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 6){
+            # (X)                         $SNP->[$i][7] = returnInt("C");
+            # (X)                         $SNP->[$i][8] = $blocks[9];
+            # (X)                         $SNP->[$i][9] = returnInt("G");
+            # (X)                         $SNP->[$i][10] = $blocks[10];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 9){
+            # (X)                         $SNP->[$i][7] = returnInt("A");
+            # (X)                         $SNP->[$i][8] = $blocks[8];
+            # (X)                         $SNP->[$i][9] = returnInt("T");
+            # (X)                         $SNP->[$i][10] = $blocks[11];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 10){
+            # (X)                         $SNP->[$i][7] = returnInt("T");
+            # (X)                         $SNP->[$i][8] = $blocks[11];
+            # (X)                         $SNP->[$i][9] = returnInt("C");
+            # (X)                         $SNP->[$i][10] = $blocks[9];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                     if($consensus[$SNP->[$i][1]] == 12){
+            # (X)                         $SNP->[$i][7] = returnInt("G");
+            # (X)                         $SNP->[$i][8] = $blocks[10];
+            # (X)                         $SNP->[$i][9] = returnInt("T");
+            # (X)                         $SNP->[$i][10] = $blocks[11];
+            # (X)                         $SNP->[$i][11] = "processed normally";
+            # (X)                         $SNP->[$i][12] = $blocks[1];## added by sam217pa on 29.01.16
+            # (X)                     }
+            # (X)                 }
+            # (X)             } else { # if primary is not compatible with the consensus => put in errors
+            # (X)                 $SNP->[$i][7] = 0;
+            # (X)                 $SNP->[$i][8] = 0;
+            # (X)                 $SNP->[$i][9] = 0;
+            # (X)                 $SNP->[$i][10] = 0;
+            # (X)                 $SNP->[$i][11] = "WARNING: primary peak does not match the reference";
+            # (X)                 $SNP->[$i][12] = $blocks[1];
+            # (X)             }
+            # (X)             if($SNP->[$i][5] != $SNP->[$i][6]){
+            # (X)                 $SNP->[$i][11] = "WARNING: multiple peak span, data are not trustworthy";
+            # (X)                 $SNP->[$i][12] = $blocks[1];
+            # (X)             }
+            # (X)             if($SNP->[$i][6] == $blocks[1]){
+            # (X)                 $i++;
+            # (X)                 if($i > $#{$SNP}){
+            # (X)                     last;
+            # (X)                 }
+            # (X)             }
+            # (X)         }
+            # (X)     }
+            # (X) }
+            # (X) close(INFILE);
+
+
+
+}
+
+# (X) elsif(($p == 2) || ($p == 3)){ # (X) ## BIO::SCF
+            # (X) ## START BIO::SCF
+            # (X) $infile = $t . ".scf";
+            # (X) $SCF = Bio::SCF->new($infile);
+            # (X) for $i (0 .. ($#{$SNP})){ ## GET HEIGHT DATA
+            # (X)     if($matrix->[0][$SNP->[$i][1]] == 1){
+            # (X)         $SNP->[$i][7] = returnInt("A"); #the "primary" base
+            # (X)         $SNP->[$i][8] = $SCF->sample("A",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[0][$SNP->[$i][1]] == 2){
+            # (X)         $SNP->[$i][7] = returnInt("C"); #the "primary" base
+            # (X)         $SNP->[$i][8] = $SCF->sample("C",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[0][$SNP->[$i][1]] == 4){
+            # (X)         $SNP->[$i][7] = returnInt("G"); #the "primary" base
+            # (X)         $SNP->[$i][8] = $SCF->sample("G",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[0][$SNP->[$i][1]] == 8){
+            # (X)         $SNP->[$i][7] = returnInt("T"); #the "primary" base
+            # (X)         $SNP->[$i][8] = $SCF->sample("T",$SCF->index($SNP->[$i][0]));
+            # (X)     }
+            # (X)     if($matrix->[1][$SNP->[$i][1]] == 1){
+            # (X)         $SNP->[$i][9] = returnInt("A"); #the "secondary" base
+            # (X)         $SNP->[$i][10] = $SCF->sample("A",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[1][$SNP->[$i][1]] == 2){
+            # (X)         $SNP->[$i][9] = returnInt("C"); #the "secondary" base
+            # (X)         $SNP->[$i][10] = $SCF->sample("C",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[1][$SNP->[$i][1]] == 4){
+            # (X)         $SNP->[$i][9] = returnInt("G"); #the "secondary" base
+            # (X)         $SNP->[$i][10] = $SCF->sample("G",$SCF->index($SNP->[$i][0]));
+            # (X)     } elsif($matrix->[1][$SNP->[$i][1]] == 8){
+            # (X)         $SNP->[$i][9] = returnInt("T"); #the "secondary" base
+            # (X)         $SNP->[$i][10] = $SCF->sample("T",$SCF->index($SNP->[$i][0]));
+            # (X)     }
+            # (X)     $SNP->[$i][11] = "processed normally";
+            # (X) }
+        # (X) }
+
+
+
+        ##	STANDARD CURVE
+    # (X)     if(-e "$s"){
+    # (X)         open(INFILE, "$s") || die("Could not open standard curve file!");
+    # (X)         foreach $line (<INFILE>){
+    # (X)             if(length($line)){
+    # (X)                 chomp($line);
+    # (X)                 ($position, $reference, $slope, $yIntercept) = split(/,/, $line);
+    # (X)                 if(($position =~ m/[0-9]/) && ($reference =~ m/A|C|G|T/i) && ($slope =~ m/[0-9]/) && ($yIntercept =~ m/[0-9]/)){
+    # (X)                     $position--;
+    # (X)                     for $k (0 .. ($#{$SNP})){
+    # (X)                         if($position == $SNP->[$k][2]){
+    # (X)                             $SNP->[$k][12] = returnInt(uc($reference));
+    # (X)                             $SNP->[$k][13] = $slope;
+    # (X)                             $SNP->[$k][14] = $yIntercept;
+    # (X)                         }
+    # (X)                     }
+    # (X)                 } else {
+    # (X)                     $s = ();
+    # (X)                     print "cannot read standard curve file\n";
+    # (X)                     last;
+    # (X)                 }
+    # (X)             }
+    # (X)         }
+    # (X)         close(INFILE);
+    # (X)     }
+    # (X) }
+
+
+
+    ##	PRINT PRETTY
+    # (X) $buffer = ();
+
+    # (X) if($l == 1){
+    # (X)     $firstName = $terminals[0];
+    # (X)     $secondName = $terminals[1];
+    # (X)     $firstName =~ s/>//g;
+    # (X)     $secondName =~ s/>//g;
+    # (X)     $buffer = "file,analysis,datum,comments,reference position,SCF position,$firstName base,$secondName base,first call,";
+    # (X)     $buffer .= "first area,second call,second area,uncorrected proportion $firstName,uncorrected proportion $secondName";
+    # (X)     if($s){
+    # (X)         $buffer .= ",corrected proportion $firstName,corrected proportion $secondName";
+    # (X)     }
+    # (X)     $buffer .= "\n";
+    # (X)     if(($p == 1) || ($p == 2) || ($p == 3)){
+    # (X)         $buffer =~ s/area/height/g;
+    # (X)     }
+    # (X) }
+
+    # (X) if($SNPCount > 0){
+    # (X)     for $k (0 .. $#{$SNP}){
+    # (X)         $firstBase = returnChar($matrix->[0][$SNP->[$k][1]]);
+    # (X)         $secondBase = returnChar($matrix->[1][$SNP->[$k][1]]);
+
+    # (X)         $primary = returnChar($SNP->[$k][7]);
+    # (X)         $secondary = returnChar($SNP->[$k][9]);
+
+    # (X)         $solo = 0;
+
+    # (X)         if(($firstBase eq $primary) && ($secondBase eq $secondary)){
+    # (X)             $proportionOne = $SNP->[$k][8] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)             $proportionTwo = $SNP->[$k][10] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)         } elsif(($firstBase eq $secondary) && ($secondBase eq $primary)){
+    # (X)             $proportionOne = $SNP->[$k][10] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)             $proportionTwo = $SNP->[$k][8] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)         } elsif(($firstBase eq $primary) && ($secondary eq "-")){
+    # (X)             $proportionOne = $SNP->[$k][8] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)             $proportionTwo = "0.000";
+    # (X)             $solo = 1;
+    # (X)         } elsif (($secondBase eq $primary) && ($secondary eq "-")){
+    # (X)             $proportionOne = "0.000";
+    # (X)             $proportionTwo = $SNP->[$k][8] / ($SNP->[$k][8] + $SNP->[$k][10]);
+    # (X)             $solo = 1;
+    # (X)         } else {# no match!
+    # (X)             $proportionOne = "";
+    # (X)             $proportionTwo = "";
+    # (X)         }
+
+    # (X)         ## FILE
+    # (X)         $buffer .= "$t,";
+
+    # (X)         ## ANALYSIS
+    # (X)         if(($p == 0) || ($p == 1)){
+    # (X)             $buffer .= "PHRED/PHRED,";
+    # (X)         }
+    # (X)         if($p == 2){
+    # (X)             $buffer .= "PHRED/Bio::SCF,";
+    # (X)         }
+    # (X)         if($p == 3){
+    # (X)             $buffer .= "qclip/Bio::SCF,";
+    # (X)         }
+
+    # (X)         ## DATUM
+    # (X)         if($p == 0){
+    # (X)             $buffer .= "area,";
+    # (X)         }
+    # (X)         if(($p == 1) || ($p == 2) || ($p == 3)){
+    # (X)             $buffer .= "height,";
+    # (X)         }
+
+    # (X)         ##	COMMENTS
+    # (X)         $buffer .= "$SNP->[$k][11],";
+
+    # (X)         ## REFERENCE POSITION
+    # (X)         $position = $SNP->[$k][2];
+    # (X)         $position++;
+    # (X)         $buffer .= "$position,";
+
+    # (X)         ## SCF POSITION
+    # (X)         $position = $SNP->[$k][0];
+    # (X)         $position++;
+    # (X)         $buffer .= "$position,";
+
+
+    # (X)         ## SPECTROGRAM POSITION
+    # (X)         $seq_pos = $SNP->[$k][12];
+    # (X)         $buffer .= "$seq_pos,";
+
+    # (X)         ## FIRST,SECOND
+    # (X)         $buffer .= "$firstBase,$secondBase,";
+
+    # (X)         ## FIRST
+    # (X)         $buffer .= "$primary,$SNP->[$k][8],";
+
+    # (X)         ## SECOND
+    # (X)         $buffer .= "$secondary,$SNP->[$k][10],";
+
+    # (X)         ## UNCORRECTED
+    # (X)         $buffer .= sprintf('%.3f', $proportionOne);
+    # (X)         $buffer .= ",";
+    # (X)         $buffer .= sprintf('%.3f', $proportionTwo);
+
+    # (X)         ## CORRECTED
+    # (X)         if($s){
+    # (X)             $reference = returnChar($SNP->[$k][12]);
+    # (X)             if(($firstBase eq $reference) && ($solo == 0)){
+    # (X)                 $proportionOne = ($proportionOne * ($SNP->[$k][13])) + ($SNP->[$k][14]);
+    # (X)                 $proportionTwo =  1 - $proportionOne;
+    # (X)             } elsif(($secondBase eq $reference) && ($solo == 0)){
+    # (X)                 $proportionTwo = ($proportionTwo * ($SNP->[$k][13])) + ($SNP->[$k][14]);
+    # (X)                 $proportionOne = 1 - $proportionTwo;
+    # (X)             }
+
+    # (X)             $buffer .= ",";
+    # (X)             $buffer .= sprintf('%.3f', $proportionOne);
+    # (X)             $buffer .= ",";
+    # (X)             $buffer .= sprintf('%.3f', $proportionTwo);
+    # (X)         }
+
+    # (X)         ## END
+    # (X)         $buffer .= "\n";
+    # (X)     }
+    # (X) }
+
+
+
+    # (X) ALIGNMENT
+    # (X) if($a == 1){
+    # (X)     for $k (0 .. $#{$matrix}){
+    # (X)         $buffer .= $terminals[$k];
+    # (X)         $j = 0;
+    # (X)         for($j = 0; $j < $length; $j++){
+    # (X)             if(($j % 80) == 0){
+    # (X)                 $buffer .= "\n" . returnChar($matrix->[$k][$j]);
+    # (X)             } else {
+    # (X)                 $buffer .= returnChar($matrix->[$k][$j]);
+    # (X)             }
+    # (X)         }
+    # (X)         $buffer .= "\n";
+    # (X)         $k++;
+    # (X)     }
+    # (X) }
+
+    # (X) ) print "$buffer\n";
+
+
+
+    ## (X) CLEAN UP
+    unlink $tempFile;
+
+
+
+else { ## (X) PRINT INFO
+    print "A PERL script for outputting a CSV listing of SNP peak areas (version 1.0).\n\n";
+    print "USAGE: polySNP  -r reference_file  -t trace_file  [-s standard_curve_file]  [-l]  [-a]  [-p 0|1|2|3]  [-c 0.XX]\n\n";
+    print "\t\"reference_file\" is a FASTA format file containing two aligned sequences\n";
+    print "\t(SNPs will be inferred)\n\n";
+    print "\t\"trace_file\" is a chromatogram file readable by PHRED or convert_trace\n\n";
+    print "\t\"standard_curve_file\" is a CSV text file containing reference\n";
+    print "\tposition (in \"reference_file\"), reference base,\n";
+    print "\tslope (decimal notation), y-intercept\n\n";
+    print "\t-l outputs a line of data labels before outputting the data\n\n";
+    print "\t-a outputs the alignment along with the data\n\n";
+    print "\t-p 0 base call and trim with PHRED, use PHRED values for peak area\n";
+    print "\tmeasurement (default)\n";
+    print "\t-p 1 base call and trim with PHRED, use PHRED values for peak height\n";
+    print "\tmeasurement\n";
+    print "\t-p 2 base call and trim with PHRED, use Bio::SCF values for peak height\n";
+    print "\tmeasurment\n";
+    print "\t-p 3 use existing base calls, trim with qclip, use Bio::SCF values for\n";
+    print "\tpeak height measurement\n\n";
+    print "\tFor -p 0, 1, or 2 an optional -c 0.XX argument can be appended to\n";
+    print "\tspecify the PHRED \"-trim_cutoff\"  value. If no -c 0.XX value is\n";
+    print "\tspecified, the script defaults to 0.10.\n\n";
+    print "Warning: this script assumes infile extensions have meaning.\n";
+    print "Requirements: MUSCLE; PHRED is required for -p 0, 1, or 2;\n";
+    print "BIO:SCF is required for -p 2, or 3; for -p 3 qclip is required and\n";
+    print "convert_trace (Staden package) may be required.\n\n";
+    print "This program is free software; you can redistribute it and/or modify\n";
+    print "it under the terms of the GNU General Public License as published by\n";
+    print "the Free Software Foundation; either version 2 of the License, or\n";
+    print "(at your option) any later version.\n";
+    print "This program is distributed in the hope that it will be useful,\n";
+    print "but WITHOUT ANY WARRANTY; without even the implied warranty of\n";
+    print "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n";
+    print "GNU General Public License for more details.\n\n";
+    print "Copyright 2006 Damon P. Little.\n";
+    print "Please cite Little, D. P. and G. S. Hall. 2006. polySNP: an analysis tool \nfor quantitative sequencing. Program distributed by the authors.\n";
+}
+
+
+
+## (X) CODE
+sub returnInt ($){ # (X) any non IUPAC are returned as 0 => "-" is 0
+    my $int = 0;
+    if($_[0] =~ m/A|N|V|D|H|W|M|R/i){
+        $int = $int | 1; #0001
+    }
+    if($_[0] =~ m/C|N|V|B|H|M|S|Y/i){
+        $int = $int | 2; #0010
+    }
+    if($_[0] =~ m/G|N|V|D|B|R|K|S/i){
+        $int = $int | 4; #0100
+    }
+    if($_[0] =~ m/T|N|D|B|H|W|K|Y/i){
+        $int = $int | 8; #1000
+    }
+    return($int);
+}
+
+
+
+## (X) DECODE
+sub returnChar ($){
+    my @chars = ();
+    $chars[0]  = "-"; #0000
+    $chars[1]  = "A"; #0001
+    $chars[2]  = "C"; #0010
+    $chars[4]  = "G"; #0100
+    $chars[8]  = "T"; #1000
+    $chars[3]  = "M"; #0011
+    $chars[5]  = "R"; #0101
+    $chars[6]  = "S"; #0110
+    $chars[7]  = "V"; #0111
+    $chars[9]  = "W"; #1001
+    $chars[10] = "Y"; #1010
+    $chars[11] = "H"; #1011
+    $chars[12] = "K"; #1100
+    $chars[13] = "D"; #1101
+    $chars[14] = "B"; #1110
+    $chars[15] = "N"; #1111
+    return($chars[$_[0]]);
+}
+
+
+## (X) DONE
+exit 0;
