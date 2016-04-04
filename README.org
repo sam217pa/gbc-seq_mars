@@ -1128,6 +1128,8 @@ def clean_output(input, output):
 # (X)     run_phruscle()
 #+END_SRC
 
+Le script suivant est un script pour déployer =phruscle=.
+
 #+BEGIN_SRC python :tangle setup.py
 from setuptools import setup, find_packages
 
@@ -1148,6 +1150,30 @@ setup(name="phruscle",
     ''', )
 #+END_SRC
 Le script est là : [[./src/phruscle]].
+
+Avec la commande suivante :
+#+BEGIN_SRC sh
+phruscle table -i pW85-1073.ab1 -o test.csv
+#+END_SRC
+
+Je produit une table csv, que j'analyse rapidement dans R.
+
+#+BEGIN_SRC R :file tmp/test_qual.pdf :results output graphics
+library(dplyr)
+library(ggplot2)
+
+setwd("./tmp")
+test <- read.csv("test.csv") %>% tbl_df()
+
+test %>%
+  qplot(data= ., x = refp, y = qual, geom = c("point", "line"), color = qual)
+#+END_SRC
+
+#+RESULTS:
+[[file:tmp/test_qual.pdf]]
+
+À priori tout est bon. Le but est maintenant d'utiliser ce script sur un grand
+nombre de séquence.
 
 * Tests
 
