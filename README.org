@@ -871,7 +871,7 @@ muscle à chaque séquence. Une façon plus efficace de faire la même
 chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
 
-#+BEGIN_SRC python :tangle src/phruscle :shebang "#!/usr/bin/env python"
+#+BEGIN_SRC python :tangle src/phruscle.py
 # -*- coding: utf-8 -*-
 
 # 1. lancer phred sur la séquence abi en entrée.
@@ -982,17 +982,20 @@ def run_muscle(input, reference):
 
 @click.group()
 def phruscle():
+    """This program gather a set of function to run phred on a abi file, to run muscle on the
+    called bases, and to give a nicely formatted output either as human readable or as csv.
+
     """
-    This script run muscle and phred, and uses pandas to make a clean table of it.
-    """
+    pass
 
 
-@phruscle.command('basecall')
-@click.option('--input', help="Input sequence in ab1 or abi format")
-@click.option('--ref', help="Reference alignment in fasta format")
-@click.option('--cutoff',
+@phruscle.command('basecall', short_help='Make basecall and alignment.')
+@click.option('-c',
+              '--cutoff',
               default=0.05,
               help="Probability of error of basecalling")
+@click.argument('-i', '--input', help="Input sequence in ab1 or abi format")
+@click.argument('-r', '--ref', help="Reference alignment in fasta format")
 def run_phruscle(input, ref, cutoff):
     """This programme uses phred to call bases on the `--input` file to create a fasta file.
     Muscle align this fasta file to the `--reference`, without disrupting the reference,
@@ -1004,9 +1007,6 @@ def run_phruscle(input, ref, cutoff):
         run_muscle(input + ".seq", ref)
     else:
         print "Phred failed."
-
-# (X) if __name__ == '__main__':
-# (X)     run_phruscle()
 
 
 def parse_muscle(align):
@@ -1025,9 +1025,8 @@ def parse_muscle(align):
         'wt': str(read_seq(align, 1).seq),  # la séquence sauvage.
         'snp': str(read_seq(align, 2).seq)  # la séquence du gène synthétique
     }
-#+END_SRC
 
-#+BEGIN_SRC python :tangle src/phruscle
+
 def are_the_same(exp, snp, wt):
     """Détermine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont
     identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base
@@ -1089,8 +1088,14 @@ def parse_phd(align):
     # le spectrogramme.
 
 
-@phruscle.command('table')
-@click.options('-i', '--input', help="The abi file to make table with")
+@phruscle.command('table', short_help="Make a table of SNP qual and polarity")
+@click.argument('-i', '--input', help="The abi file to make table with")
+@click.argument('-o',
+                '--output',
+                type=click.File('w'),
+                default='-',
+                required=False,
+                help="The abi file to make table with")
 def clean_output(input):
     """"""
     assert is_abi(input), "Input is not an abi file"
@@ -1114,9 +1119,31 @@ def clean_output(input):
         ignore_index=True)
     with_phd.columns = ['cons', 'refp', 'seqp', 'base', 'qual', 'phase']
 
-    return with_phd
+    click.echo(with_phd, file=output)
+
+# (X) if __name__ == '__main__':
+# (X)     run_phruscle()
 #+END_SRC
 
+#+BEGIN_SRC python :tangle setup.py
+from setuptools import setup, find_packages
+
+setup(name="phruscle",
+      version="0.0.1",
+      py_modules=["phruscle"],
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
+      install_requires=[
+          'Click',
+          'Biopython',
+          'numpy',
+          'pandas',
+      ],
+      entry_points='''
+        [console_scripts]
+        phruscle=phruscle:phruscle
+    ''', )
+#+END_SRC
 Le script est là : [[./src/phruscle]].
 
 * Tests
