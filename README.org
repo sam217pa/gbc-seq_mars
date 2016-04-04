@@ -872,6 +872,8 @@ chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
 
 #+BEGIN_SRC python :tangle src/phruscle :shebang "#!/usr/bin/env python"
+# -*- coding: utf-8 -*-
+
 # 1. lancer phred sur la séquence abi en entrée.
 # 2. lancer muscle avec pour entrée le fichier d'alignement fst entre
 #    le gène synthétique et la séquence sauvage d'une part, et la
@@ -879,10 +881,10 @@ leur référence, mais c'est un peu plus compliqué à programmer.
 # 3. analyser la sortie de phred .phd pour extraire l'information de
 #    la qualité de la base.
 
-from Bio import AlignIO         # permet d'analyser les sorties de muscle.
-from Bio import SeqIO           # permet de tester les entrées
-import subprocess as sub        # permet de lancer phred et muscle
-import click as c
+from Bio import AlignIO  # permet d'analyser les sorties de muscle.
+from Bio import SeqIO  # permet de tester les entrées
+import subprocess as sub  # permet de lancer phred et muscle
+import click
 import os.path
 
 # TODO build UI via click
@@ -893,34 +895,43 @@ import os.path
 # -v verbose ?
 # -h help message ?
 
+
+
 def is_abi(sequence):
     """Cette fonction détermine si une séquence est bien un fichier spectrogramme.
     Renvoit TRUE ou FALSE."""
-    assert os.path.isfile(sequence) , "Le fichier n'existe pas."
-    with open(sequence, "rb") as input:    # le fichier doit être ouvert en mode "rb"
-        if len(SeqIO.read(input, "abi").id) > 0:  # teste la longueur de l'id de la séquence
+    assert os.path.isfile(sequence), "Le fichier n'existe pas."
+
+    with open(sequence,
+              "rb") as input:  # le fichier doit être ouvert en mode "rb"
+        if len(SeqIO.read(
+                input,
+                "abi").id) > 0:  # teste la longueur de l'id de la séquence
             return True
         else:
             return False
 
+
 def is_fasta(sequence):
     """Cette fonction détermine si une séquence est bien un fichier fasta.
     Renvoit True ou False."""
-    assert os.path.isfile(sequence) , "Le fichier n'existe pas"
+    assert os.path.isfile(sequence), "Le fichier n'existe pas"
+
     with open(sequence, "rb") as input:
         seq_list = []
         for record in SeqIO.parse(input, "fasta"):
-            seq_list.append(len(record.id))
+            seq_list.append(len(record.id))  # crée une liste de longueur d'id.
 
-    if 0 not in seq_list :
-        return True
+    if 0 not in seq_list:  # s'il n'y a pas d'identifiant nul
+        return True  # c'est bon.
     else:
         return False
+
 
 def run_phred(input, cutoff):
     """Cette fonction utilise phred sur la séquence .abi en entrée.
     Test: entrée de type abi."""
-    assert is_abi(input) , "La séquence n'est pas un fichier de sequençage."
+    assert is_abi(input), "La séquence n'est pas un fichier de sequençage."
 
     # phred reads and process file listed in the file input via `-if`.
     # we must then create a temporary file containing only the name of the input.
@@ -931,84 +942,91 @@ def run_phred(input, cutoff):
     # the following list describes the phred list of argument.
     phred = [
         "phred",
-        "-st", "fasta",          # sequence type output (default = fasta)
-        "-trim_alt", "\"\"",     # quality trim
-        "-trim_cutoff", str(cutoff),  # error probability of trimming
-        ## TODO voir si ça ne serait pas intéressant de ne trimmer que les sorties qui ne nous
-        ## intéressent pas. Genre phd et fasta et compagnie.
-        "-trim_fasta",           # trim sortie fasta.
-        "-trim_phd",             # trim sortie phd
-        # "-c",                    # write scf file with the trace data
-        "-s",                    # write seq file, append ".seq" to the names of the input files
-        "-d",                    # write a poly file
-        "-p",                    # write a phd file
-        "-if", "tempfile" # input file
+        "-st",
+        "fasta",  # sequence type output (default = fasta)
+        "-trim_alt",
+        "\"\"",  # quality trim
+        "-trim_cutoff",
+        str(cutoff),  # error probability of trimming
+        "-trim_fasta",  # trim sortie fasta.
+        "-trim_phd",  # trim sortie phd
+        "-s",  # write seq file, append ".seq" to the names of the input files
+        "-d",  # write a poly file
+        "-p",  # write a phd file
+        "-if",
+        "tempfile"  # input file
     ]
     phred_call = sub.call(phred)
-    os.remove("tempfile")       # supprime le fichier temporaire
+    os.remove("tempfile")  # supprime le fichier temporaire
     return phred_call
 
-# (X) "phred -st fasta -trim_alt \"\" -trim_cutoff $c -trim_out -c $t.scf -s -d -p -if $tempFile"; la commande perl dans polysnp.
-# (X) run_phred(test_seq)
 
 def run_muscle(input, reference):
     """Cette fonction lance muscle sur la séquence fasta en entrée.
-    Test: entrée de type fasta.
-    """
-    assert is_fasta(reference) , "La référence n'est pas un fichier fasta."
-    assert is_fasta(input) , "La séquence n'est pas un fichier fasta."
+    Test: entrée de type fasta."""
+    assert is_fasta(reference), "La référence n'est pas un fichier fasta."
+    assert is_fasta(input), "La séquence n'est pas un fichier fasta."
 
     muscle = [
         "muscle",
-        "-quiet",
-        "-profile",
-        "-objscore", "ps",
-        "-maxmb", str(50),
-        "-in1", input + ".seq",
-        "-in2", str(reference),
-        "-out", input + ".aln"
+        "-quiet",  # non verbose
+        "-profile",  # do not disrupt the profile alignment
+        "-objscore",
+        "ps",  # matrice de scoring
+        "-maxmb",
+        str(1500),  # 1.5 G as max memory
+        "-in1",
+        input,
+        "-in2",
+        str(reference),  # profile is reference
+        "-out",
+        input + ".aln"  # append .aln to input name
     ]
 
-    muscle_call = sub.call(muscle)
-    return muscle_call
+    muscle_call = sub.call(muscle)  # call muscle on input
+    return muscle_call  # return 0 or 1 if muscle is successful.
 
-# (X) run_muscle("pW85-1073.ab1", "aln-weak-wt.fst")
 
-def parse_muscle(align):
-    """Cette fonction renvoit une liste de dict comprenant 3 choses :
-    1. la séquence alignée
-    2. la séquence sauvage
-    3. la séquence avec les SNP
-    """
-    assert is_fasta(align) , "Le fichier n'est pas un fichier fasta"
+@click.command()
+@click.option('--in', help="Input sequence in ab1 or abi format")
+@click.option('--ref', help="Reference alignment in fasta format")
+@click.option('--cutoff', default=0.05, help = "Probability of error of basecalling")
+def run_phruscle(in, ref, cutoff):
+    """Cette fonction utilise les fonctions ``run_phred`` et ``run_muscle`` sur le fichier
+    `.ab1` en input."""
+    phred_code = run_phred(input, cutoff)
+    if phred_code == 0:
+        run_muscle(input + ".seq", reference)
+    else:
+        print "Phred failed."
 
-    def read_seq(sequence, index):
-        return AlignIO.read(sequence, "fasta")[index]
 
-    return [
-        (read_seq(align, 0).id, str(read_seq(align, 0).seq)),
-        (read_seq(align, 1).id, str(read_seq(align, 1).seq)),
-        (read_seq(align, 2).id, str(read_seq(align, 2).seq))
-    ]
+if __name__ == '__main__':
+    run_phruscle()
 
-parse_muscle(test_seq + ".aln")[0][1][1]
+# def parse_muscle(align):
+#     """Cette fonction renvoit une liste de dict comprenant 3 choses :
+#     1. la séquence alignée
+#     2. la séquence sauvage
+#     3. la séquence avec les SNP
+#     """
+#     assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
 
-def index_phd(align):
-    # sequence = parse_muscle(align)
-sequence = parse_muscle(test_seq + ".aln")
+#     def read_seq(sequence, index):
+#         return AlignIO.read(sequence, "fasta")[index]
 
-for base in sequence[0][1]:
-    print base
+#     return {
+#         read_seq(align, 0).id: str(read_seq(align, 0).seq),
+#         read_seq(align, 1).id: str(read_seq(align, 1).seq),
+#         read_seq(align, 2).id: str(read_seq(align, 2).seq)
+#     }
 
-for i in sequence[0][1]:
-    print i
+# test_seq = "pW85-1073.ab1"
+# parse_muscle(test_seq + ".seq.aln")['weak'][1]
 
-# (X) def read_seq(sequence, index):
-# (X)     return AlignIO.read(sequence, "fasta")[index]
-
-# (X) print AlignIO.read("pW85-1073.ab1.aln", "fasta")[1].id
-
-print read_seq(test_seq + ".aln", 0).seq
+# (X) def index_phd(align):
+# (X)     sequence = parse_muscle(align)
+# (X)     sequence = parse_muscle(test_seq + ".aln")
 #+END_SRC
 
 Le script est là : [[./src/phruscle]].
