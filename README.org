@@ -886,15 +886,8 @@ from Bio import SeqIO  # permet de tester les entrées
 import subprocess as sub  # permet de lancer phred et muscle
 import click
 import os.path
-
-# TODO build UI via click
-# -i sequence
-# -r reference
-# -a align ?
-# -q quality ?
-# -v verbose ?
-# -h help message ?
-
+import numpy as np
+import pandas as pd
 
 
 def is_abi(sequence):
@@ -974,7 +967,7 @@ def run_muscle(input, reference):
         "-objscore",
         "ps",  # matrice de scoring
         "-maxmb",
-        str(1500),  # 1.5 G as max memory
+        str(100),  # 1.5 G as max memory
         "-in1",
         input,
         "-in2",
@@ -987,46 +980,141 @@ def run_muscle(input, reference):
     return muscle_call  # return 0 or 1 if muscle is successful.
 
 
-@click.command()
-@click.option('--in', help="Input sequence in ab1 or abi format")
+@click.group()
+def phruscle():
+    """
+    This script run muscle and phred, and uses pandas to make a clean table of it.
+    """
+
+
+@phruscle.command('basecall')
+@click.option('--input', help="Input sequence in ab1 or abi format")
 @click.option('--ref', help="Reference alignment in fasta format")
-@click.option('--cutoff', default=0.05, help = "Probability of error of basecalling")
-def run_phruscle(in, ref, cutoff):
-    """Cette fonction utilise les fonctions ``run_phred`` et ``run_muscle`` sur le fichier
-    `.ab1` en input."""
+@click.option('--cutoff',
+              default=0.05,
+              help="Probability of error of basecalling")
+def run_phruscle(input, ref, cutoff):
+    """This programme uses phred to call bases on the `--input` file to create a fasta file.
+    Muscle align this fasta file to the `--reference`, without disrupting the reference,
+    to get the localisation of SNPs and their polarity.
+
+    """
     phred_code = run_phred(input, cutoff)
     if phred_code == 0:
-        run_muscle(input + ".seq", reference)
+        run_muscle(input + ".seq", ref)
     else:
         print "Phred failed."
 
+# (X) if __name__ == '__main__':
+# (X)     run_phruscle()
 
-if __name__ == '__main__':
-    run_phruscle()
 
-# def parse_muscle(align):
-#     """Cette fonction renvoit une liste de dict comprenant 3 choses :
-#     1. la séquence alignée
-#     2. la séquence sauvage
-#     3. la séquence avec les SNP
-#     """
-#     assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
+def parse_muscle(align):
+    """Cette fonction renvoit un dict comprenant 3 choses :
+    1. la séquence alignée
+    2. la séquence sauvage
+    3. la séquence avec les SNP
+    """
+    assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
 
-#     def read_seq(sequence, index):
-#         return AlignIO.read(sequence, "fasta")[index]
+    def read_seq(sequence, index):
+        return AlignIO.read(sequence, "fasta")[index]
 
-#     return {
-#         read_seq(align, 0).id: str(read_seq(align, 0).seq),
-#         read_seq(align, 1).id: str(read_seq(align, 1).seq),
-#         read_seq(align, 2).id: str(read_seq(align, 2).seq)
-#     }
+    return {
+        'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
+        'wt': str(read_seq(align, 1).seq),  # la séquence sauvage.
+        'snp': str(read_seq(align, 2).seq)  # la séquence du gène synthétique
+    }
+#+END_SRC
 
-# test_seq = "pW85-1073.ab1"
-# parse_muscle(test_seq + ".seq.aln")['weak'][1]
+#+BEGIN_SRC python :tangle src/phruscle
+def are_the_same(exp, snp, wt):
+    """Détermine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont
+    identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base
+    wt, et '-' quand la base exp ne correspond à aucune des possibilités
 
-# (X) def index_phd(align):
-# (X)     sequence = parse_muscle(align)
-# (X)     sequence = parse_muscle(test_seq + ".aln")
+    """
+    if exp == '-':
+        return '-'
+    elif exp == snp and snp == wt:
+        return '.'
+    elif exp == snp and snp != wt:
+        return 'x'
+    elif exp != snp and exp == wt:
+        return 'X'
+    else:
+        return '-'
+
+
+def index_seq(sequence):
+    """Détermine la position dans la séquence expérimentale"""
+
+    position = 0
+    position_list = []
+    for index, base in enumerate(sequence):
+        if base != '-': position += 1
+        position_list.append(str(position))
+
+    return position_list
+
+
+def polarity_snp(align):
+    """Détermine la polarité des SNP, WT ou GS."""
+    muscle_output = parse_muscle(align)
+
+    consensus = []
+    for i, base in enumerate(muscle_output['exp']):
+        exp = muscle_output['exp'][i]
+        snp = muscle_output['snp'][i]
+        wt = muscle_output['wt'][i]
+
+        consensus += are_the_same(
+            exp, snp, wt)  # + ',' + exp + '\n' # + sortie de parse_phd
+
+    return consensus
+
+
+def parse_phd(align):
+    """Renvoit une DataFrame à partir de la sortie phd de phred.
+
+    """
+    return pd.read_table(align,
+                         sep=" ",
+                         skiprows=20, # FRAGILE. peut être utiliser une autre fonction
+                         # pour définir où commence la séquence, ou pour
+                         # nettoyer la sortie phd de phred
+                         skipfooter=3, # idem, moins sensible normalement.
+                         engine='python', # nécessaire pour skipfooter
+                         names=['base', 'qual', 'phase']) # 'phase' est la position dans
+    # le spectrogramme.
+
+
+@phruscle.command('table')
+@click.options('-i', '--input', help="The abi file to make table with")
+def clean_output(input):
+    """"""
+    assert is_abi(input), "Input is not an abi file"
+
+    parse_align = parse_muscle(input + ".seq.aln")
+
+    clean_data = pd.DataFrame({
+        'seqp': index_seq(parse_align['exp']),
+        'refp': index_seq(parse_align['wt']),
+        'cons': polarity_snp(input + ".seq.aln")
+    })
+
+    with_phd = pd.concat(
+        [
+            clean_data[clean_data.cons != '-'].reset_index(
+                drop=
+                True),  # ne garde que les positions qui existent dans le phd file
+            parse_phd(input + ".phd.1")
+        ],
+        axis=1,
+        ignore_index=True)
+    with_phd.columns = ['cons', 'refp', 'seqp', 'base', 'qual', 'phase']
+
+    return with_phd
 #+END_SRC
 
 Le script est là : [[./src/phruscle]].
