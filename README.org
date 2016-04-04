@@ -855,6 +855,8 @@ snp %>%
 #+END_SRC
 
 * SNP calling précis [0%]
+
+** phred + muscle = phruscle !
 Le SNP calling via ssahaSNP ne permet pas de connaître l'ensemble des
 informations dont on a besoin. Un peu dans l'esprit de polySNP, je
 veux écrire un script python qui permette :
@@ -870,6 +872,10 @@ veux écrire un script python qui permette :
 muscle à chaque séquence. Une façon plus efficace de faire la même
 chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
+
+- [ ] manage paths mistake. le script fonctionnait bien quand l'input était dans
+  le dossier de travail. Mais il faut tenir compte des changements de dossier de
+  travail pour faire les choses bien. 
 
 #+BEGIN_SRC python :tangle src/phruscle.py
 # -*- coding: utf-8 -*-
@@ -1003,8 +1009,12 @@ def run_phruscle(input, ref, cutoff):
 
     """
     phred_code = run_phred(input, cutoff)
+    muscle_input = os.getcwd() + '/' + os.path.basename(input) + '.seq'
+
     if phred_code == 0:
-        run_muscle(input + ".seq", ref)
+        run_muscle(muscle_input, ref)  # FIXME fragile.
+        ## Il faut que la séquence input soit dans le dossier de travail. peut être voir à
+        ## jouer sur la sortie de phred.
     else:
         print "Phred failed."
 
@@ -1015,6 +1025,7 @@ def parse_muscle(align):
     2. la séquence sauvage
     3. la séquence avec les SNP
     """
+    align = os.getcwd() + '/' + os.path.basename(input) + '.seq.aln'
     assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
 
     def read_seq(sequence, index):
@@ -1033,16 +1044,16 @@ def are_the_same(exp, snp, wt):
     wt, et '-' quand la base exp ne correspond à aucune des possibilités
 
     """
-    if exp == '-':
+    if exp == '-':  # si la base a été trimmée ou non alignée
         return '-'
-    elif exp == snp and snp == wt:
+    elif exp == snp and snp == wt:  # si les trois bases sont identiques
         return '.'
-    elif exp == snp and snp != wt:
+    elif exp == snp and snp != wt:  # si la base correspond au SNP
         return 'x'
-    elif exp != snp and exp == wt:
+    elif exp != snp and exp == wt:  # si la base correspond au WT
         return 'X'
     else:
-        return '-'
+        return '-'  # si c'est encore autre chose ?
 
 
 def index_seq(sequence):
@@ -1100,7 +1111,7 @@ def clean_output(input, output):
     """"""
     assert is_abi(input), "Input is not an abi file"
 
-    parse_align = parse_muscle(input + ".seq.aln")
+    parse_align = parse_muscle(input) # + ".seq.aln")
 
     clean_data = pd.DataFrame({
         'seqp': index_seq(parse_align['exp']),
@@ -1123,9 +1134,6 @@ def clean_output(input, output):
         with_phd.to_csv(output, index=False)
     else:
         click.echo(with_phd, file=output)
-
-# (X) if __name__ == '__main__':
-# (X)     run_phruscle()
 #+END_SRC
 
 Le script suivant est un script pour déployer =phruscle=.
@@ -1174,6 +1182,46 @@ test %>%
 
 À priori tout est bon. Le but est maintenant d'utiliser ce script sur un grand
 nombre de séquence.
+
+** phruscling et autres joyeusetés…
+
+Le script phruscle est pour l'instant suffisamment fonctionnel pour qu'on puisse
+l'utiliser sur l'ensemble des séquences ab1 dont on dispose. Il faut auparavant
+recréer l'alignement entre la séquence sauvage et la séquence snp de WS et SW.
+
+*** alignement WS et SW
+
+J'utilise muscle pour faire l'alignement entre la séquence sauvage et les
+séquences SW et WS.
+
+#+BEGIN_SRC sh :tangle src/make_ref :shebang "#!/usr/bin/env bash"
+muscle \
+    -profile \
+    -in1 raw/ref/strong-weak.fasta \
+    -in2 raw/ref/reference1073bis-1392.fasta \
+    -out raw/ref/aln-sw-ref.fst
+
+muscle \
+    -profile \
+    -in1 raw/ref/weak-strong.fasta \
+    -in2 raw/ref/reference1073bis-1392.fasta \
+    -out raw/ref/aln-ws-ref.fst
+#+END_SRC
+
+*** run phruscle on it
+
+#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/phruscler
+
+ROOT=`pwd`
+
+mkdir data/ws/aln
+cd data/ws/aln
+
+for file in ../spectro/*.ab1
+do
+    phruscle basecall -i $file -r $ROOT/raw/ref/weak-strong.fasta
+done
+#+END_SRC
 
 * Tests
 
