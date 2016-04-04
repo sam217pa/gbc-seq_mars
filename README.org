@@ -994,8 +994,8 @@ def phruscle():
               '--cutoff',
               default=0.05,
               help="Probability of error of basecalling")
-@click.argument('-i', '--input', help="Input sequence in ab1 or abi format")
-@click.argument('-r', '--ref', help="Reference alignment in fasta format")
+@click.option('-i', '--input', help="The abi sequence to base call")
+@click.option('-r', '--ref', help="The reference alignment in fasta format")
 def run_phruscle(input, ref, cutoff):
     """This programme uses phred to call bases on the `--input` file to create a fasta file.
     Muscle align this fasta file to the `--reference`, without disrupting the reference,
@@ -1089,14 +1089,14 @@ def parse_phd(align):
 
 
 @phruscle.command('table', short_help="Make a table of SNP qual and polarity")
-@click.argument('-i', '--input', help="The abi file to make table with")
-@click.argument('-o',
-                '--output',
-                type=click.File('w'),
-                default='-',
-                required=False,
-                help="The abi file to make table with")
-def clean_output(input):
+@click.option('-i', '--input', help="Input file in abi format")
+@click.option('-o',
+              '--output',
+              type=click.File('wb'),
+              default='-',
+              required=False,
+              help="Output file in csv format")
+def clean_output(input, output):
     """"""
     assert is_abi(input), "Input is not an abi file"
 
@@ -1119,7 +1119,10 @@ def clean_output(input):
         ignore_index=True)
     with_phd.columns = ['cons', 'refp', 'seqp', 'base', 'qual', 'phase']
 
-    click.echo(with_phd, file=output)
+    if output != '-':
+        with_phd.to_csv(output, index=False)
+    else:
+        click.echo(with_phd, file=output)
 
 # (X) if __name__ == '__main__':
 # (X)     run_phruscle()
