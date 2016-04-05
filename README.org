@@ -875,7 +875,7 @@ leur référence, mais c'est un peu plus compliqué à programmer.
 
 - [ ] manage paths mistake. le script fonctionnait bien quand l'input était dans
   le dossier de travail. Mais il faut tenir compte des changements de dossier de
-  travail pour faire les choses bien. 
+  travail pour faire les choses bien.
 
 #+BEGIN_SRC python :tangle src/phruscle.py
 # -*- coding: utf-8 -*-
@@ -887,28 +887,26 @@ leur référence, mais c'est un peu plus compliqué à programmer.
 # 3. analyser la sortie de phred .phd pour extraire l'information de
 #    la qualité de la base.
 
+import os.path
+import subprocess as sub  # permet de lancer phred et muscle
+import click  # construit la cli
 from Bio import AlignIO  # permet d'analyser les sorties de muscle.
 from Bio import SeqIO  # permet de tester les entrées
-import subprocess as sub  # permet de lancer phred et muscle
-import click
-import os.path
 import numpy as np
 import pandas as pd
+
+# TODO: définir les chemins de fichiers avec constance.
 
 
 def is_abi(sequence):
     """Cette fonction détermine si une séquence est bien un fichier spectrogramme.
     Renvoit TRUE ou FALSE."""
-    assert os.path.isfile(sequence), "Le fichier n'existe pas."
-
-    with open(sequence,
-              "rb") as input:  # le fichier doit être ouvert en mode "rb"
-        if len(SeqIO.read(
-                input,
-                "abi").id) > 0:  # teste la longueur de l'id de la séquence
-            return True
-        else:
-            return False
+    assert isinstance(sequence, 'str'), "Sequence must be str"
+    # TODO: make it check if file ends with .abi
+    if sequence.lower().endswith(('ab1', 'abi')):
+        True
+    else:
+        False
 
 
 def is_fasta(sequence):
@@ -1111,7 +1109,7 @@ def clean_output(input, output):
     """"""
     assert is_abi(input), "Input is not an abi file"
 
-    parse_align = parse_muscle(input) # + ".seq.aln")
+    parse_align = parse_muscle(input)  # + ".seq.aln")
 
     clean_data = pd.DataFrame({
         'seqp': index_seq(parse_align['exp']),
