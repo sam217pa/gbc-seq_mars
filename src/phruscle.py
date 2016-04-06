@@ -8,6 +8,7 @@
 #    la qualité de la base.
 
 import os.path
+import io
 import subprocess as sub  # permet de lancer phred et muscle
 import click  # construit la cli
 from Bio import AlignIO  # permet d'analyser les sorties de muscle.
@@ -46,8 +47,8 @@ def is_fasta(sequence):
     :param sequence: name of the fasta file. str
 
     """
-    if os.path.splitext(sequence)[1].lower().endswith(('.seq', '.fasta', 'aln'
-                                                       '.fst', '.rev')):
+    ext = os.path.splitext(sequence)[1].lower()
+    if ext.endswith(('.seq', '.fasta', '.aln', '.fst', '.rev')):
         return True
     else:
         return False
@@ -203,15 +204,19 @@ def run_phruscle(input, ref, cutoff, reverse, clustalw):
               '--output',
               type=click.File('wb'),
               default='-', # default is print to stdin
-              help="Output file in csv format")
+              help="Output file in csv format. Default is STDOUT.")
 def clean_output(input, phd, output):
     """This programme takes a fasta alignment between the experimental sequence and the
     reference alignment, find the quality of the base call in the phd file, and outputs it
     as csv.
 
-    :param input: the output of muscle aln. str
-    :param phd: the phred output referencing the quality of the base call.
-    :param output: the file to write to. str
+    \b
+    To read the consensus (cons) output:
+    - `.` : the three bases are the same.
+    - `x` : the sequenced base matches to the snp base.
+    - `X` : the sequenced base matches the WT base.
+    - `-` : the sequenced base is misaligned.
+    - `N` : the base was not called.
 
     """
 
@@ -224,7 +229,7 @@ def clean_output(input, phd, output):
         assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
 
         def read_seq(sequence, index):
-            """read the """
+            """quick wrapper around AlignIO.read()"""
             return AlignIO.read(sequence, "fasta")[index]
 
         return {
@@ -233,12 +238,14 @@ def clean_output(input, phd, output):
             'snp': str(read_seq(align, 2).seq)  # gène synthétique
         }
 
-    def are_the_same(exp, snp, wt):
+    def are_the_same(seq_list):
         """Détermine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont
         identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base
         wt, et '-' quand la base exp ne correspond à aucune des possibilités
 
         """
+        exp, snp, wt = seq_list
+
         if exp == '-':  # si la base a été trimmée ou non alignée
             return '-'
         elif exp == snp and snp == wt:  # si les trois bases sont identiques
@@ -261,55 +268,77 @@ def clean_output(input, phd, output):
 
         return position_list
 
-    def polarity_snp(align):
-        """Détermine la polarité des SNP, WT ou GS."""
-        muscle_output = parse_muscle(align)
+    def polarity_snp(parsed_aln):
+        """Give back the polarity of the SNP. Expect an output of parse_muscle."""
 
         consensus = []
-        for i, base in enumerate(muscle_output['exp']):
-            exp = muscle_output['exp'][i]
-            snp = muscle_output['snp'][i]
-            wt = muscle_output['wt'][i]
+        for i, base in enumerate(parsed_aln['exp']):
+            exp = parsed_aln['exp'][i]
+            snp = parsed_aln['snp'][i]
+            wt = parsed_aln['wt'][i]
 
-            consensus += are_the_same(
-                exp, snp, wt)  # + ',' + exp + '\n' # + sortie de parse_phd
+            consensus += are_the_same([exp, snp, wt])
 
         return consensus
 
     def parse_phd(align):
-        """Renvoit une DataFrame à partir de la sortie phd de phred.
+        """Return a pandas DataFrame by parsing a phred output.
+
+        :param align: a phd output.
 
         """
-        return pd.read_table(align,
-                             sep=" ",
-                             skiprows=20, # FRAGILE. peut être utiliser une autre fonction
-                             # pour définir où commence la séquence, ou pour
-                             # nettoyer la sortie phd de phred
-                             skipfooter=3, # idem, moins sensible normalement.
-                             engine='python', # nécessaire pour skipfooter
-                             names=['base', 'qual', 'phase']) # 'phase' est la position dans
-        # le spectrogramme.
 
-    assert is_abi(input), "Input is not an abi file"
+        def get_phd_seq_only(phd_file):
+            """Return string from BEGIN_DNA to END_DNA"""
+            ## inspiré de
+            ## http://stackoverflow.com/questions/7559397/python-read-file-from-and-to-specific-lines-of-textq,
+            ## réponse de EOL
+            with open(phd_file, 'r') as in_data:
+                block = ""
+                found = False
 
-    parse_align = parse_muscle(input)  # + ".seq.aln")
+                for line in in_data:
+                    if found:
+                        if line.strip() == "END_DNA": break
+                        else: block += line
+                    else:
+                        if line.strip() == "BEGIN_DNA":
+                            found = True
+                            block = ""
+            return block
+
+        # pd.DataFrame.
+        return pd.read_table(
+            io.StringIO(u"%s" % get_phd_seq_only(align)),
+            sep=" ",
+            names=['base', 'qual', 'phase'])  # 'phase' = spectrogramme pos
+
+    # (X) assert is_abi(input), "Input is not an abi file"
+
+    parsed_align = parse_muscle(input)
 
     clean_data = pd.DataFrame({
-        'seqp': index_seq(parse_align['exp']),
-        'refp': index_seq(parse_align['wt']),
-        'cons': polarity_snp(input + ".seq.aln")
+        'seqp': index_seq(parsed_align['exp']),
+        'seqb': list(parsed_align['exp']),
+        'refp': index_seq(parsed_align['wt']),
+        'refb': list(parsed_align['wt']),
+        'snpb': list(parsed_align['snp']),
+        'cons': polarity_snp(parsed_align)
     })
 
+    ## use pandas concat to concatenate two datasets along the axis 1, equivalent to cbind in R.
+    ## ignore_index indicate that the two dataframes are not combined with their index.
     with_phd = pd.concat(
         [
-            clean_data[clean_data.cons != '-'].reset_index(
-                drop=
-                True),  # ne garde que les positions qui existent dans le phd file
-            parse_phd(input + ".phd.1")
+            clean_data[clean_data.cons != '-'].reset_index(drop=True),
+            # ne garde que les positions qui existent dans le phd file
+            parse_phd(phd)
         ],
         axis=1,
         ignore_index=True)
-    with_phd.columns = ['cons', 'refp', 'seqp', 'base', 'qual', 'phase']
+    # change les noms de colonnes.
+    with_phd.columns = ['cons', 'refb', 'refp', 'seqb', 'seqp', 'snpb', 'base',
+                        'qual', 'phase']
 
     if output != '-':
         with_phd.to_csv(output, index=False)
