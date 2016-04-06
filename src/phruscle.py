@@ -191,6 +191,8 @@ def run_phruscle(input, ref, cutoff, reverse, clustalw):
 ##-----------------------------------------------------------------------------
 ## TABLE
 ##-----------------------------------------------------------------------------
+# for line in reversed(open("filename").readlines()):
+#     print line.rstrip()
 
 
 @phruscle.command('table',
