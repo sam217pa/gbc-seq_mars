@@ -207,7 +207,14 @@ def run_phruscle(input, ref, cutoff, reverse, clustalw):
               type=click.File('wb'),
               default='-', # default is print to stdin
               help="Output file in csv format. Default is STDOUT.")
-def clean_output(input, phd, output):
+@click.option(
+    '-r',
+    '--reverse',
+    is_flag=True,
+    help=
+    "Reverse the phd file. Useful when reference and sequence are not in the same direction."
+)
+def clean_output(input, phd, output, reverse=False):
     """This programme takes a fasta alignment between the experimental sequence and the
     reference alignment, find the quality of the base call in the phd file, and outputs it
     as csv.
@@ -283,39 +290,49 @@ def clean_output(input, phd, output):
 
         return consensus
 
-    def parse_phd(align):
+    def parse_phd(align, rev=False):
         """Return a pandas DataFrame by parsing a phred output.
 
         :param align: a phd output.
 
         """
 
-        def get_phd_seq_only(phd_file):
-            """Return string from BEGIN_DNA to END_DNA"""
+        def get_phd_seq_only(phd_file, reverse=False):
+            """Return string from BEGIN_DNA to END_DNA. If reverse is True, give the
+            sequence in inverse order."""
             ## inspiré de
             ## http://stackoverflow.com/questions/7559397/python-read-file-from-and-to-specific-lines-of-textq,
             ## réponse de EOL
+            block = ""
+            found = False
             with open(phd_file, 'r') as in_data:
-                block = ""
-                found = False
-
-                for line in in_data:
-                    if found:
-                        if line.strip() == "END_DNA": break
-                        else: block += line
-                    else:
-                        if line.strip() == "BEGIN_DNA":
-                            found = True
-                            block = ""
+                if not reverse:
+                    for line in in_data:
+                        if found:
+                            if line.strip() == "END_DNA": break
+                            else: block += line
+                        else:
+                            if line.strip() == "BEGIN_DNA":
+                                found = True
+                                block = ""
+                else:
+                    # dans l'autre sens.
+                    for line in reversed(in_data.readlines()):
+                        if found:
+                            if line.strip() == "BEGIN_DNA": break
+                            else: block += line
+                        else:
+                            if line.strip() == "END_DNA":
+                                found = True
+                                block = ""
             return block
 
         # pd.DataFrame.
         return pd.read_table(
-            io.StringIO(u"%s" % get_phd_seq_only(align)),
+            io.StringIO(u"%s" % get_phd_seq_only(align,
+                                                 reverse=rev)),
             sep=" ",
             names=['base', 'qual', 'phase'])  # 'phase' = spectrogramme pos
-
-    # (X) assert is_abi(input), "Input is not an abi file"
 
     parsed_align = parse_muscle(input)
 
@@ -325,7 +342,8 @@ def clean_output(input, phd, output):
         'refp': index_seq(parsed_align['wt']),
         'refb': list(parsed_align['wt']),
         'snpb': list(parsed_align['snp']),
-        'cons': polarity_snp(parsed_align)
+        'cons': polarity_snp(parsed_align),
+        'name': input
     })
 
     ## use pandas concat to concatenate two datasets along the axis 1, equivalent to cbind in R.
@@ -334,13 +352,15 @@ def clean_output(input, phd, output):
         [
             clean_data[clean_data.cons != '-'].reset_index(drop=True),
             # ne garde que les positions qui existent dans le phd file
-            parse_phd(phd)
+            parse_phd(phd,
+                      rev=reverse)
+            # parse the phred output. reverse it if necessary to align to the reference.
         ],
         axis=1,
         ignore_index=True)
     # change les noms de colonnes.
-    with_phd.columns = ['cons', 'refb', 'refp', 'seqb', 'seqp', 'snpb', 'base',
-                        'qual', 'phase']
+    with_phd.columns = ['cons', 'name', 'refb', 'refp', 'seqb', 'seqp', 'snpb',
+                        'base', 'qual', 'phase']
 
     if output != '-':
         with_phd.to_csv(output, index=False)
