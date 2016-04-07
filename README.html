@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-04-04 Mon 20:25 -->
+<!-- 2016-04-07 Thu 13:18 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -214,25 +214,25 @@ fichiers selon leur extension.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/bin/</span><span style="color: #4f97d7; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #4f97d7;">cd</span> data/ws
-
-mkdir fasta spectro seq
-
-find . -name <span style="color: #2d9574;">"*.fas"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./fasta/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.ab1"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./spectro/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.seq"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./seq/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.csv"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ../csv/ <span style="color: #2d9574;">\;</span>
-
-<span style="color: #4f97d7;">cd</span> ../sw
+<span style="color: #839496; font-weight: bold;">cd</span> data/ws
 
 mkdir fasta spectro seq
 
-find . -name <span style="color: #2d9574;">"*.fas"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./fasta/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.ab1"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./spectro/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.seq"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ./seq/ <span style="color: #2d9574;">\;</span>
-find . -name <span style="color: #2d9574;">"*.csv"</span>  -maxdepth <span style="color: #a45bad;">1</span> -exec mv <span style="color: #4f97d7;">{}</span> ../csv/ <span style="color: #2d9574;">\;</span>
+find . -name <span style="color: #2aa198;">"*.fas"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./fasta/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.ab1"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./spectro/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.seq"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./seq/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.csv"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ../csv/ <span style="color: #2aa198;">\;</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> ../sw
+
+mkdir fasta spectro seq
+
+find . -name <span style="color: #2aa198;">"*.fas"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./fasta/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.ab1"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./spectro/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.seq"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ./seq/ <span style="color: #2aa198;">\;</span>
+find . -name <span style="color: #2aa198;">"*.csv"</span>  -maxdepth <span style="color: #6c71c4;">1</span> -exec mv <span style="color: #2aa198;">{}</span> ../csv/ <span style="color: #2aa198;">\;</span>
 </pre>
 </div>
 </div>
@@ -250,41 +250,41 @@ représenter la qualité globale via le script <a href="./src/quality_control.sh
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/bin/</span><span style="color: #4f97d7; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">transforme en fastq</span>
-<span style="color: #4f97d7;">cd</span> data/ws
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transforme en fastq</span>
+<span style="color: #839496; font-weight: bold;">cd</span> data/ws
 
 touch ws_untrimmed.fastq
 
-<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> spectro/*.ab1
-<span style="color: #4f97d7; font-weight: bold;">do</span>
-    seqret <span style="color: #2d9574;">\</span>
-        -sformat abi <span style="color: #2d9574;">\</span>
-        -osformat fastq <span style="color: #2d9574;">\</span>
-        -auto <span style="color: #2d9574;">\</span>
-        -stdout <span style="color: #2d9574;">\</span>
-        -sequence $<span style="color: #7590db;">file</span> <span style="color: #2d9574;">\</span>
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    seqret <span style="color: #b58900; font-weight: bold;">\</span>
+        -sformat abi <span style="color: #b58900; font-weight: bold;">\</span>
+        -osformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
+        -auto <span style="color: #b58900; font-weight: bold;">\</span>
+        -stdout <span style="color: #b58900; font-weight: bold;">\</span>
+        -sequence $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
         &gt;&gt; ws_untrimmed.fastq
-<span style="color: #4f97d7; font-weight: bold;">done</span>
+<span style="color: #859900; font-weight: bold;">done</span>
 
-<span style="color: #4f97d7;">cd</span> ../sw
+<span style="color: #839496; font-weight: bold;">cd</span> ../sw
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">rm spectro/psw76-1073bis.ab1</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">TEMPORAIRE, &#233;limine le fichier .ab1 tendancieux pour l'instant</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">rm spectro/psw76-1073bis.ab1</span>
 
 touch sw_untrimmed.fastq
 
-<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> spectro/*.ab1
-<span style="color: #4f97d7; font-weight: bold;">do</span>
-    seqret <span style="color: #2d9574;">\</span>
-        -sformat abi <span style="color: #2d9574;">\</span>
-        -osformat fastq <span style="color: #2d9574;">\</span>
-        -auto <span style="color: #2d9574;">\</span>
-        -stdout <span style="color: #2d9574;">\</span>
-        -sequence $<span style="color: #7590db;">file</span> <span style="color: #2d9574;">\</span>
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    seqret <span style="color: #b58900; font-weight: bold;">\</span>
+        -sformat abi <span style="color: #b58900; font-weight: bold;">\</span>
+        -osformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
+        -auto <span style="color: #b58900; font-weight: bold;">\</span>
+        -stdout <span style="color: #b58900; font-weight: bold;">\</span>
+        -sequence $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
         &gt;&gt; sw_untrimmed.fastq
-<span style="color: #4f97d7; font-weight: bold;">done</span>
+<span style="color: #859900; font-weight: bold;">done</span>
 </pre>
 </div>
 
@@ -295,39 +295,39 @@ script <a href="./src/quality_control.sh">./src/quality_control.sh</a>.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/bin/</span><span style="color: #4f97d7; font-weight: bold;">bash</span>
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/</span><span style="color: #859900; font-weight: bold;">bash</span>
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">contr&#244;le qualit&#233; des s&#233;quences.</span>
-<span style="color: #4f97d7;">cd</span> data
+<span style="color: #586e75;"># </span><span style="color: #586e75;">contr&#244;le qualit&#233; des s&#233;quences.</span>
+<span style="color: #839496; font-weight: bold;">cd</span> data
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">cr&#233;e un dossier qc de quality control pour ws et sw</span>
-mkdir -p qc/<span style="color: #4f97d7;">{</span>ws,sw<span style="color: #4f97d7;">}</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">cr&#233;e un dossier qc de quality control pour ws et sw</span>
+mkdir -p qc/<span style="color: #2aa198;">{</span>ws,sw<span style="color: #2aa198;">}</span>
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">fastqc sortie dasn le dossier appropri&#233;</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">fastqc sortie dasn le dossier appropri&#233;</span>
 fastqc ws/ws_untrimmed.fastq -o qc/ws
 fastqc sw/sw_untrimmed.fastq -o qc/sw
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">et suppression des dossiers inutiles</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -qq : very quiet</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -o  : overwrite without warning</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -d  : out dir</span>
-unzip -qq -o <span style="color: #2d9574;">\</span>
-      qc/sw/sw_untrimmed_fastqc.zip <span style="color: #2d9574;">\</span>
-      sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #2d9574;">\</span>
-      -d ../anl/ <span style="color: #2d9574;">\</span>
-    &amp;&amp; mv ../anl/sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #2d9574;">\</span>
-          ../anl/sw_per_base_qual.png <span style="color: #2d9574;">\</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -qq : very quiet</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -o  : overwrite without warning</span>
+<span style="color: #586e75;">#</span><span style="color: #586e75;">' -d  : out dir</span>
+unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
+      qc/sw/sw_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
+      sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+      -d ../anl/ <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; mv ../anl/sw_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+          ../anl/sw_per_base_qual.png <span style="color: #b58900; font-weight: bold;">\</span>
     &amp;&amp; rm -r ../anl/sw_untrimmed_fastqc
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">et suppression des dossiers inutiles</span>
-unzip -qq -o <span style="color: #2d9574;">\</span>
-      qc/ws/ws_untrimmed_fastqc.zip <span style="color: #2d9574;">\</span>
-      ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #2d9574;">\</span>
-      -d ../anl/ <span style="color: #2d9574;">\</span>
-    &amp;&amp; mv ../anl/ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #2d9574;">\</span>
-          ../anl/ws_per_base_qual.png <span style="color: #2d9574;">\</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">transfert du fichier .png qui nous int&#233;resse dans le dir adapt&#233;</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">et suppression des dossiers inutiles</span>
+unzip -qq -o <span style="color: #b58900; font-weight: bold;">\</span>
+      qc/ws/ws_untrimmed_fastqc.zip <span style="color: #b58900; font-weight: bold;">\</span>
+      ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+      -d ../anl/ <span style="color: #b58900; font-weight: bold;">\</span>
+    &amp;&amp; mv ../anl/ws_untrimmed_fastqc/Images/per_base_quality.png <span style="color: #b58900; font-weight: bold;">\</span>
+          ../anl/ws_per_base_qual.png <span style="color: #b58900; font-weight: bold;">\</span>
     &amp;&amp; rm -r ../anl/ws_untrimmed_fastqc
 </pre>
 </div>
@@ -369,42 +369,42 @@ qualité.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/bin/bash</span>
+<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/bash</span>
 
-  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -qtrim=rl : quality trim right and left</span>
-  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -trimq=28 : trim if quality &lt; 28 (sanger encoding, illumina 1.9)</span>
-  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -minlen=620 : keep only seq with length &gt; 620, after trimming.</span>
-  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -Xmx1g : tells bbduk / java to use 1G of RAM</span>
+  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -qtrim=rl : quality trim right and left</span>
+  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -trimq=28 : trim if quality &lt; 28 (sanger encoding, illumina 1.9)</span>
+  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -minlen=620 : keep only seq with length &gt; 620, after trimming.</span>
+  <span style="color: #586e75;">#</span><span style="color: #586e75;">' -Xmx1g : tells bbduk / java to use 1G of RAM</span>
 
-  <span style="color: #7590db;">FASTQ</span>=<span style="color: #2d9574;">"data/sw/sw_untrimmed.fastq</span>
-<span style="color: #2d9574;">  data/ws/ws_untrimmed.fastq</span>
-<span style="color: #2d9574;">  "</span>
+  <span style="color: #268bd2;">FASTQ</span>=<span style="color: #2aa198;">"data/sw/sw_untrimmed.fastq</span>
+<span style="color: #2aa198;">  data/ws/ws_untrimmed.fastq</span>
+<span style="color: #2aa198;">  "</span>
 
-  <span style="color: #4f97d7; font-weight: bold;">for</span> f<span style="color: #4f97d7; font-weight: bold;"> in</span> $<span style="color: #7590db;">FASTQ</span>
-  <span style="color: #4f97d7; font-weight: bold;">do</span>
-      <span style="color: #7590db;">out</span>=$<span style="color: #7590db;">f</span>.trim
-      bin/bbmap/bbduk.sh -Xmx1g <span style="color: #2d9574;">\</span>
-                         -in=$<span style="color: #7590db;">f</span> <span style="color: #2d9574;">\</span>
-                         -out=$<span style="color: #7590db;">f</span>.qtrim <span style="color: #2d9574;">\</span>
-                         -qtrim=rl <span style="color: #2d9574;">\</span>
-                         -trimq=<span style="color: #a45bad;">28</span> <span style="color: #2d9574;">\</span>
-                         -minlen=<span style="color: #a45bad;">600</span>
+  <span style="color: #859900; font-weight: bold;">for</span> f<span style="color: #859900; font-weight: bold;"> in</span> $<span style="color: #268bd2;">FASTQ</span>
+  <span style="color: #859900; font-weight: bold;">do</span>
+      <span style="color: #268bd2;">out</span>=$<span style="color: #268bd2;">f</span>.trim
+      bin/bbmap/bbduk.sh -Xmx1g <span style="color: #b58900; font-weight: bold;">\</span>
+                         -in=$<span style="color: #268bd2;">f</span> <span style="color: #b58900; font-weight: bold;">\</span>
+                         -out=$<span style="color: #268bd2;">f</span>.qtrim <span style="color: #b58900; font-weight: bold;">\</span>
+                         -qtrim=rl <span style="color: #b58900; font-weight: bold;">\</span>
+                         -trimq=<span style="color: #6c71c4;">28</span> <span style="color: #b58900; font-weight: bold;">\</span>
+                         -minlen=<span style="color: #6c71c4;">600</span>
 
-      <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">convertit les bases d'une qualit&#233; inf&#233;rieure &#224; 20 en N.</span>
-      seqtk seq <span style="color: #2d9574;">\</span>
-            -q20 <span style="color: #2d9574;">\</span>
-            -nN <span style="color: #2d9574;">\</span>
-            $<span style="color: #7590db;">f</span>.qtrim &gt; $<span style="color: #7590db;">out</span>
+      <span style="color: #586e75;">## </span><span style="color: #586e75;">convertit les bases d'une qualit&#233; inf&#233;rieure &#224; 20 en N.</span>
+      seqtk seq <span style="color: #b58900; font-weight: bold;">\</span>
+            -q20 <span style="color: #b58900; font-weight: bold;">\</span>
+            -nN <span style="color: #b58900; font-weight: bold;">\</span>
+            $<span style="color: #268bd2;">f</span>.qtrim &gt; $<span style="color: #268bd2;">out</span>
 
-      <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">convertit le fastq en fasta</span>
-      seqret <span style="color: #2d9574;">\</span>
-          -sformat fastq <span style="color: #2d9574;">\</span>
-          -osformat fasta <span style="color: #2d9574;">\</span>
-          -auto -stdout <span style="color: #2d9574;">\</span>
-          -sequence $<span style="color: #7590db;">out</span> &gt; $<span style="color: #7590db;">f</span>.fasta
+      <span style="color: #586e75;">## </span><span style="color: #586e75;">convertit le fastq en fasta</span>
+      seqret <span style="color: #b58900; font-weight: bold;">\</span>
+          -sformat fastq <span style="color: #b58900; font-weight: bold;">\</span>
+          -osformat fasta <span style="color: #b58900; font-weight: bold;">\</span>
+          -auto -stdout <span style="color: #b58900; font-weight: bold;">\</span>
+          -sequence $<span style="color: #268bd2;">out</span> &gt; $<span style="color: #268bd2;">f</span>.fasta
 
-      rm $<span style="color: #7590db;">f</span>.qtrim
-  <span style="color: #4f97d7; font-weight: bold;">done</span>
+      rm $<span style="color: #268bd2;">f</span>.qtrim
+  <span style="color: #859900; font-weight: bold;">done</span>
 </pre>
 </div>
 </div>
@@ -415,18 +415,18 @@ qualité.
 <div class="outline-text-3" id="text-4-2">
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/env bash</span>
+<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
 
-  <span style="color: #4f97d7;">cd</span> data
+  <span style="color: #839496; font-weight: bold;">cd</span> data
 
-  <span style="color: #7590db;">TRIM</span>=<span style="color: #2d9574;">"ws/ws_untrimmed.fastq.trim sw/sw_untrimmed.fastq.trim"</span>
+  <span style="color: #268bd2;">TRIM</span>=<span style="color: #2aa198;">"ws/ws_untrimmed.fastq.trim sw/sw_untrimmed.fastq.trim"</span>
 
   mkdir qtrim_qc
 
-  <span style="color: #4f97d7; font-weight: bold;">for</span> f<span style="color: #4f97d7; font-weight: bold;"> in</span> $<span style="color: #7590db;">TRIM</span>
-  <span style="color: #4f97d7; font-weight: bold;">do</span>
-      fastqc $<span style="color: #7590db;">f</span> -o qtrim_qc
-  <span style="color: #4f97d7; font-weight: bold;">done</span>
+  <span style="color: #859900; font-weight: bold;">for</span> f<span style="color: #859900; font-weight: bold;"> in</span> $<span style="color: #268bd2;">TRIM</span>
+  <span style="color: #859900; font-weight: bold;">do</span>
+      fastqc $<span style="color: #268bd2;">f</span> -o qtrim_qc
+  <span style="color: #859900; font-weight: bold;">done</span>
 </pre>
 </div>
 
@@ -448,7 +448,7 @@ bases qu'on veut analyser sont de bonne qualité. C'est donc plutôt bon signe.
 <div class="outline-text-3" id="text-4-3">
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/env bash</span>
+<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
 
   cat data/sw/sw_untrimmed.fastq.trim data/ws/ws_untrimmed.fastq.trim &gt; data/trimmed.fastq
 </pre>
@@ -470,13 +470,13 @@ ajoute la référence.
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+<pre class="src src-sh"><span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/</span><span style="color: #859900; font-weight: bold;">env</span><span style="color: #586e75;"> bash</span>
 
-seqret -sformat fastq -osformat fasta -auto -stdout <span style="color: #2d9574;">\</span>
+seqret -sformat fastq -osformat fasta -auto -stdout <span style="color: #b58900; font-weight: bold;">\</span>
        -sequence data/trimmed.fastq &gt; data/trimmed.fasta
 
-fastx_reverse_complement <span style="color: #2d9574;">\</span>
-    -i raw/ref/reference1073bis-1392.fasta <span style="color: #2d9574;">\</span>
+fastx_reverse_complement <span style="color: #b58900; font-weight: bold;">\</span>
+    -i raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     &gt;&gt; data/trimmed.fasta
 </pre>
 </div>
@@ -524,39 +524,39 @@ tableau.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">   <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/env bash</span>
+<pre class="src src-sh">   <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env bash</span>
 
-   <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">Variant calling using ssaha2 and ssahaSNP</span>
+   <span style="color: #586e75;"># </span><span style="color: #586e75;">Variant calling using ssaha2 and ssahaSNP</span>
 
-   <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span> <span style="color: #a45bad;">!</span> -e data/snp_call <span style="color: #4f97d7;">]</span>
-   <span style="color: #4f97d7; font-weight: bold;">then</span>
+   <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #2aa198;">[</span> <span style="color: #b58900; font-weight: bold;">!</span> -e data/snp_call <span style="color: #2aa198;">]</span>
+   <span style="color: #859900; font-weight: bold;">then</span>
        mkdir data/snp_call
-   <span style="color: #4f97d7; font-weight: bold;">fi</span>
+   <span style="color: #859900; font-weight: bold;">fi</span>
 
-   <span style="color: #4f97d7;">cd</span> data/snp_call
+   <span style="color: #839496; font-weight: bold;">cd</span> data/snp_call
 
-   <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span><span style="color: #bc6ec5;">[</span> <span style="color: #a45bad;">!</span> -e trimmed.fastq &amp;&amp; <span style="color: #a45bad;">!</span> -e ref.fasta <span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">]</span>
-   <span style="color: #4f97d7; font-weight: bold;">then</span>
+   <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #2aa198;">[</span><span style="color: #b58900;">[</span> <span style="color: #b58900; font-weight: bold;">!</span> -e trimmed.fastq &amp;&amp; <span style="color: #b58900; font-weight: bold;">!</span> -e ref.fasta <span style="color: #b58900;">]</span><span style="color: #2aa198;">]</span>
+   <span style="color: #859900; font-weight: bold;">then</span>
        ln -s    ../trimmed.fastq .
        ln -s ../../raw/ref/reference1073bis-1392.fasta ref.fasta
-   <span style="color: #4f97d7; font-weight: bold;">fi</span>
+   <span style="color: #859900; font-weight: bold;">fi</span>
 
-   <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">alignement &#224; la s&#233;quence de r&#233;f&#233;rence</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' -output psl :             format de sortie psl</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' reference_reverse.fasta : s&#233;quence de r&#233;f&#233;rence</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' trimmed.fastq :           s&#233;quence &#224; aligner</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">' output.psl :              fichier de sortie</span>
+   <span style="color: #586e75;">## </span><span style="color: #586e75;">alignement &#224; la s&#233;quence de r&#233;f&#233;rence</span>
+   <span style="color: #586e75;">#</span><span style="color: #586e75;">' -output psl :             format de sortie psl</span>
+   <span style="color: #586e75;">#</span><span style="color: #586e75;">' reference_reverse.fasta : s&#233;quence de r&#233;f&#233;rence</span>
+   <span style="color: #586e75;">#</span><span style="color: #586e75;">' trimmed.fastq :           s&#233;quence &#224; aligner</span>
+   <span style="color: #586e75;">#</span><span style="color: #586e75;">' output.psl :              fichier de sortie</span>
    ../../bin/ssahaSNP/ssaha2 -output psl ref.fasta trimmed.fastq &gt; output.psl
 
-   <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">column annotation based on</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/readme,</span>
-   <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">part (6) some further information</span>
-   <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">la premi&#232;re ligne du fichier .dat, afin d'&#234;tre lu dans R</span>
-   cat <span style="color: #2d9574;">\</span>
-       &lt;<span style="color: #4f97d7;">(</span> <span style="color: #4f97d7;">echo</span> <span style="color: #2d9574;">"match subject_name index_of_subject read_name s_base q_base s_qual q_qual offset_on_subject offset_on_read length_of_snp start_match_of_read end_match_of_read match_direction length_of_subject"</span> <span style="color: #4f97d7;">)</span> <span style="color: #2d9574;">\</span>
-       &lt;<span style="color: #4f97d7;">(</span> ../../bin/ssahaSNP/ssahaSNP ref.fasta trimmed.fastq | <span style="color: #2d9574;">\</span>
-                egrep ssaha:SNP | <span style="color: #2d9574;">\</span>
-                awk <span style="color: #2d9574;">'{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15}'</span><span style="color: #4f97d7;">)</span> <span style="color: #2d9574;">\</span>
+   <span style="color: #586e75;">## </span><span style="color: #586e75;">column annotation based on</span>
+   <span style="color: #586e75;">## </span><span style="color: #586e75;">ftp://ftp.sanger.ac.uk/pub/resources/software/ssahasnp/readme,</span>
+   <span style="color: #586e75;">## </span><span style="color: #586e75;">part (6) some further information</span>
+   <span style="color: #586e75;"># </span><span style="color: #586e75;">la premi&#232;re ligne du fichier .dat, afin d'&#234;tre lu dans R</span>
+   cat <span style="color: #b58900; font-weight: bold;">\</span>
+       &lt;<span style="color: #2aa198;">(</span> <span style="color: #839496; font-weight: bold;">echo</span> <span style="color: #2aa198;">"match subject_name index_of_subject read_name s_base q_base s_qual q_qual offset_on_subject offset_on_read length_of_snp start_match_of_read end_match_of_read match_direction length_of_subject"</span> <span style="color: #2aa198;">)</span> <span style="color: #b58900; font-weight: bold;">\</span>
+       &lt;<span style="color: #2aa198;">(</span> ../../bin/ssahaSNP/ssahaSNP ref.fasta trimmed.fastq | <span style="color: #b58900; font-weight: bold;">\</span>
+                egrep ssaha:SNP | <span style="color: #b58900; font-weight: bold;">\</span>
+                awk <span style="color: #2aa198;">'{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15}'</span><span style="color: #2aa198;">)</span> <span style="color: #b58900; font-weight: bold;">\</span>
        &gt; snp_calling.dat
 </pre>
 </div>
@@ -577,35 +577,35 @@ identifiant de séquence le nom expérimental qu'on lui a attribué.
 
 <div class="org-src-container">
 
-<pre class="src src-python">  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/env python</span>
+<pre class="src src-python"><span style="background-color: #073642;"> </span> <span style="color: #586e75;">#</span><span style="color: #586e75;">!/usr/bin/env python</span>
 
-  <span style="color: #4f97d7; font-weight: bold;">from</span> Bio <span style="color: #4f97d7; font-weight: bold;">import</span> SeqIO
-  <span style="color: #4f97d7; font-weight: bold;">from</span> glob <span style="color: #4f97d7; font-weight: bold;">import</span> glob
-  <span style="color: #4f97d7; font-weight: bold;">from</span> os.path <span style="color: #4f97d7; font-weight: bold;">import</span> basename
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">from</span> Bio <span style="color: #859900; font-weight: bold;">import</span> SeqIO
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">from</span> glob <span style="color: #859900; font-weight: bold;">import</span> glob
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">from</span> os.path <span style="color: #859900; font-weight: bold;">import</span> basename
 
-  <span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">sw_or_ws</span><span style="color: #4f97d7;">(</span>mutant_name<span style="color: #4f97d7;">)</span>:
-      <span style="color: #2d9574;">"""</span>
-<span style="color: #2d9574;">      Determine si le mutant est SW ou WS</span>
-<span style="color: #2d9574;">      """</span>
-      <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #2d9574;">'sw'</span> <span style="color: #4f97d7; font-weight: bold;">in</span> mutant_name:
-          <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'sw'</span>
-      <span style="color: #4f97d7; font-weight: bold;">else</span>:
-          <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'ws'</span>
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">sw_or_ws</span><span style="color: #2aa198;">(</span>mutant_name<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">"""</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;"> Determine si le mutant est SW ou WS</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;"> """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #2aa198;">'sw'</span> <span style="color: #859900; font-weight: bold;">in</span> mutant_name:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'sw'</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'ws'</span>
 
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">en tete de colonne</span>
-  <span style="color: #4f97d7; font-weight: bold;">print</span> <span style="color: #2d9574;">"id name mutant"</span>
+<span style="background-color: #073642;"> </span> <span style="color: #586e75;"># </span><span style="color: #586e75;">en tete de colonne</span>
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">print</span> <span style="color: #2aa198;">"id name mutant"</span>
 
-  <span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">print_seq_id</span><span style="color: #4f97d7;">(</span>dna_seq<span style="color: #4f97d7;">)</span>:
-      <span style="color: #4f97d7; font-weight: bold;">with</span> <span style="color: #4f97d7;">open</span><span style="color: #4f97d7;">(</span>dna_seq, <span style="color: #2d9574;">"rb"</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7; font-weight: bold;">as</span> spectro:
-          <span style="color: #7590db;">sequence</span> = <span style="color: #4f97d7;">list</span><span style="color: #4f97d7;">(</span>SeqIO.parse<span style="color: #bc6ec5;">(</span>spectro, <span style="color: #2d9574;">"abi"</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
-          <span style="color: #4f97d7; font-weight: bold;">print</span> sequence<span style="color: #4f97d7;">[</span><span style="color: #a45bad;">0</span><span style="color: #4f97d7;">]</span>.<span style="color: #4f97d7;">id</span> + <span style="color: #2d9574;">" "</span> + sequence<span style="color: #4f97d7;">[</span><span style="color: #a45bad;">0</span><span style="color: #4f97d7;">]</span>.name + <span style="color: #2d9574;">" "</span> + sw_or_ws<span style="color: #4f97d7;">(</span>sequence<span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">0</span><span style="color: #bc6ec5;">]</span>.name<span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">print_seq_id</span><span style="color: #2aa198;">(</span>dna_seq<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">with</span> <span style="color: #839496; font-weight: bold;">open</span><span style="color: #2aa198;">(</span>dna_seq, <span style="color: #2aa198;">"rb"</span><span style="color: #2aa198;">)</span> <span style="color: #859900; font-weight: bold;">as</span> spectro:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #268bd2;">sequence</span> = <span style="color: #839496; font-weight: bold;">list</span><span style="color: #2aa198;">(</span>SeqIO.parse<span style="color: #b58900;">(</span>spectro, <span style="color: #2aa198;">"abi"</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">print</span> sequence<span style="color: #2aa198;">[</span><span style="color: #6c71c4;">0</span><span style="color: #2aa198;">]</span>.<span style="color: #839496; font-weight: bold;">id</span> + <span style="color: #2aa198;">" "</span> + sequence<span style="color: #2aa198;">[</span><span style="color: #6c71c4;">0</span><span style="color: #2aa198;">]</span>.name + <span style="color: #2aa198;">" "</span> + sw_or_ws<span style="color: #2aa198;">(</span>sequence<span style="color: #b58900;">[</span><span style="color: #6c71c4;">0</span><span style="color: #b58900;">]</span>.name<span style="color: #2aa198;">)</span>
 
-  <span style="color: #4f97d7; font-weight: bold;">for</span> <span style="color: #4f97d7;">file</span> <span style="color: #4f97d7; font-weight: bold;">in</span> glob<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"data/sw/spectro/*.ab1"</span><span style="color: #4f97d7;">)</span>:
-      <span style="color: #4f97d7; font-weight: bold;">if</span> basename<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">file</span><span style="color: #4f97d7;">)</span> != <span style="color: #2d9574;">"psw76-1073bis.ab1"</span>: <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">exclut la sequence qui pose probleme</span>
-          print_seq_id<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">file</span><span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #839496; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/sw/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">if</span> basename<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span> != <span style="color: #2aa198;">"psw76-1073bis.ab1"</span>: <span style="color: #586e75;"># </span><span style="color: #586e75;">exclut la sequence qui pose probleme</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> print_seq_id<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
 
-  <span style="color: #4f97d7; font-weight: bold;">for</span> <span style="color: #4f97d7;">file</span> <span style="color: #4f97d7; font-weight: bold;">in</span> glob<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"data/ws/spectro/*.ab1"</span><span style="color: #4f97d7;">)</span>:
-      print_seq_id<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">file</span><span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span> <span style="color: #859900; font-weight: bold;">for</span> <span style="color: #839496; font-weight: bold;">file</span> <span style="color: #859900; font-weight: bold;">in</span> glob<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"data/ws/spectro/*.ab1"</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> print_seq_id<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">file</span><span style="color: #2aa198;">)</span>
 </pre>
 </div>
 </div>
@@ -646,271 +646,376 @@ chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
 </p>
 
-<ul class="org-ul">
-<li><code>[&#xa0;]</code> manage paths mistake. le script fonctionnait bien quand l'input était dans
-le dossier de travail. Mais il faut tenir compte des changements de dossier de
-travail pour faire les choses bien.
-</li>
-</ul>
-
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">-*- coding: utf-8 -*-</span>
+<pre class="src src-python"><span style="color: #586e75;"># </span><span style="color: #586e75;">-*- coding: utf-8 -*-</span>
 
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">1. lancer phred sur la s&#233;quence abi en entr&#233;e.</span>
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">2. lancer muscle avec pour entr&#233;e le fichier d'alignement fst entre</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#    </span><span style="color: #2aa1ae; background-color: #292e34;">le g&#232;ne synth&#233;tique et la s&#233;quence sauvage d'une part, et la</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#    </span><span style="color: #2aa1ae; background-color: #292e34;">s&#233;quence dans le fichier seq d'autre part.</span>
-<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">3. analyser la sortie de phred .phd pour extraire l'information de</span>
-<span style="color: #2aa1ae; background-color: #292e34;">#    </span><span style="color: #2aa1ae; background-color: #292e34;">la qualit&#233; de la base.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">1. lancer phred sur la s&#233;quence abi en entr&#233;e.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">2. lancer muscle avec pour entr&#233;e le fichier d'alignement fst entre</span>
+<span style="color: #586e75;">#    </span><span style="color: #586e75;">le g&#232;ne synth&#233;tique et la s&#233;quence sauvage d'une part, et la</span>
+<span style="color: #586e75;">#    </span><span style="color: #586e75;">s&#233;quence dans le fichier seq d'autre part.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">3. analyser la sortie de phred .phd pour extraire l'information de</span>
+<span style="color: #586e75;">#    </span><span style="color: #586e75;">la qualit&#233; de la base.</span>
 
-<span style="color: #4f97d7; font-weight: bold;">from</span> Bio <span style="color: #4f97d7; font-weight: bold;">import</span> AlignIO  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">permet d'analyser les sorties de muscle.</span>
-<span style="color: #4f97d7; font-weight: bold;">from</span> Bio <span style="color: #4f97d7; font-weight: bold;">import</span> SeqIO  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">permet de tester les entr&#233;es</span>
-<span style="color: #4f97d7; font-weight: bold;">import</span> subprocess <span style="color: #4f97d7; font-weight: bold;">as</span> sub  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">permet de lancer phred et muscle</span>
-<span style="color: #4f97d7; font-weight: bold;">import</span> click
-<span style="color: #4f97d7; font-weight: bold;">import</span> os.path
-<span style="color: #4f97d7; font-weight: bold;">import</span> numpy <span style="color: #4f97d7; font-weight: bold;">as</span> np
-<span style="color: #4f97d7; font-weight: bold;">import</span> pandas <span style="color: #4f97d7; font-weight: bold;">as</span> pd
+<span style="color: #859900; font-weight: bold;">import</span> os.path
+<span style="color: #859900; font-weight: bold;">import</span> io
+<span style="color: #859900; font-weight: bold;">import</span> subprocess <span style="color: #859900; font-weight: bold;">as</span> sub  <span style="color: #586e75;"># </span><span style="color: #586e75;">permet de lancer phred et muscle</span>
+<span style="color: #859900; font-weight: bold;">import</span> click  <span style="color: #586e75;"># </span><span style="color: #586e75;">construit la cli</span>
+<span style="color: #859900; font-weight: bold;">from</span> Bio <span style="color: #859900; font-weight: bold;">import</span> AlignIO  <span style="color: #586e75;"># </span><span style="color: #586e75;">permet d'analyser les sorties de muscle.</span>
+<span style="color: #859900; font-weight: bold;">from</span> Bio <span style="color: #859900; font-weight: bold;">import</span> SeqIO  <span style="color: #586e75;"># </span><span style="color: #586e75;">permet de tester les entr&#233;es</span>
+<span style="color: #859900; font-weight: bold;">from</span> Bio.Seq <span style="color: #859900; font-weight: bold;">import</span> Seq
+<span style="color: #859900; font-weight: bold;">import</span> numpy <span style="color: #859900; font-weight: bold;">as</span> np
+<span style="color: #859900; font-weight: bold;">import</span> pandas <span style="color: #859900; font-weight: bold;">as</span> pd
 
-
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">is_abi</span><span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Cette fonction d&#233;termine si une s&#233;quence est bien un fichier spectrogramme.</span>
-<span style="color: #2d9574;">    Renvoit TRUE ou FALSE."""</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> os.path.isfile<span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"Le fichier n'existe pas."</span>
-
-    <span style="color: #4f97d7; font-weight: bold;">with</span> <span style="color: #4f97d7;">open</span><span style="color: #4f97d7;">(</span>sequence,
-              <span style="color: #2d9574;">"rb"</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7; font-weight: bold;">as</span> <span style="color: #4f97d7;">input</span>:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">le fichier doit &#234;tre ouvert en mode "rb"</span>
-        <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">len</span><span style="color: #4f97d7;">(</span>SeqIO.read<span style="color: #bc6ec5;">(</span>
-                <span style="color: #4f97d7;">input</span>,
-                <span style="color: #2d9574;">"abi"</span><span style="color: #bc6ec5;">)</span>.<span style="color: #4f97d7;">id</span><span style="color: #4f97d7;">)</span> &gt; <span style="color: #a45bad;">0</span>:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">teste la longueur de l'id de la s&#233;quence</span>
-            <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">True</span>
-        <span style="color: #4f97d7; font-weight: bold;">else</span>:
-            <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">False</span>
+<span style="color: #586e75;"># </span><span style="color: #cc9393;">TODO</span><span style="color: #586e75;">: d&#233;finir les chemins de fichiers avec constance.</span>
 
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">is_fasta</span><span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Cette fonction d&#233;termine si une s&#233;quence est bien un fichier fasta.</span>
-<span style="color: #2d9574;">    Renvoit True ou False."""</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> os.path.isfile<span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"Le fichier n'existe pas"</span>
+<span style="color: #b58900;">@click.group</span><span style="color: #2aa198;">()</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">phruscle</span><span style="color: #2aa198;">()</span>:
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""This program gather a set of function to run phred on a abi file, to run muscle on the</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   called bases, and to give a nicely formatted output as csv.</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">with</span> <span style="color: #4f97d7;">open</span><span style="color: #4f97d7;">(</span>sequence, <span style="color: #2d9574;">"rb"</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7; font-weight: bold;">as</span> <span style="color: #4f97d7;">input</span>:
-        <span style="color: #7590db;">seq_list</span> = <span style="color: #4f97d7;">[]</span>
-        <span style="color: #4f97d7; font-weight: bold;">for</span> record <span style="color: #4f97d7; font-weight: bold;">in</span> SeqIO.parse<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, <span style="color: #2d9574;">"fasta"</span><span style="color: #4f97d7;">)</span>:
-            seq_list.append<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">len</span><span style="color: #bc6ec5;">(</span>record.<span style="color: #4f97d7;">id</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">cr&#233;e une liste de longueur d'id.</span>
-
-    <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #a45bad;">0</span> <span style="color: #4f97d7; font-weight: bold;">not</span> <span style="color: #4f97d7; font-weight: bold;">in</span> seq_list:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">s'il n'y a pas d'identifiant nul</span>
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">True</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">c'est bon.</span>
-    <span style="color: #4f97d7; font-weight: bold;">else</span>:
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">False</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">pass</span>
 
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">run_phred</span><span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, cutoff<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Cette fonction utilise phred sur la s&#233;quence .abi en entr&#233;e.</span>
-<span style="color: #2d9574;">    Test: entr&#233;e de type abi."""</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> is_abi<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"La s&#233;quence n'est pas un fichier de sequen&#231;age."</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">is_abi</span><span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Check if sequence if a spectrogram from abi file.</span>
 
-    <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">phred reads and process file listed in the file input via `-if`.</span>
-    <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">we must then create a temporary file containing only the name of the input.</span>
-    <span style="color: #4f97d7; font-weight: bold;">with</span> <span style="color: #4f97d7;">open</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'tempfile'</span>, <span style="color: #2d9574;">'w'</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7; font-weight: bold;">as</span> tempfile:
-        tempfile.write<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span> + <span style="color: #2d9574;">"\n"</span><span style="color: #4f97d7;">)</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param sequence: sequence file name. str.</span>
 
-    <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">subprocess.call takes a list of argument as input.</span>
-    <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">the following list describes the phred list of argument.</span>
-    <span style="color: #7590db;">phred</span> = <span style="color: #4f97d7;">[</span>
-        <span style="color: #2d9574;">"phred"</span>,
-        <span style="color: #2d9574;">"-st"</span>,
-        <span style="color: #2d9574;">"fasta"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">sequence type output (default = fasta)</span>
-        <span style="color: #2d9574;">"-trim_alt"</span>,
-        <span style="color: #2d9574;">"\"\""</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">quality trim</span>
-        <span style="color: #2d9574;">"-trim_cutoff"</span>,
-        <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>cutoff<span style="color: #bc6ec5;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">error probability of trimming</span>
-        <span style="color: #2d9574;">"-trim_fasta"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">trim sortie fasta.</span>
-        <span style="color: #2d9574;">"-trim_phd"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">trim sortie phd</span>
-        <span style="color: #2d9574;">"-s"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">write seq file, append ".seq" to the names of the input files</span>
-        <span style="color: #2d9574;">"-d"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">write a poly file</span>
-        <span style="color: #2d9574;">"-p"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">write a phd file</span>
-        <span style="color: #2d9574;">"-if"</span>,
-        <span style="color: #2d9574;">"tempfile"</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">input file</span>
-    <span style="color: #4f97d7;">]</span>
-    <span style="color: #7590db;">phred_call</span> = sub.call<span style="color: #4f97d7;">(</span>phred<span style="color: #4f97d7;">)</span>
-    os.remove<span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"tempfile"</span><span style="color: #4f97d7;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">supprime le fichier temporaire</span>
-    <span style="color: #4f97d7; font-weight: bold;">return</span> phred_call
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> os.path.splitext<span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)[</span><span style="color: #6c71c4;">1</span><span style="color: #2aa198;">]</span>.lower<span style="color: #2aa198;">()</span>.endswith<span style="color: #2aa198;">(</span><span style="color: #b58900;">(</span><span style="color: #2aa198;">'abi'</span>, <span style="color: #2aa198;">'ab1'</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2; font-weight: bold;">True</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2; font-weight: bold;">False</span>
 
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">run_muscle</span><span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, reference<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Cette fonction lance muscle sur la s&#233;quence fasta en entr&#233;e.</span>
-<span style="color: #2d9574;">    Test: entr&#233;e de type fasta."""</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> is_fasta<span style="color: #4f97d7;">(</span>reference<span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"La r&#233;f&#233;rence n'est pas un fichier fasta."</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> is_fasta<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"La s&#233;quence n'est pas un fichier fasta."</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">is_fasta</span><span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Check if sequence is a fasta file.</span>
 
-    <span style="color: #7590db;">muscle</span> = <span style="color: #4f97d7;">[</span>
-        <span style="color: #2d9574;">"muscle"</span>,
-        <span style="color: #2d9574;">"-quiet"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">non verbose</span>
-        <span style="color: #2d9574;">"-profile"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">do not disrupt the profile alignment</span>
-        <span style="color: #2d9574;">"-objscore"</span>,
-        <span style="color: #2d9574;">"ps"</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">matrice de scoring</span>
-        <span style="color: #2d9574;">"-maxmb"</span>,
-        <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">100</span><span style="color: #bc6ec5;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">1.5 G as max memory</span>
-        <span style="color: #2d9574;">"-in1"</span>,
-        <span style="color: #4f97d7;">input</span>,
-        <span style="color: #2d9574;">"-in2"</span>,
-        <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>reference<span style="color: #bc6ec5;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">profile is reference</span>
-        <span style="color: #2d9574;">"-out"</span>,
-        <span style="color: #4f97d7;">input</span> + <span style="color: #2d9574;">".aln"</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">append .aln to input name</span>
-    <span style="color: #4f97d7;">]</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param sequence: name of the fasta file. str</span>
 
-    <span style="color: #7590db;">muscle_call</span> = sub.call<span style="color: #4f97d7;">(</span>muscle<span style="color: #4f97d7;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">call muscle on input</span>
-    <span style="color: #4f97d7; font-weight: bold;">return</span> muscle_call  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">return 0 or 1 if muscle is successful.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">ext</span> = os.path.splitext<span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)[</span><span style="color: #6c71c4;">1</span><span style="color: #2aa198;">]</span>.lower<span style="color: #2aa198;">()</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> ext.endswith<span style="color: #2aa198;">(</span><span style="color: #b58900;">(</span><span style="color: #2aa198;">'.seq'</span>, <span style="color: #2aa198;">'.fasta'</span>, <span style="color: #2aa198;">'.aln'</span>, <span style="color: #2aa198;">'.fst'</span>, <span style="color: #2aa198;">'.rev'</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2; font-weight: bold;">True</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #268bd2; font-weight: bold;">False</span>
+
+<span style="color: #586e75;">##</span><span style="color: #586e75;">-----------------------------------------------------------------------------</span>
+<span style="color: #586e75;">##                                          </span><span style="color: #586e75;">BASECALL</span>
+<span style="color: #586e75;">##</span><span style="color: #586e75;">-----------------------------------------------------------------------------</span>
 
 
-<span style="color: #ce537a; font-weight: bold;">@click.group</span><span style="color: #4f97d7;">()</span>
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">phruscle</span><span style="color: #4f97d7;">()</span>:
-    <span style="color: #2d9574;">"""This program gather a set of function to run phred on a abi file, to run muscle on the</span>
-<span style="color: #2d9574;">    called bases, and to give a nicely formatted output either as human readable or as csv.</span>
+<span style="color: #b58900;">@phruscle.command</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'basecall'</span>, short_help=<span style="color: #2aa198;">'Make basecall and alignment.'</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'-i'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'--input'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">type</span>=click.File<span style="color: #b58900;">(</span><span style="color: #2aa198;">'rb'</span><span style="color: #b58900;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> default=<span style="color: #2aa198;">'-'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"The abi sequence to base call with phred"</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'-r'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'--ref'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">type</span>=click.File<span style="color: #b58900;">(</span><span style="color: #2aa198;">'r'</span><span style="color: #b58900;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> default=<span style="color: #2aa198;">'-'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"The reference alignment in fasta format"</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'-c'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'--cutoff'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> default=<span style="color: #6c71c4;">0</span>.<span style="color: #6c71c4;">05</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Probability of error of basecalling"</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'--reverse'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> is_flag=<span style="color: #268bd2; font-weight: bold;">True</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Reverse complement sequencing file."</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'--clustalw'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> is_flag=<span style="color: #268bd2; font-weight: bold;">True</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Muscle output in human readable clustalw format"</span><span style="color: #2aa198;">)</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">run_phruscle</span><span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">input</span>, ref, cutoff, reverse, clustalw<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""This programme uses phred to call bases on the `--input` file to create a fasta file.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   Muscle align this fasta file to the `--ref`, without disrupting the reference,</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   to get the localisation of SNPs and their polarity.</span>
 
-<span style="color: #2d9574;">    """</span>
-    <span style="color: #4f97d7; font-weight: bold;">pass</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param input: the abi file to run phred on. str</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param ref: the reference alignment. str</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param cutoff: the maximum phred probability of error.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param reverse: bool. compute reverse complement of input.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param clustalw: bool. muscle output as human readable format clustalw.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">run_phred</span><span style="color: #2aa198;">(</span>abi_file, cutoff<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Run phred on the abi_file, with a probability of base calling error of cutoff.</span>
+
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param abi_file: the sanger sequencing file to base call. str</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param cutoff: probability of error. float.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">print abi_file.name</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">assert</span> is_abi<span style="color: #2aa198;">(</span>abi_file.name<span style="color: #2aa198;">)</span>, <span style="color: #2aa198;">"Abi_File is not, well&#8230;, an abi file."</span>
+
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">phred reads and process file listed in the file abi_file via `-if`.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">we must then create a temporary file containing only the name of the abi_file.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">with</span> <span style="color: #839496; font-weight: bold;">open</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'tempfile'</span>, <span style="color: #2aa198;">'w'</span><span style="color: #2aa198;">)</span> <span style="color: #859900; font-weight: bold;">as</span> tempfile:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   tempfile.write<span style="color: #2aa198;">(</span>abi_file.name + <span style="color: #2aa198;">"\n"</span><span style="color: #2aa198;">)</span>
+
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">subprocess.call takes a list of argument as abi_file.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">the following list describes the phred list of argument.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">phred</span> = <span style="color: #2aa198;">[</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"phred"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-st"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"fasta"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">sequence type output (default = fasta)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-trim_alt"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"\"\""</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">quality trim</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-trim_cutoff"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #839496; font-weight: bold;">str</span><span style="color: #b58900;">(</span>cutoff<span style="color: #b58900;">)</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">error probability of trimming</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-trim_fasta"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">trim sortie fasta.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-trim_phd"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">trim sortie phd</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-s"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">write seq file, append ".seq" to the names of the abi_file files</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-d"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">write a poly file</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-p"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">write a phd file</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-if"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"tempfile"</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">abi_file file</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">phred_call</span> = sub.call<span style="color: #2aa198;">(</span>phred<span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   os.remove<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"tempfile"</span><span style="color: #2aa198;">)</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">supprime le fichier temporaire</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> phred_call
+
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">run_muscle</span><span style="color: #2aa198;">(</span>phred_output, reference, clw=<span style="color: #268bd2; font-weight: bold;">False</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Run muscle on the phred_output sequence, and align it to the reference sequence.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param phred_output: the fasta sequence to align.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param reference: the reference fasta sequence.</span>
+
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">assert</span> is_fasta<span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   phred_output<span style="color: #2aa198;">)</span>, <span style="color: #2aa198;">"La s&#233;quence n'est pas un fichier fasta."</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">assert</span> is_fasta<span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   reference.name<span style="color: #2aa198;">)</span>, <span style="color: #2aa198;">"La r&#233;f&#233;rence n'est pas un fichier fasta."</span>
+
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">muscle</span> = <span style="color: #2aa198;">[</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"muscle"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-quiet"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">non verbose</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-profile"</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">do not disrupt the profile alignment</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">"-clw",</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">"-objscore",</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">"ps",  # matrice de scoring</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">"-maxmb",</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">str(100),  # 100M as max memory</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-in1"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   phred_output,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-in2"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   reference.name,  <span style="color: #586e75;"># </span><span style="color: #586e75;">profile is reference</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"-out"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   phred_output + <span style="color: #2aa198;">".aln"</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">append .aln to phred_output name</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> clw:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   muscle.append<span style="color: #2aa198;">(</span><span style="color: #2aa198;">"-clw"</span><span style="color: #2aa198;">)</span>
+
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">muscle_call</span> = sub.call<span style="color: #2aa198;">(</span>muscle<span style="color: #2aa198;">)</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">call muscle list on input</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> muscle_call  <span style="color: #586e75;"># </span><span style="color: #586e75;">return 0 or 1 if muscle is successful.</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">reverse_complement</span><span style="color: #2aa198;">(</span>seq_in, seq_out<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Read seq_in and writes its reverse complement to seq_out.</span>
+
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param seq_in: sequence to reverse comp. str</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param seq_out: sequence to write revcomp to. str</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :returns: None.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :rtype: NoneType.</span>
+
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">record</span> = SeqIO.read<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">open</span><span style="color: #b58900;">(</span>seq_in<span style="color: #b58900;">)</span>, <span style="color: #2aa198;">"fasta"</span><span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   SeqIO.write<span style="color: #2aa198;">(</span>record.reverse_complement<span style="color: #b58900;">()</span>, <span style="color: #839496; font-weight: bold;">open</span><span style="color: #b58900;">(</span>seq_out, <span style="color: #2aa198;">'w'</span><span style="color: #b58900;">)</span>, <span style="color: #2aa198;">'fasta'</span><span style="color: #2aa198;">)</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">phred_code</span> = run_phred<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">input</span>, cutoff<span style="color: #2aa198;">)</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">phred_output</span> = os.path.basename<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">input</span>.name<span style="color: #2aa198;">)</span> + <span style="color: #2aa198;">".seq"</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> reverse:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   reverse_complement<span style="color: #2aa198;">(</span>phred_output, phred_output + <span style="color: #2aa198;">".rev"</span><span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">phred_output</span> += <span style="color: #2aa198;">".rev"</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">muscle_code</span> = run_muscle<span style="color: #2aa198;">(</span>phred_output, ref, clustalw<span style="color: #2aa198;">)</span>
+
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> phred_code == <span style="color: #6c71c4;">0</span> <span style="color: #859900; font-weight: bold;">and</span> muscle_code == <span style="color: #6c71c4;">0</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">print</span> <span style="color: #2aa198;">"Phruscle ran fine."</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">elif</span> muscle_code != <span style="color: #6c71c4;">0</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">print</span> <span style="color: #2aa198;">"Muscle failed."</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">print</span> <span style="color: #2aa198;">"Phred failed."</span>
+
+<span style="color: #586e75;">##</span><span style="color: #586e75;">-----------------------------------------------------------------------------</span>
+<span style="color: #586e75;">## </span><span style="color: #586e75;">TABLE</span>
+<span style="color: #586e75;">##</span><span style="color: #586e75;">-----------------------------------------------------------------------------</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">for line in reversed(open("filename").readlines()):</span>
+<span style="color: #586e75;">#     </span><span style="color: #586e75;">print line.rstrip()</span>
 
 
-<span style="color: #ce537a; font-weight: bold;">@phruscle.command</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'basecall'</span>, short_help=<span style="color: #2d9574;">'Make basecall and alignment.'</span><span style="color: #4f97d7;">)</span>
-<span style="color: #ce537a; font-weight: bold;">@click.option</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'-c'</span>,
-              <span style="color: #2d9574;">'--cutoff'</span>,
-              default=<span style="color: #a45bad;">0</span>.<span style="color: #a45bad;">05</span>,
-              <span style="color: #4f97d7;">help</span>=<span style="color: #2d9574;">"Probability of error of basecalling"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #ce537a; font-weight: bold;">@click.option</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'-i'</span>, <span style="color: #2d9574;">'--input'</span>, <span style="color: #4f97d7;">help</span>=<span style="color: #2d9574;">"The abi sequence to base call"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #ce537a; font-weight: bold;">@click.option</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'-r'</span>, <span style="color: #2d9574;">'--ref'</span>, <span style="color: #4f97d7;">help</span>=<span style="color: #2d9574;">"The reference alignment in fasta format"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">run_phruscle</span><span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, ref, cutoff<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""This programme uses phred to call bases on the `--input` file to create a fasta file.</span>
-<span style="color: #2d9574;">    Muscle align this fasta file to the `--reference`, without disrupting the reference,</span>
-<span style="color: #2d9574;">    to get the localisation of SNPs and their polarity.</span>
+<span style="color: #b58900;">@phruscle.command</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'table'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> short_help=<span style="color: #2aa198;">"Make a table of SNP quality and polarity"</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'-i'</span>, <span style="color: #2aa198;">'--input'</span>, <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Input alignment in fasta format."</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'-p'</span>,
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'--phd'</span>,
+<span style="background-color: #073642;"> </span>   <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Input sequence quality and position file, output by phred."</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span><span style="color: #2aa198;">'-o'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'--output'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">type</span>=click.File<span style="color: #b58900;">(</span><span style="color: #2aa198;">'wb'</span><span style="color: #b58900;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> default=<span style="color: #2aa198;">'-'</span>, <span style="color: #586e75;"># </span><span style="color: #586e75;">default is print to stdin</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #839496; font-weight: bold;">help</span>=<span style="color: #2aa198;">"Output file in csv format. Default is STDOUT."</span><span style="color: #2aa198;">)</span>
+<span style="color: #b58900;">@click.option</span><span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'-r'</span>,
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'--reverse'</span>,
+<span style="background-color: #073642;"> </span>   is_flag=<span style="color: #268bd2; font-weight: bold;">True</span>,
+<span style="background-color: #073642;"> </span>   <span style="color: #839496; font-weight: bold;">help</span>=
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"Reverse the phd file. Useful when reference and sequence are not in the same direction."</span>
+<span style="color: #2aa198;">)</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">clean_output</span><span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">input</span>, phd, output, reverse=<span style="color: #268bd2; font-weight: bold;">False</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""This programme takes a fasta alignment between the experimental sequence and the</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   reference alignment, find the quality of the base call in the phd file, and outputs it</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   as csv.</span>
 
-<span style="color: #2d9574;">    """</span>
-    <span style="color: #7590db;">phred_code</span> = run_phred<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, cutoff<span style="color: #4f97d7;">)</span>
-    <span style="color: #7590db;">muscle_input</span> = os.getcwd<span style="color: #4f97d7;">()</span> + <span style="color: #2d9574;">'/'</span> + os.path.basename<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span> + <span style="color: #2d9574;">'.seq'</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   \b</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   To read the consensus (cons) output:</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   - `.` : the three bases are the same.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   - `x` : the sequenced base matches to the snp base.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   - `X` : the sequenced base matches the WT base.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   - `-` : the sequenced base is misaligned.</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   - `N` : the base was not called.</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">if</span> phred_code == <span style="color: #a45bad;">0</span>:
-        run_muscle<span style="color: #4f97d7;">(</span>muscle_input, ref<span style="color: #4f97d7;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #cc9393;">FIXME</span><span style="color: #2aa1ae; background-color: #292e34;"> fragile.</span>
-        <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">Il faut que la s&#233;quence input soit dans le dossier de travail. peut &#234;tre voir &#224;</span>
-        <span style="color: #2aa1ae; background-color: #292e34;">## </span><span style="color: #2aa1ae; background-color: #292e34;">jouer sur la sortie de phred.</span>
-    <span style="color: #4f97d7; font-weight: bold;">else</span>:
-        <span style="color: #4f97d7; font-weight: bold;">print</span> <span style="color: #2d9574;">"Phred failed."</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
 
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">parse_muscle</span><span style="color: #2aa198;">(</span>align<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Cette fonction renvoit un dict comprenant 3 choses :</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   1. la s&#233;quence align&#233;e</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   2. la s&#233;quence sauvage</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   3. la s&#233;quence avec les SNP</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">assert</span> is_fasta<span style="color: #2aa198;">(</span>align<span style="color: #2aa198;">)</span>, <span style="color: #2aa198;">"Le fichier n'est pas un fichier fasta"</span>
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">parse_muscle</span><span style="color: #4f97d7;">(</span>align<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Cette fonction renvoit un dict comprenant 3 choses :</span>
-<span style="color: #2d9574;">    1. la s&#233;quence align&#233;e</span>
-<span style="color: #2d9574;">    2. la s&#233;quence sauvage</span>
-<span style="color: #2d9574;">    3. la s&#233;quence avec les SNP</span>
-<span style="color: #2d9574;">    """</span>
-    <span style="color: #7590db;">align</span> = os.getcwd<span style="color: #4f97d7;">()</span> + <span style="color: #2d9574;">'/'</span> + os.path.basename<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span> + <span style="color: #2d9574;">'.seq.aln'</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> is_fasta<span style="color: #4f97d7;">(</span>align<span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"Le fichier n'est pas un fichier fasta"</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">read_seq</span><span style="color: #2aa198;">(</span>sequence, index<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""quick wrapper around AlignIO.read()"""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> AlignIO.read<span style="color: #2aa198;">(</span>sequence, <span style="color: #2aa198;">"fasta"</span><span style="color: #2aa198;">)[</span>index<span style="color: #2aa198;">]</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">read_seq</span><span style="color: #4f97d7;">(</span>sequence, index<span style="color: #4f97d7;">)</span>:
-        <span style="color: #4f97d7; font-weight: bold;">return</span> AlignIO.read<span style="color: #4f97d7;">(</span>sequence, <span style="color: #2d9574;">"fasta"</span><span style="color: #4f97d7;">)[</span>index<span style="color: #4f97d7;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">{</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'exp'</span>: <span style="color: #839496; font-weight: bold;">str</span><span style="color: #b58900;">(</span>read_seq<span style="color: #268bd2;">(</span>align, <span style="color: #6c71c4;">0</span><span style="color: #268bd2;">)</span>.seq<span style="color: #b58900;">)</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">la s&#233;quence exp&#233;rimentale</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'wt'</span>: <span style="color: #839496; font-weight: bold;">str</span><span style="color: #b58900;">(</span>read_seq<span style="color: #268bd2;">(</span>align, <span style="color: #6c71c4;">1</span><span style="color: #268bd2;">)</span>.seq<span style="color: #b58900;">)</span>,  <span style="color: #586e75;"># </span><span style="color: #586e75;">la s&#233;quence de r&#233;f&#233;rence</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'snp'</span>: <span style="color: #839496; font-weight: bold;">str</span><span style="color: #b58900;">(</span>read_seq<span style="color: #268bd2;">(</span>align, <span style="color: #6c71c4;">2</span><span style="color: #268bd2;">)</span>.seq<span style="color: #b58900;">)</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">g&#232;ne synth&#233;tique</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">}</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #4f97d7;">{</span>
-        <span style="color: #2d9574;">'exp'</span>: <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>read_seq<span style="color: #2d9574;">(</span>align, <span style="color: #a45bad;">0</span><span style="color: #2d9574;">)</span>.seq<span style="color: #bc6ec5;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">la s&#233;quence exp&#233;rimentale</span>
-        <span style="color: #2d9574;">'wt'</span>: <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>read_seq<span style="color: #2d9574;">(</span>align, <span style="color: #a45bad;">1</span><span style="color: #2d9574;">)</span>.seq<span style="color: #bc6ec5;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">la s&#233;quence sauvage.</span>
-        <span style="color: #2d9574;">'snp'</span>: <span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>read_seq<span style="color: #2d9574;">(</span>align, <span style="color: #a45bad;">2</span><span style="color: #2d9574;">)</span>.seq<span style="color: #bc6ec5;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">la s&#233;quence du g&#232;ne synth&#233;tique</span>
-    <span style="color: #4f97d7;">}</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">are_the_same</span><span style="color: #2aa198;">(</span>seq_list<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""D&#233;termine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   wt, et '-' quand la base exp ne correspond &#224; aucune des possibilit&#233;s</span>
 
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">exp</span>, <span style="color: #268bd2;">snp</span>, <span style="color: #268bd2;">wt</span> = seq_list
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">are_the_same</span><span style="color: #4f97d7;">(</span>exp, snp, wt<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""D&#233;termine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont</span>
-<span style="color: #2d9574;">    identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base</span>
-<span style="color: #2d9574;">    wt, et '-' quand la base exp ne correspond &#224; aucune des possibilit&#233;s</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> exp == <span style="color: #2aa198;">'-'</span>:  <span style="color: #586e75;"># </span><span style="color: #586e75;">si la base a &#233;t&#233; trimm&#233;e ou non align&#233;e</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'-'</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">elif</span> exp == snp <span style="color: #859900; font-weight: bold;">and</span> snp == wt:  <span style="color: #586e75;"># </span><span style="color: #586e75;">si les trois bases sont identiques</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'.'</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">elif</span> exp == snp <span style="color: #859900; font-weight: bold;">and</span> snp != wt:  <span style="color: #586e75;"># </span><span style="color: #586e75;">si la base correspond au SNP</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'x'</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">elif</span> exp != snp <span style="color: #859900; font-weight: bold;">and</span> exp == wt:  <span style="color: #586e75;"># </span><span style="color: #586e75;">si la base correspond au WT</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'X'</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #2aa198;">'N'</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">si c'est encore autre chose ?</span>
 
-<span style="color: #2d9574;">    """</span>
-    <span style="color: #4f97d7; font-weight: bold;">if</span> exp == <span style="color: #2d9574;">'-'</span>:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">si la base a &#233;t&#233; trimm&#233;e ou non align&#233;e</span>
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'-'</span>
-    <span style="color: #4f97d7; font-weight: bold;">elif</span> exp == snp <span style="color: #4f97d7; font-weight: bold;">and</span> snp == wt:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">si les trois bases sont identiques</span>
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'.'</span>
-    <span style="color: #4f97d7; font-weight: bold;">elif</span> exp == snp <span style="color: #4f97d7; font-weight: bold;">and</span> snp != wt:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">si la base correspond au SNP</span>
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'x'</span>
-    <span style="color: #4f97d7; font-weight: bold;">elif</span> exp != snp <span style="color: #4f97d7; font-weight: bold;">and</span> exp == wt:  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">si la base correspond au WT</span>
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'X'</span>
-    <span style="color: #4f97d7; font-weight: bold;">else</span>:
-        <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'-'</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">si c'est encore autre chose ?</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">index_seq</span><span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""D&#233;termine la position dans la s&#233;quence exp&#233;rimentale"""</span>
 
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">position</span> = <span style="color: #6c71c4;">0</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">position_list</span> = <span style="color: #2aa198;">[]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">for</span> index, base <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #839496; font-weight: bold;">enumerate</span><span style="color: #2aa198;">(</span>sequence<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> base != <span style="color: #2aa198;">'-'</span>: <span style="color: #268bd2;">position</span> += <span style="color: #6c71c4;">1</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   position_list.append<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">str</span><span style="color: #b58900;">(</span>position<span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span>
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">index_seq</span><span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""D&#233;termine la position dans la s&#233;quence exp&#233;rimentale"""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> position_list
 
-    <span style="color: #7590db;">position</span> = <span style="color: #a45bad;">0</span>
-    <span style="color: #7590db;">position_list</span> = <span style="color: #4f97d7;">[]</span>
-    <span style="color: #4f97d7; font-weight: bold;">for</span> index, base <span style="color: #4f97d7; font-weight: bold;">in</span> <span style="color: #4f97d7;">enumerate</span><span style="color: #4f97d7;">(</span>sequence<span style="color: #4f97d7;">)</span>:
-        <span style="color: #4f97d7; font-weight: bold;">if</span> base != <span style="color: #2d9574;">'-'</span>: <span style="color: #7590db;">position</span> += <span style="color: #a45bad;">1</span>
-        position_list.append<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">str</span><span style="color: #bc6ec5;">(</span>position<span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">polarity_snp</span><span style="color: #2aa198;">(</span>parsed_aln<span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Give back the polarity of the SNP. Expect an output of parse_muscle."""</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">return</span> position_list
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">consensus</span> = <span style="color: #2aa198;">[]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">for</span> i, base <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #839496; font-weight: bold;">enumerate</span><span style="color: #2aa198;">(</span>parsed_aln<span style="color: #b58900;">[</span><span style="color: #2aa198;">'exp'</span><span style="color: #b58900;">]</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">exp</span> = parsed_aln<span style="color: #2aa198;">[</span><span style="color: #2aa198;">'exp'</span><span style="color: #2aa198;">][</span>i<span style="color: #2aa198;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">snp</span> = parsed_aln<span style="color: #2aa198;">[</span><span style="color: #2aa198;">'snp'</span><span style="color: #2aa198;">][</span>i<span style="color: #2aa198;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">wt</span> = parsed_aln<span style="color: #2aa198;">[</span><span style="color: #2aa198;">'wt'</span><span style="color: #2aa198;">][</span>i<span style="color: #2aa198;">]</span>
 
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">consensus</span> += are_the_same<span style="color: #2aa198;">(</span><span style="color: #b58900;">[</span>exp, snp, wt<span style="color: #b58900;">]</span><span style="color: #2aa198;">)</span>
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">polarity_snp</span><span style="color: #4f97d7;">(</span>align<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""D&#233;termine la polarit&#233; des SNP, WT ou GS."""</span>
-    <span style="color: #7590db;">muscle_output</span> = parse_muscle<span style="color: #4f97d7;">(</span>align<span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> consensus
 
-    <span style="color: #7590db;">consensus</span> = <span style="color: #4f97d7;">[]</span>
-    <span style="color: #4f97d7; font-weight: bold;">for</span> i, base <span style="color: #4f97d7; font-weight: bold;">in</span> <span style="color: #4f97d7;">enumerate</span><span style="color: #4f97d7;">(</span>muscle_output<span style="color: #bc6ec5;">[</span><span style="color: #2d9574;">'exp'</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">)</span>:
-        <span style="color: #7590db;">exp</span> = muscle_output<span style="color: #4f97d7;">[</span><span style="color: #2d9574;">'exp'</span><span style="color: #4f97d7;">][</span>i<span style="color: #4f97d7;">]</span>
-        <span style="color: #7590db;">snp</span> = muscle_output<span style="color: #4f97d7;">[</span><span style="color: #2d9574;">'snp'</span><span style="color: #4f97d7;">][</span>i<span style="color: #4f97d7;">]</span>
-        <span style="color: #7590db;">wt</span> = muscle_output<span style="color: #4f97d7;">[</span><span style="color: #2d9574;">'wt'</span><span style="color: #4f97d7;">][</span>i<span style="color: #4f97d7;">]</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">parse_phd</span><span style="color: #2aa198;">(</span>align, rev=<span style="color: #268bd2; font-weight: bold;">False</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Return a pandas DataFrame by parsing a phred output.</span>
 
-        <span style="color: #7590db;">consensus</span> += are_the_same<span style="color: #4f97d7;">(</span>
-            exp, snp, wt<span style="color: #4f97d7;">)</span>  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">+ ',' + exp + '\n' # + sortie de parse_phd</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   :param align: a phd output.</span>
 
-    <span style="color: #4f97d7; font-weight: bold;">return</span> consensus
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   """</span>
 
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">get_phd_seq_only</span><span style="color: #2aa198;">(</span>phd_file, reverse=<span style="color: #268bd2; font-weight: bold;">False</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">"""Return string from BEGIN_DNA to END_DNA. If reverse is True, give the</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   sequence in inverse order."""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;">## </span><span style="color: #586e75;">inspir&#233; de</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;">## </span><span style="color: #586e75;">http://stackoverflow.com/questions/7559397/python-read-file-from-and-to-specific-lines-of-textq,</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;">## </span><span style="color: #586e75;">r&#233;ponse de EOL</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">block</span> = <span style="color: #2aa198;">""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">found</span> = <span style="color: #268bd2; font-weight: bold;">False</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">with</span> <span style="color: #839496; font-weight: bold;">open</span><span style="color: #2aa198;">(</span>phd_file, <span style="color: #2aa198;">'r'</span><span style="color: #2aa198;">)</span> <span style="color: #859900; font-weight: bold;">as</span> in_data:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #859900; font-weight: bold;">not</span> reverse:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">for</span> line <span style="color: #859900; font-weight: bold;">in</span> in_data:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> found:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> line.strip<span style="color: #2aa198;">()</span> == <span style="color: #2aa198;">"END_DNA"</span>: <span style="color: #859900; font-weight: bold;">break</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>: <span style="color: #268bd2;">block</span> += line
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> line.strip<span style="color: #2aa198;">()</span> == <span style="color: #2aa198;">"BEGIN_DNA"</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">found</span> = <span style="color: #268bd2; font-weight: bold;">True</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">block</span> = <span style="color: #2aa198;">""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">dans l'autre sens.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">for</span> line <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #839496; font-weight: bold;">reversed</span><span style="color: #2aa198;">(</span>in_data.readlines<span style="color: #b58900;">()</span><span style="color: #2aa198;">)</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> found:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> line.strip<span style="color: #2aa198;">()</span> == <span style="color: #2aa198;">"BEGIN_DNA"</span>: <span style="color: #859900; font-weight: bold;">break</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>: <span style="color: #268bd2;">block</span> += line
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> line.strip<span style="color: #2aa198;">()</span> == <span style="color: #2aa198;">"END_DNA"</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">found</span> = <span style="color: #268bd2; font-weight: bold;">True</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">block</span> = <span style="color: #2aa198;">""</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> block
 
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">parse_phd</span><span style="color: #4f97d7;">(</span>align<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">"""Renvoit une DataFrame &#224; partir de la sortie phd de phred.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">pd.DataFrame.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">return</span> pd.read_table<span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   io.StringIO<span style="color: #b58900;">(</span>u<span style="color: #2aa198;">"%s"</span> % get_phd_seq_only<span style="color: #268bd2;">(</span>align,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>reverse=rev<span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   sep=<span style="color: #2aa198;">" "</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   names=<span style="color: #b58900;">[</span><span style="color: #2aa198;">'base'</span>, <span style="color: #2aa198;">'qual'</span>, <span style="color: #2aa198;">'phase'</span><span style="color: #b58900;">]</span><span style="color: #2aa198;">)</span>  <span style="color: #586e75;"># </span><span style="color: #586e75;">'phase' = spectrogramme pos</span>
 
-<span style="color: #2d9574;">    """</span>
-    <span style="color: #4f97d7; font-weight: bold;">return</span> pd.read_table<span style="color: #4f97d7;">(</span>align,
-                         sep=<span style="color: #2d9574;">" "</span>,
-                         skiprows=<span style="color: #a45bad;">20</span>, <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">FRAGILE. peut &#234;tre utiliser une autre fonction</span>
-                         <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">pour d&#233;finir o&#249; commence la s&#233;quence, ou pour</span>
-                         <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">nettoyer la sortie phd de phred</span>
-                         skipfooter=<span style="color: #a45bad;">3</span>, <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">idem, moins sensible normalement.</span>
-                         engine=<span style="color: #2d9574;">'python'</span>, <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">n&#233;cessaire pour skipfooter</span>
-                         names=<span style="color: #bc6ec5;">[</span><span style="color: #2d9574;">'base'</span>, <span style="color: #2d9574;">'qual'</span>, <span style="color: #2d9574;">'phase'</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">)</span> <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">'phase' est la position dans</span>
-    <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">le spectrogramme.</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">parsed_align</span> = parse_muscle<span style="color: #2aa198;">(</span><span style="color: #839496; font-weight: bold;">input</span><span style="color: #2aa198;">)</span>
 
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">clean_data</span> = pd.DataFrame<span style="color: #2aa198;">(</span><span style="color: #b58900;">{</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'seqp'</span>: index_seq<span style="color: #268bd2;">(</span>parsed_align<span style="color: #6c71c4;">[</span><span style="color: #2aa198;">'exp'</span><span style="color: #6c71c4;">]</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'seqb'</span>: <span style="color: #839496; font-weight: bold;">list</span><span style="color: #268bd2;">(</span>parsed_align<span style="color: #6c71c4;">[</span><span style="color: #2aa198;">'exp'</span><span style="color: #6c71c4;">]</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'refp'</span>: index_seq<span style="color: #268bd2;">(</span>parsed_align<span style="color: #6c71c4;">[</span><span style="color: #2aa198;">'wt'</span><span style="color: #6c71c4;">]</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'refb'</span>: <span style="color: #839496; font-weight: bold;">list</span><span style="color: #268bd2;">(</span>parsed_align<span style="color: #6c71c4;">[</span><span style="color: #2aa198;">'wt'</span><span style="color: #6c71c4;">]</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'snpb'</span>: <span style="color: #839496; font-weight: bold;">list</span><span style="color: #268bd2;">(</span>parsed_align<span style="color: #6c71c4;">[</span><span style="color: #2aa198;">'snp'</span><span style="color: #6c71c4;">]</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'cons'</span>: polarity_snp<span style="color: #268bd2;">(</span>parsed_align<span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'name'</span>: <span style="color: #839496; font-weight: bold;">input</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #b58900;">}</span><span style="color: #2aa198;">)</span>
 
-<span style="color: #ce537a; font-weight: bold;">@phruscle.command</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'table'</span>, short_help=<span style="color: #2d9574;">"Make a table of SNP qual and polarity"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #ce537a; font-weight: bold;">@click.option</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'-i'</span>, <span style="color: #2d9574;">'--input'</span>, <span style="color: #4f97d7;">help</span>=<span style="color: #2d9574;">"Input file in abi format"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #ce537a; font-weight: bold;">@click.option</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'-o'</span>,
-              <span style="color: #2d9574;">'--output'</span>,
-              <span style="color: #4f97d7;">type</span>=click.File<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'wb'</span><span style="color: #bc6ec5;">)</span>,
-              default=<span style="color: #2d9574;">'-'</span>,
-              required=<span style="color: #a45bad;">False</span>,
-              <span style="color: #4f97d7;">help</span>=<span style="color: #2d9574;">"Output file in csv format"</span><span style="color: #4f97d7;">)</span>
-<span style="color: #4f97d7; font-weight: bold;">def</span> <span style="color: #bc6ec5; font-weight: bold;">clean_output</span><span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span>, output<span style="color: #4f97d7;">)</span>:
-    <span style="color: #2d9574;">""""""</span>
-    <span style="color: #4f97d7; font-weight: bold;">assert</span> is_abi<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span>, <span style="color: #2d9574;">"Input is not an abi file"</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #586e75;">## </span><span style="color: #586e75;">use pandas concat to concatenate two datasets along the axis 1, equivalent to cbind in R.</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #586e75;">## </span><span style="color: #586e75;">ignore_index indicate that the two dataframes are not combined with their index.</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">with_phd</span> = pd.concat<span style="color: #2aa198;">(</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #b58900;">[</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   clean_data<span style="color: #268bd2;">[</span>clean_data.cons != <span style="color: #2aa198;">'-'</span><span style="color: #268bd2;">]</span>.reset_index<span style="color: #268bd2;">(</span>drop=<span style="color: #268bd2; font-weight: bold;">True</span><span style="color: #268bd2;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">ne garde que les positions qui existent dans le phd file</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   parse_phd<span style="color: #268bd2;">(</span>phd,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> rev=reverse<span style="color: #268bd2;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">parse the phred output. reverse it if necessary to align to the reference.</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #b58900;">]</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   axis=<span style="color: #6c71c4;">1</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   ignore_index=<span style="color: #268bd2; font-weight: bold;">True</span><span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #586e75;"># </span><span style="color: #586e75;">change les noms de colonnes.</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #268bd2;">with_phd.columns</span> = <span style="color: #2aa198;">[</span><span style="color: #2aa198;">'cons'</span>, <span style="color: #2aa198;">'name'</span>, <span style="color: #2aa198;">'refb'</span>, <span style="color: #2aa198;">'refp'</span>, <span style="color: #2aa198;">'seqb'</span>, <span style="color: #2aa198;">'seqp'</span>, <span style="color: #2aa198;">'snpb'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="color: #2aa198;">'base'</span>, <span style="color: #2aa198;">'qual'</span>, <span style="color: #2aa198;">'phase'</span><span style="color: #2aa198;">]</span>
 
-    <span style="color: #7590db;">parse_align</span> = parse_muscle<span style="color: #4f97d7;">(</span><span style="color: #4f97d7;">input</span><span style="color: #4f97d7;">)</span> <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">+ ".seq.aln")</span>
-
-    <span style="color: #7590db;">clean_data</span> = pd.DataFrame<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">{</span>
-        <span style="color: #2d9574;">'seqp'</span>: index_seq<span style="color: #2d9574;">(</span>parse_align<span style="color: #67b11d;">[</span><span style="color: #2d9574;">'exp'</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">)</span>,
-        <span style="color: #2d9574;">'refp'</span>: index_seq<span style="color: #2d9574;">(</span>parse_align<span style="color: #67b11d;">[</span><span style="color: #2d9574;">'wt'</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">)</span>,
-        <span style="color: #2d9574;">'cons'</span>: polarity_snp<span style="color: #2d9574;">(</span><span style="color: #4f97d7;">input</span> + <span style="color: #2d9574;">".seq.aln"</span><span style="color: #2d9574;">)</span>
-    <span style="color: #bc6ec5;">}</span><span style="color: #4f97d7;">)</span>
-
-    <span style="color: #7590db;">with_phd</span> = pd.concat<span style="color: #4f97d7;">(</span>
-        <span style="color: #bc6ec5;">[</span>
-            clean_data<span style="color: #2d9574;">[</span>clean_data.cons != <span style="color: #2d9574;">'-'</span><span style="color: #2d9574;">]</span>.reset_index<span style="color: #2d9574;">(</span>
-                drop=
-                <span style="color: #a45bad;">True</span><span style="color: #2d9574;">)</span>,  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">ne garde que les positions qui existent dans le phd file</span>
-            parse_phd<span style="color: #2d9574;">(</span><span style="color: #4f97d7;">input</span> + <span style="color: #2d9574;">".phd.1"</span><span style="color: #2d9574;">)</span>
-        <span style="color: #bc6ec5;">]</span>,
-        axis=<span style="color: #a45bad;">1</span>,
-        ignore_index=<span style="color: #a45bad;">True</span><span style="color: #4f97d7;">)</span>
-    <span style="color: #7590db;">with_phd.columns</span> = <span style="color: #4f97d7;">[</span><span style="color: #2d9574;">'cons'</span>, <span style="color: #2d9574;">'refp'</span>, <span style="color: #2d9574;">'seqp'</span>, <span style="color: #2d9574;">'base'</span>, <span style="color: #2d9574;">'qual'</span>, <span style="color: #2d9574;">'phase'</span><span style="color: #4f97d7;">]</span>
-
-    <span style="color: #4f97d7; font-weight: bold;">if</span> output != <span style="color: #2d9574;">'-'</span>:
-        with_phd.to_csv<span style="color: #4f97d7;">(</span>output, index=<span style="color: #a45bad;">False</span><span style="color: #4f97d7;">)</span>
-    <span style="color: #4f97d7; font-weight: bold;">else</span>:
-        click.echo<span style="color: #4f97d7;">(</span>with_phd, <span style="color: #4f97d7;">file</span>=output<span style="color: #4f97d7;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">if</span> output != <span style="color: #2aa198;">'-'</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   with_phd.to_csv<span style="color: #2aa198;">(</span>output, index=<span style="color: #268bd2; font-weight: bold;">False</span><span style="color: #2aa198;">)</span>
+<span style="background-color: #073642;"> </span>   <span style="color: #859900; font-weight: bold;">else</span>:
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   click.echo<span style="color: #2aa198;">(</span>with_phd, <span style="color: #839496; font-weight: bold;">file</span>=output<span style="color: #2aa198;">)</span>
 </pre>
 </div>
 
@@ -920,23 +1025,23 @@ Le script suivant est un script pour déployer <code>phruscle</code>.
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #4f97d7; font-weight: bold;">from</span> setuptools <span style="color: #4f97d7; font-weight: bold;">import</span> setup, find_packages
+<pre class="src src-python"><span style="color: #859900; font-weight: bold;">from</span> setuptools <span style="color: #859900; font-weight: bold;">import</span> setup, find_packages
 
-setup<span style="color: #4f97d7;">(</span>name=<span style="color: #2d9574;">"phruscle"</span>,
-      version=<span style="color: #2d9574;">"0.0.1"</span>,
-      py_modules=<span style="color: #bc6ec5;">[</span><span style="color: #2d9574;">"phruscle"</span><span style="color: #bc6ec5;">]</span>,
-      packages=find_packages<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">'src'</span><span style="color: #bc6ec5;">)</span>,
-      package_dir=<span style="color: #bc6ec5;">{</span><span style="color: #2d9574;">''</span>: <span style="color: #2d9574;">'src'</span><span style="color: #bc6ec5;">}</span>,
-      install_requires=<span style="color: #bc6ec5;">[</span>
-          <span style="color: #2d9574;">'Click'</span>,
-          <span style="color: #2d9574;">'Biopython'</span>,
-          <span style="color: #2d9574;">'numpy'</span>,
-          <span style="color: #2d9574;">'pandas'</span>,
-      <span style="color: #bc6ec5;">]</span>,
-      entry_points=<span style="color: #2d9574;">'''</span>
-<span style="color: #2d9574;">        [console_scripts]</span>
-<span style="color: #2d9574;">        phruscle=phruscle:phruscle</span>
-<span style="color: #2d9574;">    '''</span>, <span style="color: #4f97d7;">)</span>
+setup<span style="color: #2aa198;">(</span>name=<span style="color: #2aa198;">"phruscle"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> version=<span style="color: #2aa198;">"0.0.1"</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> py_modules=<span style="color: #b58900;">[</span><span style="color: #2aa198;">"phruscle"</span><span style="color: #b58900;">]</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> packages=find_packages<span style="color: #b58900;">(</span><span style="color: #2aa198;">'src'</span><span style="color: #b58900;">)</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> package_dir=<span style="color: #b58900;">{</span><span style="color: #2aa198;">''</span>: <span style="color: #2aa198;">'src'</span><span style="color: #b58900;">}</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> install_requires=<span style="color: #b58900;">[</span>
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'Click'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'Biopython'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'numpy'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #2aa198;">'pandas'</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> <span style="color: #b58900;">]</span>,
+<span style="background-color: #073642;"> </span>   <span style="background-color: #073642;"> </span> entry_points=<span style="color: #2aa198;">'''</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   [console_scripts]</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   </span><span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   phruscle=phruscle:phruscle</span>
+<span style="color: #2aa198; background-color: #073642;"> </span><span style="color: #2aa198;">   '''</span>, <span style="color: #2aa198;">)</span>
 </pre>
 </div>
 <p>
@@ -958,14 +1063,14 @@ Je produit une table csv, que j'analyse rapidement dans R.
 
 <div class="org-src-container">
 
-<pre class="src src-R"><span style="color: #a45bad;">library</span><span style="color: #4f97d7;">(</span>dplyr<span style="color: #4f97d7;">)</span>
-<span style="color: #a45bad;">library</span><span style="color: #4f97d7;">(</span>ggplot2<span style="color: #4f97d7;">)</span>
+<pre class="src src-R"><span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>dplyr<span style="color: #2aa198; font-weight: bold;">)</span>
+<span style="color: #268bd2; font-weight: bold;">library</span><span style="color: #2aa198; font-weight: bold;">(</span>ggplot2<span style="color: #2aa198; font-weight: bold;">)</span>
 
-<span style="color: #bc6ec5; font-weight: bold;">setwd</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"./tmp"</span><span style="color: #4f97d7;">)</span>
-test <span style="color: #a45bad;">&lt;-</span> <span style="color: #bc6ec5; font-weight: bold;">read.csv</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"test.csv"</span><span style="color: #4f97d7;">)</span> <span style="color: #a45bad;">%&gt;%</span> <span style="color: #bc6ec5; font-weight: bold;">tbl_df</span><span style="color: #4f97d7;">()</span>
+<span style="color: #268bd2;">setwd</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"./tmp"</span><span style="color: #2aa198; font-weight: bold;">)</span>
+test <span style="color: #268bd2; font-weight: bold;">&lt;-</span> <span style="color: #268bd2;">read.csv</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">"test.csv"</span><span style="color: #2aa198; font-weight: bold;">)</span> <span style="color: #268bd2; font-weight: bold;">%&gt;%</span> <span style="color: #268bd2;">tbl_df</span><span style="color: #2aa198; font-weight: bold;">()</span>
 
-test <span style="color: #a45bad;">%&gt;%</span>
-  <span style="color: #bc6ec5; font-weight: bold;">qplot</span><span style="color: #4f97d7;">(</span>data<span style="color: #a45bad;">=</span> ., x <span style="color: #a45bad;">=</span> refp, y <span style="color: #a45bad;">=</span> qual, geom <span style="color: #a45bad;">=</span> <span style="color: #bc6ec5; font-weight: bold;">c</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"point"</span>, <span style="color: #2d9574;">"line"</span><span style="color: #bc6ec5;">)</span>, color <span style="color: #a45bad;">=</span> qual<span style="color: #4f97d7;">)</span>
+test <span style="color: #268bd2; font-weight: bold;">%&gt;%</span>
+  <span style="color: #268bd2;">qplot</span><span style="color: #2aa198; font-weight: bold;">(</span>data<span style="color: #268bd2; font-weight: bold;">=</span> ., x <span style="color: #268bd2; font-weight: bold;">=</span> refp, y <span style="color: #268bd2; font-weight: bold;">=</span> qual, geom <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #268bd2;">c</span><span style="color: #b58900; font-weight: bold;">(</span><span style="color: #2aa198;">"point"</span>, <span style="color: #2aa198;">"line"</span><span style="color: #b58900; font-weight: bold;">)</span>, color <span style="color: #268bd2; font-weight: bold;">=</span> qual<span style="color: #2aa198; font-weight: bold;">)</span>
 </pre>
 </div>
 
@@ -996,16 +1101,16 @@ séquences SW et WS.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">muscle <span style="color: #2d9574;">\</span>
-    -profile <span style="color: #2d9574;">\</span>
-    -in1 raw/ref/strong-weak.fasta <span style="color: #2d9574;">\</span>
-    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #2d9574;">\</span>
+<pre class="src src-sh">muscle <span style="color: #b58900; font-weight: bold;">\</span>
+    -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -in1 raw/ref/strong-weak.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -out raw/ref/aln-sw-ref.fst
 
-muscle <span style="color: #2d9574;">\</span>
-    -profile <span style="color: #2d9574;">\</span>
-    -in1 raw/ref/weak-strong.fasta <span style="color: #2d9574;">\</span>
-    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #2d9574;">\</span>
+muscle <span style="color: #b58900; font-weight: bold;">\</span>
+    -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -in1 raw/ref/weak-strong.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -out raw/ref/aln-ws-ref.fst
 </pre>
 </div>
@@ -1017,21 +1122,49 @@ muscle <span style="color: #2d9574;">\</span>
 <div class="outline-text-4" id="text-5-2-2">
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #7590db;">ROOT</span>=<span style="color: #fa8072;">`pwd`</span>
+<pre class="src src-sh"><span style="color: #268bd2;">ROOT</span>=<span style="color: #6c71c4; font-weight: bold;">`pwd`</span>
 
 mkdir data/ws/aln
-<span style="color: #4f97d7;">cd</span> data/ws/aln
+mkdir data/sw/aln
 
-<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> ../spectro/*.ab1
-<span style="color: #4f97d7; font-weight: bold;">do</span>
-    phruscle basecall -i $<span style="color: #7590db;">file</span> -r $<span style="color: #7590db;">ROOT</span>/raw/ref/weak-strong.fasta
-<span style="color: #4f97d7; font-weight: bold;">done</span>
+<span style="color: #839496; font-weight: bold;">cd</span> data/ws/aln
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
+             --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+             --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-ws-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
+             --reverse
+
+    phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.rev.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv <span style="color: #b58900; font-weight: bold;">\</span>
+             --reverse
+<span style="color: #859900; font-weight: bold;">done</span>
+
+<span style="color: #839496; font-weight: bold;">cd</span> ../../sw/aln
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
+             --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+             --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-sw-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
+             --reverse
+
+    phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.rev.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv <span style="color: #b58900; font-weight: bold;">\</span>
+             --reverse
+<span style="color: #859900; font-weight: bold;">done</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 </div>
+
 
 <div id="outline-container-sec-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> Tests</h2>
@@ -1058,27 +1191,27 @@ Le script pour tester les résultats, via <code>make test</code>.
 
 <div class="org-src-container">
 
-<pre class="src src-sh">  <span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/bin/bash</span>
+<pre class="src src-sh">  <span style="color: #586e75;">#</span><span style="color: #586e75;">!/bin/bash</span>
 
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">cette fonction renvoit le nombre de s&#233;quence dans un fichier fastq pool&#233;.</span>
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">elle divise le nombre de ligne par 4 pour conna&#238;tre le nombre de s&#233;quence.</span>
-  check_fastq_length <span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
-      cat $<span style="color: #a45bad;">1</span> | <span style="color: #4f97d7;">echo</span> $<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span><span style="color: #fa8072;">`wc -l`</span> / <span style="color: #a45bad;">4</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
-  <span style="color: #4f97d7;">}</span>
+  <span style="color: #586e75;"># </span><span style="color: #586e75;">cette fonction renvoit le nombre de s&#233;quence dans un fichier fastq pool&#233;.</span>
+  <span style="color: #586e75;"># </span><span style="color: #586e75;">elle divise le nombre de ligne par 4 pour conna&#238;tre le nombre de s&#233;quence.</span>
+  check_fastq_length <span style="color: #2aa198;">()</span> <span style="color: #2aa198;">{</span>
+      cat $<span style="color: #6c71c4;">1</span> | <span style="color: #839496; font-weight: bold;">echo</span> $<span style="color: #b58900;">(</span><span style="color: #268bd2;">(</span><span style="color: #6c71c4; font-weight: bold;">`wc -l`</span> / <span style="color: #6c71c4;">4</span><span style="color: #268bd2;">)</span><span style="color: #b58900;">)</span>
+  <span style="color: #2aa198;">}</span>
 
-  <span style="color: #4f97d7;">set</span> -e
+  <span style="color: #839496; font-weight: bold;">set</span> -e
 
-  <span style="color: #4f97d7;">.</span> ./test/assert.sh
+  <span style="color: #839496; font-weight: bold;">.</span> ./test/assert.sh
 
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">v&#233;rifie qu'il y ait bien 95 s&#233;quence dans le fastq SW et 96 dans le fastq WS</span>
-  assert <span style="color: #2d9574;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq`"</span> <span style="color: #2d9574;">"95"</span>
-  assert <span style="color: #2d9574;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq`"</span> <span style="color: #2d9574;">"96"</span>
+  <span style="color: #586e75;"># </span><span style="color: #586e75;">v&#233;rifie qu'il y ait bien 95 s&#233;quence dans le fastq SW et 96 dans le fastq WS</span>
+  assert <span style="color: #2aa198;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq`"</span> <span style="color: #2aa198;">"95"</span>
+  assert <span style="color: #2aa198;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq`"</span> <span style="color: #2aa198;">"96"</span>
 
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">v&#233;rifie qu'yl y ait bien 95 s&#233;quences dans le fastq SW trimm&#233; et 96</span>
-  <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">dans le fastq WS trimm&#233;</span>
-  assert <span style="color: #2d9574;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq.trim`"</span> <span style="color: #2d9574;">"90"</span>
-  assert <span style="color: #2d9574;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq.trim`"</span> <span style="color: #2d9574;">"90"</span>
-  assert <span style="color: #2d9574;">"echo `wc -l data/snp_call/snp_calling.dat | awk '{print $1}'`"</span> <span style="color: #2d9574;">"1875"</span>
+  <span style="color: #586e75;"># </span><span style="color: #586e75;">v&#233;rifie qu'yl y ait bien 95 s&#233;quences dans le fastq SW trimm&#233; et 96</span>
+  <span style="color: #586e75;"># </span><span style="color: #586e75;">dans le fastq WS trimm&#233;</span>
+  assert <span style="color: #2aa198;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq.trim`"</span> <span style="color: #2aa198;">"90"</span>
+  assert <span style="color: #2aa198;">"echo `check_fastq_length data/ws/ws_untrimmed.fastq.trim`"</span> <span style="color: #2aa198;">"90"</span>
+  assert <span style="color: #2aa198;">"echo `wc -l data/snp_call/snp_calling.dat | awk '{print $1}'`"</span> <span style="color: #2aa198;">"1875"</span>
 
   assert_end results
 </pre>
@@ -1103,9 +1236,9 @@ Pour installer bbduk :
 
 <div class="org-src-container">
 
-<pre class="src src-sh">  wget https://sourceforge.net/projects/bbmap/files/latest/download <span style="color: #2d9574;">\</span>
+<pre class="src src-sh">  wget https://sourceforge.net/projects/bbmap/files/latest/download <span style="color: #b58900; font-weight: bold;">\</span>
        -o bin/bbmap.tar.gz
-  <span style="color: #4f97d7;">cd</span> bin
+  <span style="color: #839496; font-weight: bold;">cd</span> bin
   tar xzf bin/bbmap.tar.gz
 </pre>
 </div>
@@ -1121,7 +1254,7 @@ Il faut une version récente du package <code>rmarkdown</code>.
 
 <div class="org-src-container">
 
-<pre class="src src-R"><span style="color: #bc6ec5; font-weight: bold;">install.package</span><span style="color: #4f97d7;">(</span><span style="color: #2d9574;">'rmarkdown'</span>, type <span style="color: #a45bad;">=</span> <span style="color: #2d9574;">"source"</span><span style="color: #4f97d7;">)</span>
+<pre class="src src-R"><span style="color: #268bd2;">install.package</span><span style="color: #2aa198; font-weight: bold;">(</span><span style="color: #2aa198;">'rmarkdown'</span>, type <span style="color: #268bd2; font-weight: bold;">=</span> <span style="color: #2aa198;">"source"</span><span style="color: #2aa198; font-weight: bold;">)</span>
 </pre>
 </div>
 </div>
@@ -1163,7 +1296,7 @@ Il faut une version récente du package <code>rmarkdown</code>.
 </div></div></div>
 <footer id="postamble" class="">
 <div><p class="author">Auteur: Samuel Barreto</p>
-<p class="date">Created: 2016-04-04 Mon 20:25</p>
+<p class="date">Created: 2016-04-07 Thu 13:18</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>
