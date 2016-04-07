@@ -873,10 +873,6 @@ muscle à chaque séquence. Une façon plus efficace de faire la même
 chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
 
-- [ ] manage paths mistake. le script fonctionnait bien quand l'input était dans
-  le dossier de travail. Mais il faut tenir compte des changements de dossier de
-  travail pour faire les choses bien.
-
 #+BEGIN_SRC python :tangle src/phruscle.py
 # -*- coding: utf-8 -*-
 
@@ -888,245 +884,359 @@ leur référence, mais c'est un peu plus compliqué à programmer.
 #    la qualité de la base.
 
 import os.path
+import io
 import subprocess as sub  # permet de lancer phred et muscle
 import click  # construit la cli
 from Bio import AlignIO  # permet d'analyser les sorties de muscle.
 from Bio import SeqIO  # permet de tester les entrées
+from Bio.Seq import Seq
 import numpy as np
 import pandas as pd
 
 # TODO: définir les chemins de fichiers avec constance.
 
 
-def is_abi(sequence):
-    """Cette fonction détermine si une séquence est bien un fichier spectrogramme.
-    Renvoit TRUE ou FALSE."""
-    assert isinstance(sequence, 'str'), "Sequence must be str"
-    # TODO: make it check if file ends with .abi
-    if sequence.lower().endswith(('ab1', 'abi')):
-        True
-    else:
-        False
-
-
-def is_fasta(sequence):
-    """Cette fonction détermine si une séquence est bien un fichier fasta.
-    Renvoit True ou False."""
-    assert os.path.isfile(sequence), "Le fichier n'existe pas"
-
-    with open(sequence, "rb") as input:
-        seq_list = []
-        for record in SeqIO.parse(input, "fasta"):
-            seq_list.append(len(record.id))  # crée une liste de longueur d'id.
-
-    if 0 not in seq_list:  # s'il n'y a pas d'identifiant nul
-        return True  # c'est bon.
-    else:
-        return False
-
-
-def run_phred(input, cutoff):
-    """Cette fonction utilise phred sur la séquence .abi en entrée.
-    Test: entrée de type abi."""
-    assert is_abi(input), "La séquence n'est pas un fichier de sequençage."
-
-    # phred reads and process file listed in the file input via `-if`.
-    # we must then create a temporary file containing only the name of the input.
-    with open('tempfile', 'w') as tempfile:
-        tempfile.write(input + "\n")
-
-    # subprocess.call takes a list of argument as input.
-    # the following list describes the phred list of argument.
-    phred = [
-        "phred",
-        "-st",
-        "fasta",  # sequence type output (default = fasta)
-        "-trim_alt",
-        "\"\"",  # quality trim
-        "-trim_cutoff",
-        str(cutoff),  # error probability of trimming
-        "-trim_fasta",  # trim sortie fasta.
-        "-trim_phd",  # trim sortie phd
-        "-s",  # write seq file, append ".seq" to the names of the input files
-        "-d",  # write a poly file
-        "-p",  # write a phd file
-        "-if",
-        "tempfile"  # input file
-    ]
-    phred_call = sub.call(phred)
-    os.remove("tempfile")  # supprime le fichier temporaire
-    return phred_call
-
-
-def run_muscle(input, reference):
-    """Cette fonction lance muscle sur la séquence fasta en entrée.
-    Test: entrée de type fasta."""
-    assert is_fasta(reference), "La référence n'est pas un fichier fasta."
-    assert is_fasta(input), "La séquence n'est pas un fichier fasta."
-
-    muscle = [
-        "muscle",
-        "-quiet",  # non verbose
-        "-profile",  # do not disrupt the profile alignment
-        "-objscore",
-        "ps",  # matrice de scoring
-        "-maxmb",
-        str(100),  # 1.5 G as max memory
-        "-in1",
-        input,
-        "-in2",
-        str(reference),  # profile is reference
-        "-out",
-        input + ".aln"  # append .aln to input name
-    ]
-
-    muscle_call = sub.call(muscle)  # call muscle on input
-    return muscle_call  # return 0 or 1 if muscle is successful.
-
-
 @click.group()
 def phruscle():
     """This program gather a set of function to run phred on a abi file, to run muscle on the
-    called bases, and to give a nicely formatted output either as human readable or as csv.
+    called bases, and to give a nicely formatted output as csv.
 
     """
     pass
 
 
+def is_abi(sequence):
+    """Check if sequence if a spectrogram from abi file.
+
+    :param sequence: sequence file name. str.
+
+    """
+    if os.path.splitext(sequence)[1].lower().endswith(('abi', 'ab1')):
+        return True
+    else:
+        return False
+
+
+def is_fasta(sequence):
+    """Check if sequence is a fasta file.
+
+    :param sequence: name of the fasta file. str
+
+    """
+    ext = os.path.splitext(sequence)[1].lower()
+    if ext.endswith(('.seq', '.fasta', '.aln', '.fst', '.rev')):
+        return True
+    else:
+        return False
+
+##-----------------------------------------------------------------------------
+##                                          BASECALL
+##-----------------------------------------------------------------------------
+
+
 @phruscle.command('basecall', short_help='Make basecall and alignment.')
+@click.option('-i',
+              '--input',
+              type=click.File('rb'),
+              default='-',
+              help="The abi sequence to base call with phred")
+@click.option('-r',
+              '--ref',
+              type=click.File('r'),
+              default='-',
+              help="The reference alignment in fasta format")
 @click.option('-c',
               '--cutoff',
               default=0.05,
               help="Probability of error of basecalling")
-@click.option('-i', '--input', help="The abi sequence to base call")
-@click.option('-r', '--ref', help="The reference alignment in fasta format")
-def run_phruscle(input, ref, cutoff):
+@click.option('--reverse',
+              is_flag=True,
+              help="Reverse complement sequencing file.")
+@click.option('--clustalw',
+              is_flag=True,
+              help="Muscle output in human readable clustalw format")
+def run_phruscle(input, ref, cutoff, reverse, clustalw):
     """This programme uses phred to call bases on the `--input` file to create a fasta file.
-    Muscle align this fasta file to the `--reference`, without disrupting the reference,
+    Muscle align this fasta file to the `--ref`, without disrupting the reference,
     to get the localisation of SNPs and their polarity.
 
+    :param input: the abi file to run phred on. str
+    :param ref: the reference alignment. str
+    :param cutoff: the maximum phred probability of error.
+    :param reverse: bool. compute reverse complement of input.
+    :param clustalw: bool. muscle output as human readable format clustalw.
     """
-    phred_code = run_phred(input, cutoff)
-    muscle_input = os.getcwd() + '/' + os.path.basename(input) + '.seq'
 
-    if phred_code == 0:
-        run_muscle(muscle_input, ref)  # FIXME fragile.
-        ## Il faut que la séquence input soit dans le dossier de travail. peut être voir à
-        ## jouer sur la sortie de phred.
+    def run_phred(abi_file, cutoff):
+        """Run phred on the abi_file, with a probability of base calling error of cutoff.
+
+        :param abi_file: the sanger sequencing file to base call. str
+        :param cutoff: probability of error. float.
+        """
+        # print abi_file.name
+        assert is_abi(abi_file.name), "Abi_File is not, well…, an abi file."
+
+        # phred reads and process file listed in the file abi_file via `-if`.
+        # we must then create a temporary file containing only the name of the abi_file.
+        with open('tempfile', 'w') as tempfile:
+            tempfile.write(abi_file.name + "\n")
+
+        # subprocess.call takes a list of argument as abi_file.
+        # the following list describes the phred list of argument.
+        phred = [
+            "phred",
+            "-st",
+            "fasta",  # sequence type output (default = fasta)
+            "-trim_alt",
+            "\"\"",  # quality trim
+            "-trim_cutoff",
+            str(cutoff),  # error probability of trimming
+            "-trim_fasta",  # trim sortie fasta.
+            "-trim_phd",  # trim sortie phd
+            "-s",  # write seq file, append ".seq" to the names of the abi_file files
+            "-d",  # write a poly file
+            "-p",  # write a phd file
+            "-if",
+            "tempfile"  # abi_file file
+        ]
+        phred_call = sub.call(phred)
+        os.remove("tempfile")  # supprime le fichier temporaire
+        return phred_call
+
+    def run_muscle(phred_output, reference, clw=False):
+        """Run muscle on the phred_output sequence, and align it to the reference sequence.
+        :param phred_output: the fasta sequence to align.
+        :param reference: the reference fasta sequence.
+
+        """
+        assert is_fasta(
+            phred_output), "La séquence n'est pas un fichier fasta."
+        assert is_fasta(
+            reference.name), "La référence n'est pas un fichier fasta."
+
+        muscle = [
+            "muscle",
+            "-quiet",  # non verbose
+            "-profile",  # do not disrupt the profile alignment
+            # "-clw",
+            # "-objscore",
+            # "ps",  # matrice de scoring
+            # "-maxmb",
+            # str(100),  # 100M as max memory
+            "-in1",
+            phred_output,
+            "-in2",
+            reference.name,  # profile is reference
+            "-out",
+            phred_output + ".aln"  # append .aln to phred_output name
+        ]
+        if clw:
+            muscle.append("-clw")
+
+        muscle_call = sub.call(muscle)  # call muscle list on input
+        return muscle_call  # return 0 or 1 if muscle is successful.
+
+    def reverse_complement(seq_in, seq_out):
+        """Read seq_in and writes its reverse complement to seq_out.
+
+        :param seq_in: sequence to reverse comp. str
+        :param seq_out: sequence to write revcomp to. str
+        :returns: None.
+        :rtype: NoneType.
+
+        """
+        record = SeqIO.read(open(seq_in), "fasta")
+        SeqIO.write(record.reverse_complement(), open(seq_out, 'w'), 'fasta')
+
+    phred_code = run_phred(input, cutoff)
+
+    phred_output = os.path.basename(input.name) + ".seq"
+    if reverse:
+        reverse_complement(phred_output, phred_output + ".rev")
+        phred_output += ".rev"
+
+    muscle_code = run_muscle(phred_output, ref, clustalw)
+
+    if phred_code == 0 and muscle_code == 0:
+        print "Phruscle ran fine."
+    elif muscle_code != 0:
+        print "Muscle failed."
     else:
         print "Phred failed."
 
-
-def parse_muscle(align):
-    """Cette fonction renvoit un dict comprenant 3 choses :
-    1. la séquence alignée
-    2. la séquence sauvage
-    3. la séquence avec les SNP
-    """
-    align = os.getcwd() + '/' + os.path.basename(input) + '.seq.aln'
-    assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
-
-    def read_seq(sequence, index):
-        return AlignIO.read(sequence, "fasta")[index]
-
-    return {
-        'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
-        'wt': str(read_seq(align, 1).seq),  # la séquence sauvage.
-        'snp': str(read_seq(align, 2).seq)  # la séquence du gène synthétique
-    }
+##-----------------------------------------------------------------------------
+## TABLE
+##-----------------------------------------------------------------------------
+# for line in reversed(open("filename").readlines()):
+#     print line.rstrip()
 
 
-def are_the_same(exp, snp, wt):
-    """Détermine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont
-    identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base
-    wt, et '-' quand la base exp ne correspond à aucune des possibilités
-
-    """
-    if exp == '-':  # si la base a été trimmée ou non alignée
-        return '-'
-    elif exp == snp and snp == wt:  # si les trois bases sont identiques
-        return '.'
-    elif exp == snp and snp != wt:  # si la base correspond au SNP
-        return 'x'
-    elif exp != snp and exp == wt:  # si la base correspond au WT
-        return 'X'
-    else:
-        return '-'  # si c'est encore autre chose ?
-
-
-def index_seq(sequence):
-    """Détermine la position dans la séquence expérimentale"""
-
-    position = 0
-    position_list = []
-    for index, base in enumerate(sequence):
-        if base != '-': position += 1
-        position_list.append(str(position))
-
-    return position_list
-
-
-def polarity_snp(align):
-    """Détermine la polarité des SNP, WT ou GS."""
-    muscle_output = parse_muscle(align)
-
-    consensus = []
-    for i, base in enumerate(muscle_output['exp']):
-        exp = muscle_output['exp'][i]
-        snp = muscle_output['snp'][i]
-        wt = muscle_output['wt'][i]
-
-        consensus += are_the_same(
-            exp, snp, wt)  # + ',' + exp + '\n' # + sortie de parse_phd
-
-    return consensus
-
-
-def parse_phd(align):
-    """Renvoit une DataFrame à partir de la sortie phd de phred.
-
-    """
-    return pd.read_table(align,
-                         sep=" ",
-                         skiprows=20, # FRAGILE. peut être utiliser une autre fonction
-                         # pour définir où commence la séquence, ou pour
-                         # nettoyer la sortie phd de phred
-                         skipfooter=3, # idem, moins sensible normalement.
-                         engine='python', # nécessaire pour skipfooter
-                         names=['base', 'qual', 'phase']) # 'phase' est la position dans
-    # le spectrogramme.
-
-
-@phruscle.command('table', short_help="Make a table of SNP qual and polarity")
-@click.option('-i', '--input', help="Input file in abi format")
+@phruscle.command('table',
+                  short_help="Make a table of SNP quality and polarity")
+@click.option('-i', '--input', help="Input alignment in fasta format.")
+@click.option(
+    '-p',
+    '--phd',
+    help="Input sequence quality and position file, output by phred.")
 @click.option('-o',
               '--output',
               type=click.File('wb'),
-              default='-',
-              required=False,
-              help="Output file in csv format")
-def clean_output(input, output):
-    """"""
-    assert is_abi(input), "Input is not an abi file"
+              default='-', # default is print to stdin
+              help="Output file in csv format. Default is STDOUT.")
+@click.option(
+    '-r',
+    '--reverse',
+    is_flag=True,
+    help=
+    "Reverse the phd file. Useful when reference and sequence are not in the same direction."
+)
+def clean_output(input, phd, output, reverse=False):
+    """This programme takes a fasta alignment between the experimental sequence and the
+    reference alignment, find the quality of the base call in the phd file, and outputs it
+    as csv.
 
-    parse_align = parse_muscle(input)  # + ".seq.aln")
+    \b
+    To read the consensus (cons) output:
+    - `.` : the three bases are the same.
+    - `x` : the sequenced base matches to the snp base.
+    - `X` : the sequenced base matches the WT base.
+    - `-` : the sequenced base is misaligned.
+    - `N` : the base was not called.
+
+    """
+
+    def parse_muscle(align):
+        """Cette fonction renvoit un dict comprenant 3 choses :
+        1. la séquence alignée
+        2. la séquence sauvage
+        3. la séquence avec les SNP
+        """
+        assert is_fasta(align), "Le fichier n'est pas un fichier fasta"
+
+        def read_seq(sequence, index):
+            """quick wrapper around AlignIO.read()"""
+            return AlignIO.read(sequence, "fasta")[index]
+
+        return {
+            'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
+            'wt': str(read_seq(align, 1).seq),  # la séquence de référence
+            'snp': str(read_seq(align, 2).seq)  # gène synthétique
+        }
+
+    def are_the_same(seq_list):
+        """Détermine si les trois bases sont identiques. Renvoit `.` quand les trois bases sont
+        identiques, `x` quand la base exp est la base `snp`, `X` quand la base exp est la base
+        wt, et '-' quand la base exp ne correspond à aucune des possibilités
+
+        """
+        exp, snp, wt = seq_list
+
+        if exp == '-':  # si la base a été trimmée ou non alignée
+            return '-'
+        elif exp == snp and snp == wt:  # si les trois bases sont identiques
+            return '.'
+        elif exp == snp and snp != wt:  # si la base correspond au SNP
+            return 'x'
+        elif exp != snp and exp == wt:  # si la base correspond au WT
+            return 'X'
+        else:
+            return 'N'  # si c'est encore autre chose ?
+
+    def index_seq(sequence):
+        """Détermine la position dans la séquence expérimentale"""
+
+        position = 0
+        position_list = []
+        for index, base in enumerate(sequence):
+            if base != '-': position += 1
+            position_list.append(str(position))
+
+        return position_list
+
+    def polarity_snp(parsed_aln):
+        """Give back the polarity of the SNP. Expect an output of parse_muscle."""
+
+        consensus = []
+        for i, base in enumerate(parsed_aln['exp']):
+            exp = parsed_aln['exp'][i]
+            snp = parsed_aln['snp'][i]
+            wt = parsed_aln['wt'][i]
+
+            consensus += are_the_same([exp, snp, wt])
+
+        return consensus
+
+    def parse_phd(align, rev=False):
+        """Return a pandas DataFrame by parsing a phred output.
+
+        :param align: a phd output.
+
+        """
+
+        def get_phd_seq_only(phd_file, reverse=False):
+            """Return string from BEGIN_DNA to END_DNA. If reverse is True, give the
+            sequence in inverse order."""
+            ## inspiré de
+            ## http://stackoverflow.com/questions/7559397/python-read-file-from-and-to-specific-lines-of-textq,
+            ## réponse de EOL
+            block = ""
+            found = False
+            with open(phd_file, 'r') as in_data:
+                if not reverse:
+                    for line in in_data:
+                        if found:
+                            if line.strip() == "END_DNA": break
+                            else: block += line
+                        else:
+                            if line.strip() == "BEGIN_DNA":
+                                found = True
+                                block = ""
+                else:
+                    # dans l'autre sens.
+                    for line in reversed(in_data.readlines()):
+                        if found:
+                            if line.strip() == "BEGIN_DNA": break
+                            else: block += line
+                        else:
+                            if line.strip() == "END_DNA":
+                                found = True
+                                block = ""
+            return block
+
+        # pd.DataFrame.
+        return pd.read_table(
+            io.StringIO(u"%s" % get_phd_seq_only(align,
+                                                 reverse=rev)),
+            sep=" ",
+            names=['base', 'qual', 'phase'])  # 'phase' = spectrogramme pos
+
+    parsed_align = parse_muscle(input)
 
     clean_data = pd.DataFrame({
-        'seqp': index_seq(parse_align['exp']),
-        'refp': index_seq(parse_align['wt']),
-        'cons': polarity_snp(input + ".seq.aln")
+        'seqp': index_seq(parsed_align['exp']),
+        'seqb': list(parsed_align['exp']),
+        'refp': index_seq(parsed_align['wt']),
+        'refb': list(parsed_align['wt']),
+        'snpb': list(parsed_align['snp']),
+        'cons': polarity_snp(parsed_align),
+        'name': input
     })
 
+    ## use pandas concat to concatenate two datasets along the axis 1, equivalent to cbind in R.
+    ## ignore_index indicate that the two dataframes are not combined with their index.
     with_phd = pd.concat(
         [
-            clean_data[clean_data.cons != '-'].reset_index(
-                drop=
-                True),  # ne garde que les positions qui existent dans le phd file
-            parse_phd(input + ".phd.1")
+            clean_data[clean_data.cons != '-'].reset_index(drop=True),
+            # ne garde que les positions qui existent dans le phd file
+            parse_phd(phd,
+                      rev=reverse)
+            # parse the phred output. reverse it if necessary to align to the reference.
         ],
         axis=1,
         ignore_index=True)
-    with_phd.columns = ['cons', 'refp', 'seqp', 'base', 'qual', 'phase']
+    # change les noms de colonnes.
+    with_phd.columns = ['cons', 'name', 'refb', 'refp', 'seqb', 'seqp', 'snpb',
+                        'base', 'qual', 'phase']
 
     if output != '-':
         with_phd.to_csv(output, index=False)
@@ -1209,17 +1319,44 @@ muscle \
 *** run phruscle on it
 
 #+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/phruscler
-
 ROOT=`pwd`
 
 mkdir data/ws/aln
+mkdir data/sw/aln
+
 cd data/ws/aln
 
 for file in ../spectro/*.ab1
 do
-    phruscle basecall -i $file -r $ROOT/raw/ref/weak-strong.fasta
+    phruscle basecall \
+			       --input $file \
+			       --ref $ROOT/raw/ref/aln-ws-ref.fst \
+			       --reverse
+
+	  phruscle table \
+			       --input `basename $file`.seq.rev.aln \
+			       --phd `basename $file`.phd.1 \
+			       --output `basename $file`.csv \
+			       --reverse
+done
+
+cd ../../sw/aln
+
+for file in ../spectro/*.ab1
+do
+    phruscle basecall \
+			       --input $file \
+			       --ref $ROOT/raw/ref/aln-sw-ref.fst \
+			       --reverse
+
+	  phruscle table \
+			       --input `basename $file`.seq.rev.aln \
+			       --phd `basename $file`.phd.1 \
+			       --output `basename $file`.csv \
+			       --reverse
 done
 #+END_SRC
+
 
 * Tests
 
