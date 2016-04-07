@@ -1355,6 +1355,9 @@ do
 			       --output `basename $file`.csv \
 			       --reverse
 done
+
+csvstack *.csv > phruscle_snpcall.csv
+
 #+END_SRC
 
 
