@@ -1356,7 +1356,8 @@ do
 			       --reverse
 done
 
-csvstack *.csv > phruscle_snpcall.csv
+cd ../../
+csvstack ws/aln/*.csv sw/aln/*.csv > phruscle_snpcall.csv
 
 #+END_SRC
 
