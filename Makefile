@@ -6,7 +6,27 @@ vpath %.png anl
 ## ANALYSES
 
 .PHONY: all
-all: check_qual gatc_snpcall
+all: phruscle_call snp_call check_qual gatc_snpcall
+
+## snp calling via phruscle
+.PHONY: phruscle_call
+phruscle_call: anl/phruscle_call/phruscle_call.html
+
+anl/phruscle_call/phruscle_call.html: anl/phruscle_call/phruscle_call.R data/phruscle_snpcall.csv
+	R --vanilla -e "rmarkdown::render('$<')"
+	git stage $< $@
+
+data/phruscle_snpcall.csv: src/phruscler phruscle.py src/make_ref data/sw/seq
+	mkdir data/ws/aln
+	mkdir data/sw/aln
+	mkdir data/s_w/aln
+	src/make_ref
+	$<
+
+.PHONY: clean_phruscle
+phruscle_clean:
+	rm -r data/sw/aln data/ws/aln data/s_w/aln data/phruscle_snpcall.csv
+## </phruscle>
 
 ## snp calling via ssahaSNP
 # .PHONY: snp_call

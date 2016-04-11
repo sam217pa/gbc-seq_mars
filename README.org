@@ -1302,18 +1302,34 @@ recréer l'alignement entre la séquence sauvage et la séquence snp de WS et SW
 J'utilise muscle pour faire l'alignement entre la séquence sauvage et les
 séquences SW et WS.
 
-#+BEGIN_SRC sh :tangle src/make_ref :shebang "#!/usr/bin/env bash"
+#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/make_ref
 muscle \
     -profile \
-    -in1 raw/ref/strong-weak.fasta \
+    -quiet \
+    -in1 <(fastx_reverse_complement -i raw/ref/strong-weak.fasta) \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-sw-ref.fst
 
 muscle \
     -profile \
-    -in1 raw/ref/weak-strong.fasta \
+    -quiet \
+    -in1 <(fastx_reverse_complement -i raw/ref/weak-strong.fasta) \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-ws-ref.fst
+
+muscle \
+    -profile \
+    -quiet \
+    -in1 <(fastx_reverse_complement -i raw/ref/strong.fasta) \
+    -in2 raw/ref/reference1073bis-1392.fasta \
+    -out raw/ref/aln-s-ref.fst
+
+muscle \
+    -profile \
+    -quiet \
+    -in1 <(fastx_reverse_complement -i raw/ref/weak.fasta) \
+    -in2 raw/ref/reference1073bis-1392.fasta \
+    -out raw/ref/aln-w-ref.fst
 #+END_SRC
 
 *** run phruscle on it
@@ -1321,44 +1337,76 @@ muscle \
 #+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/phruscler
 ROOT=`pwd`
 
-mkdir data/ws/aln
-mkdir data/sw/aln
-
+# ------------------------------------------------------------------------------
+# manip WS
+# ------------------------------------------------------------------------------
 cd data/ws/aln
 
 for file in ../spectro/*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-ws-ref.fst \
-			       --reverse
+			       --ref $ROOT/raw/ref/aln-ws-ref.fst
 
 	  phruscle table \
-			       --input `basename $file`.seq.rev.aln \
+			       --input `basename $file`.seq.aln \
 			       --phd `basename $file`.phd.1 \
-			       --output `basename $file`.csv \
-			       --reverse
+			       --output `basename $file`.csv
 done
 
+# ------------------------------------------------------------------------------
+# manip SW
+# ------------------------------------------------------------------------------
 cd ../../sw/aln
 
 for file in ../spectro/*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-sw-ref.fst \
-			       --reverse
+			       --ref $ROOT/raw/ref/aln-sw-ref.fst
 
 	  phruscle table \
-			       --input `basename $file`.seq.rev.aln \
+			       --input `basename $file`.seq.aln \
 			       --phd `basename $file`.phd.1 \
-			       --output `basename $file`.csv \
-			       --reverse
+			       --output `basename $file`.csv
 done
 
-cd ../../
-csvstack ws/aln/*.csv sw/aln/*.csv > phruscle_snpcall.csv
+# ------------------------------------------------------------------------------
+# manip W
+# ------------------------------------------------------------------------------
+cd ../../s_w/aln
 
+for file in ../spectro/pW*.ab1
+do
+    phruscle basecall \
+			       --input $file \
+			       --ref $ROOT/raw/ref/aln-w-ref.fst
+
+	  phruscle table \
+			       --input `basename $file`.seq.aln \
+			       --phd `basename $file`.phd.1 \
+			       --output `basename $file`.csv
+done
+
+# ------------------------------------------------------------------------------
+# manip S
+# ------------------------------------------------------------------------------
+
+for file in ../spectro/pS*.ab1
+do
+    phruscle basecall \
+			       --input $file \
+			       --ref $ROOT/raw/ref/aln-s-ref.fst
+
+	  phruscle table \
+			       --input `basename $file`.seq.aln \
+			       --phd `basename $file`.phd.1 \
+			       --output `basename $file`.csv
+done
+
+## combine
+cd ../../
+csvstack ws/aln/*.csv sw/aln/*.csv s_w/aln/*.csv > phruscle_snpcall.csv
 #+END_SRC
 
 

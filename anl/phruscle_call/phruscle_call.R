@@ -27,7 +27,7 @@
 #+ setup, include=FALSE
 library(knitr)
 library(tufte)
-opts_chunk$set(cache = FALSE, dev = 'png', include = TRUE,
+opts_chunk$set(cache = TRUE, dev = 'png', include = TRUE,
                echo = TRUE, warning = FALSE, error = FALSE,
                message = FALSE)
 
@@ -74,8 +74,10 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(viridis)
-library(purrr)
-library(ggthemes)
+## library(purrr)
+## library(ggthemes)
+library(cowplot)
+## library(gridExtra)
 
 theme_set(theme_bw() + fte_theme())
 
@@ -85,9 +87,27 @@ data_location <- "../../data/phruscle_snpcall.csv"
 snp <- read_csv(data_location) %>%
   mutate(
     name = gsub("-1073.+$", "", name),
-    base = toupper(base),
-    mutant = ifelse(grepl("ws", name), "ws", "sw")
+    base = toupper(base)#,
+    ## mutant = ifelse(grepl("ws", name), "ws",
+    ##          ifelse(grepl("sw", name), "sw",
+    ##          ifelse(grepl("W", name), "w",
+    ##          ifelse(grepl("S", name), "s", ""))))
   )
+
+find_mutant <- function(name) {
+  if      (grepl("ws", name)) "ws"
+  else if (grepl("sw", name)) "sw"
+  else if (grepl("W", name )) "w"
+  else if (grepl("S", name )) "s"
+  else ""
+}
+
+snp <- snp %>%
+  group_by(name) %>%
+  summarise(count = n()) %>%
+  rowwise() %>%
+  mutate(mutant=find_mutant(name)) %>%
+  inner_join(snp, .)
 
 #'
 #' J'ai donc obtenu un tableau de donnée de la forme suivante, où :
@@ -119,7 +139,7 @@ n_distinct(snp$name)
 snp %>%
   group_by(mutant) %>%
   summarise(count = n()) %>%
-  kable(align = "c")
+  knitr::kable(align = "c")
 
 snp %>%
   group_by(mutant, name) %>%
@@ -131,9 +151,9 @@ snp %>%
 
 #' J'ai voulu déterminer s'il existe des bases dans les sorties de phruscle qui
 #' ne correspondent pas aux sorties de phd. Autrement dit si la base `base` est
-#' bien toujours le complement de la base `seqb`.
+#' bien toujours la même que la base `seqb`.
 
-TRUE %in% (chartr("ATGC","TACG", snp$base) != snp$seqb)
+FALSE %in% (snp$base == snp$seqb)
 
 #' Plutôt bon signe ! Phruscle a fonctionné comme il faut, _ie_ toutes les bases
 #' qu'on a sorties dans nos alignements ont une correspondance dans le fichier
@@ -160,9 +180,17 @@ snp %>%
   geom_line(aes(group = name), alpha = 0.1, size = 0.1 ) +
   scale_color_viridis()
 
+#+ qual2, fig.margin=TRUE, fig.cap="Position des bases de qualité < 30"
+snp %>%
+  filter(qual < 30) %>%
+  ggplot(data = ., aes(x = refp, y = qual )) +
+  geom_point(alpha = 0.1, size = 0.1)
+
 #' Comme attendu, la qualité est moindre en fin de run, et plutôt bonne au
-#' début^[On séquence de droite à gauche, la cassete de résistance est à la position avant -1]. Ce sont des séquences trimmées par phd. On n'est pas obligé de
-#' trimmer. Peut-être refaire les analyses avec les séquences non trimmées.
+#' début^[On séquence de droite à gauche, la cassette de résistance est à la
+#' position avant -1]. Ce sont des séquences trimmées par phd. On n'est pas
+#' obligé de trimmer. Peut-être refaire les analyses avec les séquences non
+#' trimmées.
 #'
 
 #' # Distribution de la longueur des séquences.
@@ -174,10 +202,6 @@ snp %>%
   geom_histogram(binwidth = 1) +
   facet_grid(mutant ~ .)
 
-snp %>%
-  filter(qual < 30) %>%
-  ggplot(data = ., aes(x = refp, y = qual )) +
-  geom_point(alpha = 0.1, size = 0.1)
 
 #+ snp_distrib0, fig.margin=TRUE
 snp %>%
@@ -191,9 +215,10 @@ snp %>%
 #' référence basé sur le graphique dans la marge.
 
 plot_align <- function(data, mutant_) {
+
   sort_by_tract_length <- function(mut) {
     data %>%
-      filter(mut == mutant) %>%
+      filter(mutant == mut) %>%
       group_by(name, mutant) %>%
       filter(cons == "x") %>%
       summarise(len = max(refp) - min(refp)) %>%
@@ -223,15 +248,20 @@ plot_align <- function(data, mutant_) {
     rowwise() %>%
     mutate(sens =  find_polarity(refb, seqb)) %>%
     ggplot(aes(x = factor(refp),
-               y = factor(name, levels =  sort_by_tract_length(mutant_)))) +
-    geom_point(aes(color = sens, size = qual)) +
+               y = factor(name, levels = sort_by_tract_length(mut=mutant_)))) +
+    geom_point(aes(color = sens, size = qual, alpha=qual)) +
     scale_color_viridis(
       discrete = TRUE,
-      labels = c("Indel", "S vers S", "S vers W", "W vers S", "W vers W")
+      end=0.95
+      ## labels = c("Indel", "S vers S", "S vers W", "W vers S", "W vers W")
+    ) +
+    scale_alpha(
+      range=c(1/5, 1),
+      guide=FALSE
     ) +
     scale_size(
       trans = "reverse",
-      range = c(1, 4),
+      range = c(1, 3),
       breaks = c(10, 50),
       labels = c("10", "50")) +
     labs(
@@ -242,7 +272,8 @@ plot_align <- function(data, mutant_) {
       title = paste("Alignement pour la manip", toupper(mutant_))
     ) +
     theme(
-      legend.position = "right",
+      legend.position = "top",
+      legend.margin=unit(-0.3,"lines"),
       legend.key = element_rect(
         fill = scales::alpha("gray", 0),
         colour = scales::alpha("gray", 0)),
@@ -250,9 +281,57 @@ plot_align <- function(data, mutant_) {
     )
 }
 
+plot_qual <- function(data, mutant_) {
+  data %>%
+    filter(mutant == mutant_) %>%
+    ggplot(aes(x=refp, y=qual, color=qual)) +
+    geom_point(size=0.1, alpha=0.1) +
+    scale_color_viridis(end=0.95) +
+    labs(x="Position sur la référence",
+         y="") +
+    coord_cartesian(xlim=c(50, 730)) +
+    geom_smooth(se = FALSE, color=viridis(1), linetype="dotted")
+}
+
+plot_align_qual <- function(data, mutant_) {
+  plot_grid(
+    data %>% plot_align(mutant_),
+    data %>% plot_qual(mutant_),
+    ncol=1, rel_heights = c(8.5, 1.5),
+    align='v', labels=c("  1", "  2")
+  )
+}
 
 #+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
-snp %>% plot_align("ws")
+snp %>% plot_align_qual("ws")
 
 #+ sw_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
-snp %>% plot_align("sw")
+snp %>% plot_align_qual("sw")
+
+#+ s_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+snp %>% plot_align_qual("s")
+
+#+ w_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+snp %>% plot_align_qual("w")
+
+## snp %>%
+##   filter(cons != ".") %>%
+##   rowwise() %>%
+##   mutate(sens=find_polarity(refb, seqb)) %>%
+##   filter(sens != "") %>%
+##   print(n=100)
+
+#+ align1, fig.fullwidth=TRUE, fig.width=21, fig.height=21
+plot_grid(
+  snp %>% plot_align_qual("s"),
+  snp %>% plot_align_qual("w"),
+  snp %>% plot_align_qual("ws"),
+  snp %>% plot_align_qual("sw"),
+  labels=c("A", "B", "C", "D"), ncol=4
+)
+
+## save_as_a3("test.png")
+
+## snp %>%
+##   group_by(mutant) %>%
+##   summarise(count = n())
