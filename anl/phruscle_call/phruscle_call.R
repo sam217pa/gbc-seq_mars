@@ -27,9 +27,17 @@
 #+ setup, include=FALSE
 library(knitr)
 library(tufte)
-opts_chunk$set(cache = TRUE, dev = 'png', include = TRUE,
+opts_chunk$set(cache = FALSE, dev = 'png', include = TRUE,
                echo = TRUE, warning = FALSE, error = FALSE,
                message = FALSE)
+
+
+#+ setup2, include = TRUE
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(viridis)
+library(cowplot)
 
 fte_theme <- function() {
   ## Generate the colors for the chart procedurally with RColorBrewer
@@ -64,22 +72,12 @@ fte_theme <- function() {
           plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm"))
 }
 
+theme_set(theme_bw() + fte_theme())
+
 legend_position <- function(x=NULL, y=NULL) {
   if (is.null(x) & is.null(y)) theme(legend.position = "bottom")
   else theme(legend.position = c(x, y))
 }
-
-#+ setup2, include = TRUE
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(viridis)
-## library(purrr)
-## library(ggthemes)
-library(cowplot)
-## library(gridExtra)
-
-theme_set(theme_bw() + fte_theme())
 
 
 data_location <- "../../data/phruscle_snpcall.csv"
@@ -88,10 +86,6 @@ snp <- read_csv(data_location) %>%
   mutate(
     name = gsub("-1073.+$", "", name),
     base = toupper(base)#,
-    ## mutant = ifelse(grepl("ws", name), "ws",
-    ##          ifelse(grepl("sw", name), "sw",
-    ##          ifelse(grepl("W", name), "w",
-    ##          ifelse(grepl("S", name), "s", ""))))
   )
 
 find_mutant <- function(name) {
@@ -102,6 +96,7 @@ find_mutant <- function(name) {
   else ""
 }
 
+# neat little trick to reduce time of rowwise application of find_mutant.
 snp <- snp %>%
   group_by(name) %>%
   summarise(count = n()) %>%
@@ -131,7 +126,6 @@ head(snp)
 #' # Observations générales
 #'
 #' ## Nombres de séquences ?
-                                        #
 n_distinct(snp$name)
 
 #' On a donc bien toutes nos séquences.
