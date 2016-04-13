@@ -53,11 +53,39 @@ def is_fasta(sequence):
     else:
         return False
 
+
+##-----------------------------------------------------------------------------
+##                                      ALIGN
+##-----------------------------------------------------------------------------
+@phruscle.command('align', short_help='Align synthetic sequence to reference')
+@click.option('-i', '--input', help="The synthetic sequence to align")
+@click.option('-r', '--ref', help="The wild type reference sequence")
+@click.option('--clw', is_flag=True, help="The wild type reference sequence")
+def align_ref(input, ref, clw=False, input_reverse=False, ref_reverse=False):
+    """This programs aligns the input sequence to the reference sequence. It is
+    used downwards by pphruscle to localize the interesting SNP positions."""
+    muscle = [
+        "muscle",
+        "-quiet",  # non verbose
+        "-profile",  # do not disrupt the profile alignment
+        "-in1",
+        input,
+        "-in2",
+        ref,  # profile is reference
+        "-out",
+        input + ".aln"  # append .aln to phred_output name
+    ]
+    if clw:
+        muscle.append("-clw")
+
+    sub.call(muscle)
+# @click.option('-ir', '--input_reverse', is_flag=True)
+# @click.option('-rr', '--ref_reverse', is_flag=True)
+
+
 ##-----------------------------------------------------------------------------
 ##                                          BASECALL
 ##-----------------------------------------------------------------------------
-
-
 @phruscle.command('basecall', short_help='Make basecall and alignment.')
 @click.option('-i',
               '--input',
@@ -243,8 +271,8 @@ def clean_output(input, phd, output, reverse=False):
 
         return {
             'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
-            'wt': str(read_seq(align, 1).seq),  # la séquence de référence
-            'snp': str(read_seq(align, 2).seq)  # gène synthétique
+            'snp': str(read_seq(align, 1).seq),  # le gene synthétique
+            'wt': str(read_seq(align, 2).seq)  # la séquence de référence
         }
 
     def are_the_same(seq_list):
@@ -316,7 +344,7 @@ def clean_output(input, phd, output, reverse=False):
                                 found = True
                                 block = ""
                 else:
-                    # dans l'autre sens.
+                    # if reverse flag is true, reverse sequence
                     for line in reversed(in_data.readlines()):
                         if found:
                             if line.strip() == "BEGIN_DNA": break
