@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <title>Séquençage WS et SW</title>
-<!-- 2016-04-07 Thu 13:18 -->
+<!-- 2016-04-15 Fri 17:41 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Org-mode">
@@ -1103,15 +1103,31 @@ séquences SW et WS.
 
 <pre class="src src-sh">muscle <span style="color: #b58900; font-weight: bold;">\</span>
     -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -quiet <span style="color: #b58900; font-weight: bold;">\</span>
     -in1 raw/ref/strong-weak.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -out raw/ref/aln-sw-ref.fst
 
 muscle <span style="color: #b58900; font-weight: bold;">\</span>
     -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -quiet <span style="color: #b58900; font-weight: bold;">\</span>
     -in1 raw/ref/weak-strong.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
     -out raw/ref/aln-ws-ref.fst
+
+muscle <span style="color: #b58900; font-weight: bold;">\</span>
+    -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -quiet <span style="color: #b58900; font-weight: bold;">\</span>
+    -in1 raw/ref/strong.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -out raw/ref/aln-s-ref.fst
+
+muscle <span style="color: #b58900; font-weight: bold;">\</span>
+    -profile <span style="color: #b58900; font-weight: bold;">\</span>
+    -quiet <span style="color: #b58900; font-weight: bold;">\</span>
+    -in1 raw/ref/weak.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -in2 raw/ref/reference1073bis-1392.fasta <span style="color: #b58900; font-weight: bold;">\</span>
+    -out raw/ref/aln-w-ref.fst
 </pre>
 </div>
 </div>
@@ -1124,9 +1140,9 @@ muscle <span style="color: #b58900; font-weight: bold;">\</span>
 
 <pre class="src src-sh"><span style="color: #268bd2;">ROOT</span>=<span style="color: #6c71c4; font-weight: bold;">`pwd`</span>
 
-mkdir data/ws/aln
-mkdir data/sw/aln
-
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">manip WS</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
 <span style="color: #839496; font-weight: bold;">cd</span> data/ws/aln
 
 <span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/*.ab1
@@ -1134,15 +1150,17 @@ mkdir data/sw/aln
     phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
              --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
              --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-ws-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
-             --reverse
+             --cutoff <span style="color: #6c71c4;">0.10</span>
 
     phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
-             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.rev.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.aln <span style="color: #b58900; font-weight: bold;">\</span>
              --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
-             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv <span style="color: #b58900; font-weight: bold;">\</span>
-             --reverse
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv
 <span style="color: #859900; font-weight: bold;">done</span>
 
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">manip SW</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
 <span style="color: #839496; font-weight: bold;">cd</span> ../../sw/aln
 
 <span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/*.ab1
@@ -1150,16 +1168,110 @@ mkdir data/sw/aln
     phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
              --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
              --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-sw-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
-             --reverse
+             --cutoff <span style="color: #6c71c4;">0.10</span>
 
     phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
-             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.rev.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.aln <span style="color: #b58900; font-weight: bold;">\</span>
              --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
-             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv <span style="color: #b58900; font-weight: bold;">\</span>
-             --reverse
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv
 <span style="color: #859900; font-weight: bold;">done</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">manip W</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+<span style="color: #839496; font-weight: bold;">cd</span> ../../s_w/aln
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/pW*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
+             --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+             --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-w-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
+             --cutoff <span style="color: #6c71c4;">0.10</span>
+
+    phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv
+<span style="color: #859900; font-weight: bold;">done</span>
+
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">manip S</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">------------------------------------------------------------------------------</span>
+
+<span style="color: #859900; font-weight: bold;">for</span> file<span style="color: #859900; font-weight: bold;"> in</span> ../spectro/pS*.ab1
+<span style="color: #859900; font-weight: bold;">do</span>
+    phruscle basecall <span style="color: #b58900; font-weight: bold;">\</span>
+             --input $<span style="color: #268bd2;">file</span> <span style="color: #b58900; font-weight: bold;">\</span>
+             --ref $<span style="color: #268bd2;">ROOT</span>/raw/ref/aln-s-ref.fst <span style="color: #b58900; font-weight: bold;">\</span>
+             --cutoff <span style="color: #6c71c4;">0.10</span>
+
+    phruscle table <span style="color: #b58900; font-weight: bold;">\</span>
+             --input <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.seq.aln <span style="color: #b58900; font-weight: bold;">\</span>
+             --phd <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.phd.1 <span style="color: #b58900; font-weight: bold;">\</span>
+             --output <span style="color: #6c71c4; font-weight: bold;">`basename $file`</span>.csv
+<span style="color: #859900; font-weight: bold;">done</span>
+
+<span style="color: #586e75;">## </span><span style="color: #586e75;">combine</span>
+<span style="color: #839496; font-weight: bold;">cd</span> ../../
+csvstack ws/aln/*.csv sw/aln/*.csv s_w/aln/*.csv &gt; phruscle_snpcall.csv
 </pre>
 </div>
+</div>
+</div>
+
+
+<div id="outline-container-sec-5-2-3" class="outline-4">
+<h4 id="sec-5-2-3"><span class="section-number-4">5.2.3</span> analyses complémentaires</h4>
+<div class="outline-text-4" id="text-5-2-3">
+<p>
+Aujourd'hui <span class="timestamp-wrapper"><span class="timestamp">[2016-04-15 Fri] </span></span> nous avons discuté avec Laurent, Vincent et Franck
+de la façon optimale de conduire la suite des analyses.
+</p>
+
+<p>
+On s'est rendu compte de plusieurs choses.
+</p>
+
+<ol class="org-ol">
+<li>On se demande où est partie la première (ou la dernière ?) position de SNP
+qu'on voit sur les alignements WS mais pas sur les alignements SW. Il faut
+donc essayer de vérifier dans les alignements pairwise si on a bien notre
+premier SNP.
+</li>
+<li>il faut essayer de représenter sur un graphe les effectifs de point de
+bascule.
+</li>
+<li>On peut avoir différentes infos : on peut compter les doublets SS et WW dans
+les manips SW et WS pour connaître les effectifs qui switchent à un endroit
+donné, et les triplets correspondent aux évènements complexes. On peut
+résumer ça par la pseudo équation <code>nombre de doublet total = nombre de
+   doublet en fin de conversion + nombre de restauration du genotype parental</code>.
+</li>
+<li>sur la figure des alignements, il serait judicieux de représenter quelque
+part le génotype parental, et le génotype du donneur. On veut également
+représenter la trace de conversion par du bleu tout le temps, et le génotype
+parental par du rouge. On aurait de ce fait les mêmes codes couleurs pour
+toutes les manips.
+</li>
+<li>pour compter les cas de tracts complexes, <i>on ne doit pas filtrer</i> sur la
+qualité avant de déterminer le génotype, sinon on affecte le génotype inféré,
+et donc les cas complexes. On peut donc remplacer les bases de mauvaises
+qualité par des N.
+</li>
+<li>Pour différencier les cas de restauration des cas "normaux", on peut
+représenter les points, en gardant le même code couleur (donneur / receveur)
+par des <code>+</code> ou des carrés.
+</li>
+<li>On peut éviter de parler de S, W, SW et WS, mais parler de GC+, AT+ etc… Pour
+rester clean dans le discours.
+</li>
+</ol>
+
+<p>
+On veut également essayer de mettre au point un schéma pour représenter de façon
+visuelle ce qu'il se passe dans notre construction, à quel endroit les SNP sont
+convertis, de quelle façon, etc…
+</p>
 </div>
 </div>
 </div>
@@ -1201,7 +1313,7 @@ Le script pour tester les résultats, via <code>make test</code>.
 
   <span style="color: #839496; font-weight: bold;">set</span> -e
 
-  <span style="color: #839496; font-weight: bold;">.</span> ./test/assert.sh
+  . ./test/assert.sh
 
   <span style="color: #586e75;"># </span><span style="color: #586e75;">v&#233;rifie qu'il y ait bien 95 s&#233;quence dans le fastq SW et 96 dans le fastq WS</span>
   assert <span style="color: #2aa198;">"echo `check_fastq_length data/sw/sw_untrimmed.fastq`"</span> <span style="color: #2aa198;">"95"</span>
@@ -1296,7 +1408,7 @@ Il faut une version récente du package <code>rmarkdown</code>.
 </div></div></div>
 <footer id="postamble" class="">
 <div><p class="author">Auteur: Samuel Barreto</p>
-<p class="date">Created: 2016-04-07 Thu 13:18</p>
+<p class="date">Created: 2016-04-15 Fri 17:41</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 8.3.4)</p>
 </div>
 </footer>

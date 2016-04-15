@@ -38,7 +38,7 @@ library(ggplot2)
 library(readr)
 library(viridis)
 library(cowplot)
-
+#
 fte_theme <- function() {
   ## Generate the colors for the chart procedurally with RColorBrewer
   palette <- RColorBrewer::brewer.pal("Greys", n=9)
@@ -47,47 +47,56 @@ fte_theme <- function() {
   color.axis.text = palette[6]
   color.axis.title = palette[7]
   color.title = palette[9]
-
   ## Begin construction of chart
   theme_bw(base_size=9) +
     ## Set the entire chart region to a light gray color
-    theme(panel.background=element_rect(fill=color.background, color=color.background),
-          plot.background=element_rect(fill=color.background, color=color.background),
-          panel.border=element_rect(color=color.background),
-          panel.grid.major=element_line(color=color.grid.major,size=.25),
-          panel.grid.minor=element_blank(),
-          axis.ticks=element_blank(),
-          ## Format the legend, but hide by default
-          legend.position="none",
-          legend.background = element_rect(fill = scales::alpha(color.background, 0.3)),
-          legend.text = element_text(size=7,color=color.axis.title),
-          ## Set title and axis labels, and format these and tick marks
-          plot.title=element_text(color=color.title, size=14,
-                                  face = "bold", vjust=1.25, hjust = 0),
-          axis.text.x=element_text(size=7,color=color.axis.text),
-          axis.text.y=element_text(size=7,color=color.axis.text),
-          axis.title.x=element_text(size=8, color=color.axis.title, vjust=0, hjust = 0.9),
-          axis.title.y=element_text(size=8, color=color.axis.title, vjust = 0.9, angle = 0 ),
-          ## Plot margins
-          plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm"))
+    theme(
+      ## panel.background=element_rect(fill=color.background, color=color.background),
+      panel.background=element_blank(),
+      plot.background=element_rect(fill=color.background, color=color.background),
+      ## panel.border=element_rect(color=color.background),
+      panel.border=element_rect(size = 1, color=color.grid.major),
+      panel.grid.major=element_line(color=color.grid.major,size=.25, linetype = "dotted"),
+      panel.grid.minor=element_blank(),
+      axis.ticks=element_blank(),
+      strip.text.y = element_text(angle = 0, size = 8),
+      ## Format the legend, but hide by default
+      legend.position="none",
+      legend.background = element_rect(fill = scales::alpha(color.background, 0.3)),
+      legend.text = element_text(size=9,color=color.axis.title),
+      ## Set title and axis labels, and format these and tick marks
+      plot.title=element_text(color=color.title, size=14,
+                              face = "bold", vjust=1.25, hjust = 0),
+      axis.text.x=element_text(size=7,color=color.axis.text),
+      axis.text.y=element_text(size=7,color=color.axis.text),
+      axis.title.x=element_text(size=8, color=color.axis.title, vjust=0, hjust = 0.9),
+      axis.title.y=element_text(size=8, color=color.axis.title, vjust = 0.9, angle = 0 ),
+      ## Plot margins
+      plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm")
+    )
 }
-
+#
 theme_set(theme_bw() + fte_theme())
-
+#
 legend_position <- function(x=NULL, y=NULL) {
-  if (is.null(x) & is.null(y)) theme(legend.position = "bottom")
-  else theme(legend.position = c(x, y))
+  custom_legend <-
+    theme(legend.margin = unit(-0.3,"lines"),
+          legend.key = element_rect(fill = scales::alpha("gray", 0),
+                                    colour = scales::alpha("gray", 0)))
+
+  if (is.null(x) & is.null(y)) custom_legend + theme(legend.position = "bottom")
+  else custom_legend + theme(legend.position = c(x, y))
 }
-
-
+#
+#
 data_location <- "../../data/phruscle_snpcall.csv"
-
+#
 snp <- read_csv(data_location) %>%
   mutate(
     name = gsub("-1073.+$", "", name),
     base = toupper(base)#,
   )
-
+#
 find_mutant <- function(name) {
   if      (grepl("ws", name)) "ws"
   else if (grepl("sw", name)) "sw"
@@ -95,7 +104,7 @@ find_mutant <- function(name) {
   else if (grepl("S", name )) "s"
   else ""
 }
-
+#
 # neat little trick to reduce time of rowwise application of find_mutant.
 snp <- snp %>%
   group_by(name) %>%
@@ -196,7 +205,6 @@ snp %>%
   geom_histogram(binwidth = 1) +
   facet_grid(mutant ~ .)
 
-
 #+ snp_distrib0, fig.margin=TRUE
 snp %>%
   filter(cons == "x" | cons == "X") %>%
@@ -205,8 +213,19 @@ snp %>%
   geom_histogram(binwidth = 1)
 
 #' Une fonction pour faire un alignement des positions d'intérêt, sans avoir à
-#' répéter le code deux fois pour sw et ws. J'ai ̉hardcodé' les limites de la
-#' référence basé sur le graphique dans la marge.
+#' répéter le code deux fois pour sw et ws. J'ai _hardcodé_ les limites de la
+#' référence basées sur le graphique dans la marge.
+
+find_polarity <- function(reference, experimental) {
+  is_w <- function(base) { ifelse(base == "A" | base == "T", TRUE, FALSE)}
+  is_s <- function(base) { ifelse(base == "C" | base == "G", TRUE, FALSE)}
+
+  if      (is_w(reference) & is_w(experimental)) "ww"
+  else if (is_w(reference) & is_s(experimental)) "ws"
+  else if (is_s(reference) & is_w(experimental)) "sw"
+  else if (is_s(reference) & is_s(experimental)) "ss"
+  else ""
+}
 
 plot_align <- function(data, mutant_) {
 
@@ -220,112 +239,289 @@ plot_align <- function(data, mutant_) {
       arrange(len) %>%
       {.$name}
   }
-
-  find_polarity <- function(reference, experimental) {
-    is_w <- function(base) { ifelse(base == "A" | base == "T", TRUE, FALSE)}
-    is_s <- function(base) { ifelse(base == "C" | base == "G", TRUE, FALSE)}
-
-    if      (is_w(reference) & is_w(experimental)) "ww"
-    else if (is_w(reference) & is_s(experimental)) "ws"
-    else if (is_s(reference) & is_w(experimental)) "sw"
-    else if (is_s(reference) & is_s(experimental)) "ss"
-    else ""
-  }
+  ## print(sort_by_tract_length(mutant_) %>% length())
 
   data %>%
     group_by(name, mutant) %>%
-    filter(
-      refp < 750 & refp > 57,
-      mutant == mutant_,
-      cons == "x" | cons == "X"
-    ) %>%
+    filter(#refp < 750 & refp > 57,
+           mutant == mutant_,
+           cons == "x" | cons == "X" ) %>%
     rowwise() %>%
     mutate(sens =  find_polarity(refb, seqb)) %>%
     ggplot(aes(x = factor(refp),
                y = factor(name, levels = sort_by_tract_length(mut=mutant_)))) +
     geom_point(aes(color = sens, size = qual, alpha=qual)) +
-    scale_color_viridis(
-      discrete = TRUE,
-      end=0.95
-      ## labels = c("Indel", "S vers S", "S vers W", "W vers S", "W vers W")
-    ) +
-    scale_alpha(
-      range=c(1/5, 1),
-      guide=FALSE
-    ) +
-    scale_size(
-      trans = "reverse",
-      range = c(1, 3),
-      breaks = c(10, 50),
-      labels = c("10", "50")) +
-    labs(
-      x = "Position sur la référence",
-      y = "",
-      color = "Remplacement",
-      size = "Qualité",
-      title = paste("Alignement pour la manip", toupper(mutant_))
-    ) +
-    theme(
-      legend.position = "top",
-      legend.margin=unit(-0.3,"lines"),
-      legend.key = element_rect(
-        fill = scales::alpha("gray", 0),
-        colour = scales::alpha("gray", 0)),
-      panel.grid.major.y = element_line(size = 0.1, linetype = "dotted")
-    )
+    scale_color_brewer(palette = "Set1") +
+    ## scale_color_viridis( discrete = TRUE,  end=0.95 ) +
+    scale_alpha( range=c(1/5, 0.8), guide=FALSE ) +
+    scale_size(range = c(1, 3), breaks = c(10, 50),
+               labels = c("10", "50")) +
+    labs(x = "Position sur la référence", y = "", color = "Remplacement",
+         size = "Qualité",
+         title = paste("Alignement pour la manip", toupper(mutant_))) +
+    theme(legend.position = "top",
+          legend.margin = unit(-0.3,"lines"),
+          legend.key = element_rect(fill = scales::alpha("gray", 0),
+                                    colour = scales::alpha("gray", 0)),
+          panel.grid.major.y = element_line(size = 0.1, linetype = "dotted"))
 }
 
 plot_qual <- function(data, mutant_) {
   data %>%
     filter(mutant == mutant_) %>%
-    ggplot(aes(x=refp, y=qual, color=qual)) +
-    geom_point(size=0.1, alpha=0.1) +
-    scale_color_viridis(end=0.95) +
-    labs(x="Position sur la référence",
-         y="") +
-    coord_cartesian(xlim=c(50, 730)) +
-    geom_smooth(se = FALSE, color=viridis(1), linetype="dotted")
+    ggplot(aes(x = refp, y = qual)) +
+    geom_point(size = 0.1, alpha = 1/20) +
+    scale_color_viridis(end = 0.95) +
+    labs(x = "Position sur la référence",
+         y = "") +
+    ## coord_cartesian(xlim = c(50, 730)) +
+    geom_smooth(se = FALSE, color = "red", linetype = "dotted")
 }
 
 plot_align_qual <- function(data, mutant_) {
   plot_grid(
     data %>% plot_align(mutant_),
     data %>% plot_qual(mutant_),
-    ncol=1, rel_heights = c(8.5, 1.5),
-    align='v', labels=c("  1", "  2")
+    ncol = 1, rel_heights = c(8.5, 1.5),
+    align = 'v', labels = c("  1", "  2")
   )
 }
 
-#+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+
+n_distinct(snp %>% filter(mutant == "ws") %>% group_by(name) %>% .$name )
+
+#+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
 snp %>% plot_align_qual("ws")
 
-#+ sw_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+#+ sw_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
 snp %>% plot_align_qual("sw")
 
-#+ s_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+#+ s_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
 snp %>% plot_align_qual("s")
 
-#+ w_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+#+ w_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
 snp %>% plot_align_qual("w")
 
-## snp %>%
-##   filter(cons != ".") %>%
-##   rowwise() %>%
-##   mutate(sens=find_polarity(refb, seqb)) %>%
-##   filter(sens != "") %>%
-##   print(n=100)
-
-#+ align1, fig.fullwidth=TRUE, fig.width=21, fig.height=21
+#+ align1, fig.fullwidth=TRUE, fig.width=21, fig.height=21, cache=FALSE
 plot_grid(
   snp %>% plot_align_qual("s"),
   snp %>% plot_align_qual("w"),
   snp %>% plot_align_qual("ws"),
   snp %>% plot_align_qual("sw"),
-  labels=c("A", "B", "C", "D"), ncol=4
+  labels = c("A", "B", "C", "D"), ncol = 4
 )
+## interactive only
+## save_as_a3("test.pdf")
 
-## save_as_a3("test.png")
+#' # Comparaison des longueurs de trace de conversion
+#'
+#' On peut s'attendre sous l'hypothèse gBGC à ce que les traces de conversions
+#' soient plus longues lorsqu'on transforme par un plasmide porteur de S que
+#' lorsqu'on transforme par un plasmide porteur de W.
+#'
 
-## snp %>%
-##   group_by(mutant) %>%
-##   summarise(count = n())
+#+ len_distrib, fig.margin=TRUE
+snp %>%
+  filter(cons == "x") %>%
+  group_by(name, mutant) %>%
+  summarise(len = max(refp) - min(refp) ) %>%
+  ggplot(aes(x = factor(mutant, levels = c("s", "w", "sw", "ws")),
+             y = len)) +
+  geom_point(alpha = 0.2) +
+  stat_summary(fun.y = "mean", geom = "point", color = "red", shape = "|",
+               size = 7) +
+  labs(x = "mutant", y = "Longueur\ndu tract") +
+  coord_flip()
+
+snp %>%
+  filter(cons == "x") %>%
+  group_by(name, mutant) %>%
+  summarise(len = max(refp) - min(refp) ) %>%
+  group_by(mutant) %>%
+  summarise(mean_len = mean(len))
+
+#+ len_distrib2, fig.margin=TRUE
+snp %>%
+  filter(cons == "x") %>%
+  group_by(name, mutant) %>%
+  summarise(len = max(refp) - min(refp) ) %>%
+  ggplot(data = ., aes(x = len, fill = mutant )) +
+  geom_histogram(binwidth = 5, position = "dodge") +
+  facet_grid(mutant ~ .) +
+  scale_fill_viridis(discrete = TRUE) +
+  labs(x = "Longueur de trace de conversion",
+       y = "",
+       title = "Distribution des\nlongueurs de trace de conversion")
+
+#' Pour l'instant on ne voit quand même pas grand chose de flagrant. Il
+#' semblerait même que les plasmides `S` introduisent des traces de conversion
+#' plus courtes, même si rien de quantifié pour l'instant.
+#'
+
+#' Comptage des alternances SNP SS et WW
+#'
+#' Pour la manip WS et SW, le but est de compter les positions où on voit des alternances de WWW ou SSS.
+
+
+#' La fonction suivante renvoit un `tbl_df` avec le nom, le type de mutant, le
+#' genotype.
+#' @param data: le jeu de donnée snp,
+#' @param mutant: crée un filtre par mutant. Selon les mutants, on ne recherche
+#'   pas les mêmes séquences.
+make_genotype <- function(data, mutant_, qual_ = 30) {
+  weak_or_strong <- function(base) {
+    is_w <- function(base) { ifelse(base == "A" | base == "T", TRUE, FALSE)}
+    is_s <- function(base) { ifelse(base == "C" | base == "G", TRUE, FALSE)}
+
+    if (is_w(base)) "W"
+    else if (is_s(base)) "S"
+    else if (base == "N") "N"
+    else stop(base, " is not a DNA base")
+  }
+
+
+  data %>%
+    filter(cons == "x" | cons == "X", name != "psw21", qual > qual_) %>%
+    filter(mutant %in% mutant_) %>%
+    rowwise() %>%
+    mutate(geno = weak_or_strong(seqb)) %>%
+    ungroup() %>% group_by(name, mutant) %>%
+    summarise(geno = toString(geno) %>% gsub(", ", "", .))
+}
+
+#' La fonction suivante permet de compter le nombre d'anomalies, autrement dit
+#' de SNP inattendus dans les traces de conversion. Renvoit une `tbl_df`
+#' @param data : le jeu de donné snp
+#' @param kmer : le kmer à recenser dans le génotype.
+count_kmer <- function(data, kmer) {
+  count_anomaly <- function(string, kmer_) {
+    find_xxx <- function(string) {
+      function(kmer_) {
+        XxX <- gregexpr(kmer_, string) %>% unlist()
+        xXx <- gregexpr(kmer_, string) %>% unlist()
+        counter <- 0
+        if      (XxX[1] > 0) counter <- counter + length(XxX)
+        else if (xXx[1] > 0) counter <- counter + length(xXx)
+        counter
+      }
+    }
+    find_xxx(string)(kmer_)
+  }
+
+  data %>%
+    rowwise() %>%
+    mutate(anom = count_anomaly(geno, kmer)) %>%
+    filter(anom > 0)
+}
+
+#' Si on compte le nombre de positions WWW, on en a 3 dans la manip sw :
+snp %>% make_genotype(c("ws", "sw")) %>% count_kmer("WWW") %>% knitr::kable()
+#' Si on compte le nombre de marqueurs SSS, on en a 9 sur les deux manips :
+snp %>% make_genotype(c("ws", "sw")) %>% count_kmer("SSS") %>% knitr::kable()
+#' Les mêmes comptages pour les manips précédentes confirment ce qu'on savait déjà :
+snp %>% make_genotype("w" ) %>% count_kmer("WSW") %>% knitr::kable()
+snp %>% make_genotype("s" ) %>% count_kmer("WSW")
+                                        # peanuts.
+
+#' Les mêmes comptages sans filtrer sur la qualité, on retrouve les 6 positions
+#' que Laurent voyait déjà sur les alignements:
+snp %>% make_genotype("w", qual_ = 0) %>% count_kmer("WSW") %>% knitr::kable()
+snp %>% make_genotype("s", qual_ = 0) %>% count_kmer("SWS") %>% knitr::kable()
+
+#' # Quantification du rapport en base
+#'
+#' Franck se disait qu'il serait peut-être judicieux de comparer globalement le
+#' taux de GC global de nos séquences, sachant qu'on introduit des SNPs AT et GC
+#' dans toutes nos séquences, en tout cas pour la manip SW / WS.
+#'
+get_gc_content <- function(data, mut=NULL, tidy = TRUE) {
+  clean_seq <- function(x) toString(x) %>% gsub(", ", "", . )
+
+  get_gc_rate <- function(dna_seq) {
+
+  }
+  if (is.null(mut)) mut <- c("ws", "sw", "w", "s")
+
+  gc_content <- data %>% filter(mutant %in% mut) %>% group_by(name, mutant) %>%
+    summarise(exp = seqinr::GC(seqb),
+              snp = seqinr::GC(snpb),
+              ref = seqinr::GC(refb))
+  if (tidy) gc_content %>% tidyr::gather("type", "GC", 3:5)
+  else gc_content
+}
+
+get_marker_only <- function(data, snp_only = TRUE) {
+  ## permet de ne conserver que les marqueurs dans le jeu de donnée
+  snp_without_N <-  data %>% filter(cons != "N", cons != "-", name != "psw21")
+
+  if (snp_only) filter(snp_without_N, cons == "X" | cons == "x")
+  else snp_without_N
+}
+
+set_mutant_factor <- function(data) {
+  ## attribue les bons niveaux de facteurs aux donneurs s.
+  mutate(data, mutant = factor(mutant, levels = c("s", "w", "sw", "ws")))
+}
+
+set_seq_factor <- function(data) {
+  ## attribue les bons niveaux de facteurs aux différentes séquences. Choisies
+  ## de façon à ce que la base expérimentale apparaisse en rouge.
+  mutate(data, seq = factor(seq, levels = c("seqb", "refb", "snpb"),
+                            labels = c("Expérimental", "Référence", "Donneur")))
+}
+
+set_base_factor <- function(data) {
+  ## attribue les bons niveaux de facteurs aux différentes bases, de façon à ce
+  ## que S et W clusterent.
+  mutate(data, base = factor(base, levels = c("G", "C", "T", "A")))
+}
+
+snp %>%
+  get_gc_content() %>%
+  filter(name != "psw21") %>%
+  mutate(mutant = factor(mutant, levels = c("s", "w", "sw", "ws"))) %>%
+  group_by(mutant, type) %>%
+  ## summarise(gc_mean = mean(GC)) %>%
+  ggplot(
+    aes(y = GC,
+        x = factor(type, levels = c("snp", "exp", "ref"),
+                   labels = c("Donneur", "Expérimental", "Receveur")))) +
+  geom_jitter(aes(color = mutant), width = 1/3, alpha = 0.5) +
+  stat_summary(fun.y = mean, geom = "point", color = "black", shape = "¦",
+               size = 6) +
+  facet_grid(mutant ~ .) +
+  labs(y = "% GC", x = "") +
+  scale_color_brewer(palette = "Set1") +
+  coord_flip()
+
+snp %>%
+  get_gc_content()  %>%
+  set_mutant_factor() %>%
+  filter(name != "psw21") %>%
+  mutate(type = factor(type, levels = c("ref", "exp", "snp"),
+                       labels = c("Receveur", "Expérimental", "Donneur"))) %>%
+  ggplot(aes(x = type, y = GC, color = mutant)) +
+  ## geom_point() +
+  geom_line(aes(group = name), alpha = 0.3) +
+  scale_color_brewer(palette = "Set1") +
+  labs(x = "", y = "%GC", color = "Donneur :") +
+  legend_position()
+
+snp %>%
+  set_mutant_factor() %>%
+  get_marker_only(TRUE) %>%
+  select(name, mutant, refp, seqb, refb, snpb) %>%
+  tidyr::gather(key = seq, "base", 4:6) %>%
+  group_by(mutant, seq, base) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  set_seq_factor() %>%
+  set_base_factor() %>%
+  ggplot(aes(x = base, y = count, color = seq, shape = mutant )) +
+  geom_point() +
+  facet_grid(mutant ~ .) +
+  scale_shape_discrete(guide = FALSE) +
+  scale_color_brewer(palette = "Set1") +
+  labs(y = "", x = "", shape = "Séquence :", color = "Donneur :") +
+  coord_flip() +
+  legend_position()

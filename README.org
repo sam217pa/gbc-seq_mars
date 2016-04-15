@@ -873,7 +873,7 @@ muscle à chaque séquence. Une façon plus efficace de faire la même
 chose serait d'aligner l'ensemble des séquences SNP WS d'un coup, avec
 leur référence, mais c'est un peu plus compliqué à programmer.
 
-#+BEGIN_SRC python :tangle src/phruscle.py
+#+BEGIN_SRC python :tangle no
 # -*- coding: utf-8 -*-
 
 # 1. lancer phred sur la séquence abi en entrée.
@@ -1306,28 +1306,28 @@ séquences SW et WS.
 muscle \
     -profile \
     -quiet \
-    -in1 <(fastx_reverse_complement -i raw/ref/strong-weak.fasta) \
+    -in1 raw/ref/strong-weak.fasta \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-sw-ref.fst
 
 muscle \
     -profile \
     -quiet \
-    -in1 <(fastx_reverse_complement -i raw/ref/weak-strong.fasta) \
+    -in1 raw/ref/weak-strong.fasta \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-ws-ref.fst
 
 muscle \
     -profile \
     -quiet \
-    -in1 <(fastx_reverse_complement -i raw/ref/strong.fasta) \
+    -in1 raw/ref/strong.fasta \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-s-ref.fst
 
 muscle \
     -profile \
     -quiet \
-    -in1 <(fastx_reverse_complement -i raw/ref/weak.fasta) \
+    -in1 raw/ref/weak.fasta \
     -in2 raw/ref/reference1073bis-1392.fasta \
     -out raw/ref/aln-w-ref.fst
 #+END_SRC
@@ -1346,7 +1346,8 @@ for file in ../spectro/*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-ws-ref.fst
+			       --ref $ROOT/raw/ref/aln-ws-ref.fst \
+             --cutoff 0.10
 
 	  phruscle table \
 			       --input `basename $file`.seq.aln \
@@ -1363,7 +1364,8 @@ for file in ../spectro/*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-sw-ref.fst
+			       --ref $ROOT/raw/ref/aln-sw-ref.fst \
+             --cutoff 0.10
 
 	  phruscle table \
 			       --input `basename $file`.seq.aln \
@@ -1380,7 +1382,8 @@ for file in ../spectro/pW*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-w-ref.fst
+			       --ref $ROOT/raw/ref/aln-w-ref.fst \
+             --cutoff 0.10
 
 	  phruscle table \
 			       --input `basename $file`.seq.aln \
@@ -1396,7 +1399,8 @@ for file in ../spectro/pS*.ab1
 do
     phruscle basecall \
 			       --input $file \
-			       --ref $ROOT/raw/ref/aln-s-ref.fst
+			       --ref $ROOT/raw/ref/aln-s-ref.fst \
+             --cutoff 0.10
 
 	  phruscle table \
 			       --input `basename $file`.seq.aln \
@@ -1408,6 +1412,43 @@ done
 cd ../../
 csvstack ws/aln/*.csv sw/aln/*.csv s_w/aln/*.csv > phruscle_snpcall.csv
 #+END_SRC
+
+
+*** analyses complémentaires
+Aujourd'hui [2016-04-15 Fri] nous avons discuté avec Laurent, Vincent et Franck
+de la façon optimale de conduire la suite des analyses.
+
+On s'est rendu compte de plusieurs choses.
+
+1. On se demande où est partie la première (ou la dernière ?) position de SNP
+   qu'on voit sur les alignements WS mais pas sur les alignements SW. Il faut
+   donc essayer de vérifier dans les alignements pairwise si on a bien notre
+   premier SNP.
+2. il faut essayer de représenter sur un graphe les effectifs de point de
+   bascule.
+3. On peut avoir différentes infos : on peut compter les doublets SS et WW dans
+   les manips SW et WS pour connaître les effectifs qui switchent à un endroit
+   donné, et les triplets correspondent aux évènements complexes. On peut
+   résumer ça par la pseudo équation =nombre de doublet total = nombre de
+   doublet en fin de conversion + nombre de restauration du genotype parental=.
+4. sur la figure des alignements, il serait judicieux de représenter quelque
+   part le génotype parental, et le génotype du donneur. On veut également
+   représenter la trace de conversion par du bleu tout le temps, et le génotype
+   parental par du rouge. On aurait de ce fait les mêmes codes couleurs pour
+   toutes les manips.
+5. pour compter les cas de tracts complexes, /on ne doit pas filtrer/ sur la
+   qualité avant de déterminer le génotype, sinon on affecte le génotype inféré,
+   et donc les cas complexes. On peut donc remplacer les bases de mauvaises
+   qualité par des N.
+6. Pour différencier les cas de restauration des cas "normaux", on peut
+   représenter les points, en gardant le même code couleur (donneur / receveur)
+   par des ~+~ ou des carrés.
+7. On peut éviter de parler de S, W, SW et WS, mais parler de GC+, AT+ etc… Pour
+   rester clean dans le discours.
+
+On veut également essayer de mettre au point un schéma pour représenter de façon
+visuelle ce qu'il se passe dans notre construction, à quel endroit les SNP sont
+convertis, de quelle façon, etc…
 
 
 * Tests

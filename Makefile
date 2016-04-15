@@ -107,9 +107,6 @@ commit:
 
 
 # supprime tout sauf le README.org
-.PHONY: clean cleanall
+.PHONY: clean
 clean:
 	rm -rf data
-
-cleanall:
-	rm -rf data anl
