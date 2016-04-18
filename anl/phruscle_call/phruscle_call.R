@@ -38,8 +38,10 @@ library(ggplot2)
 library(readr)
 library(viridis)
 library(cowplot)
+library(extrafont)
 #
 fte_theme <- function() {
+  ## inspiré de http://minimaxir.com/2015/02/ggplot-tutorial/
   ## Generate the colors for the chart procedurally with RColorBrewer
   palette <- RColorBrewer::brewer.pal("Greys", n=9)
   color.background = palette[2]
@@ -51,26 +53,25 @@ fte_theme <- function() {
   theme_bw(base_size=9) +
     ## Set the entire chart region to a light gray color
     theme(
-      ## panel.background=element_rect(fill=color.background, color=color.background),
-      panel.background=element_blank(),
-      plot.background=element_rect(fill=color.background, color=color.background),
-      ## panel.border=element_rect(color=color.background),
-      panel.border=element_rect(size = 1, color=color.grid.major),
+      text = element_text(family = "Ubuntu Light"),
+      panel.background=element_rect(fill=alpha(color.background, 1), color=color.background),
+      plot.background=element_rect(fill=alpha(color.background, 0.5), color=color.background),
+      panel.border=element_rect(color=color.background),
+      ## panel.border=element_rect(size = 1, color=color.grid.major),
       panel.grid.major=element_line(color=color.grid.major,size=.25, linetype = "dotted"),
       panel.grid.minor=element_blank(),
       axis.ticks=element_blank(),
       strip.text.y = element_text(angle = 0, size = 8),
       ## Format the legend, but hide by default
       legend.position="none",
-      legend.background = element_rect(fill = scales::alpha(color.background, 0.3)),
+      legend.background = element_rect(fill = scales::alpha(color.background, 0.5)),
       legend.text = element_text(size=9,color=color.axis.title),
       ## Set title and axis labels, and format these and tick marks
-      plot.title=element_text(color=color.title, size=14,
-                              face = "bold", vjust=1.25, hjust = 0),
-      axis.text.x=element_text(size=7,color=color.axis.text),
-      axis.text.y=element_text(size=7,color=color.axis.text),
-      axis.title.x=element_text(size=8, color=color.axis.title, vjust=0, hjust = 0.9),
-      axis.title.y=element_text(size=8, color=color.axis.title, vjust = 0.9, angle = 0 ),
+      plot.title = element_text(color = color.title, size = 14, face = "bold", vjust = 1.25, hjust = 0, family = "Ubuntu"),
+      axis.text.x = element_text(size = 7,color = color.axis.text),
+      axis.text.y = element_text(size = 7,color = color.axis.text),
+      axis.title.x = element_text(size = 8, color = color.axis.title, vjust = 0, hjust = 0.9),
+      axis.title.y = element_text(size = 8, color = color.axis.title, vjust = 0.9, angle = 0 ),
       ## Plot margins
       plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm")
     )
@@ -239,6 +240,10 @@ plot_align <- function(data, mutant_) {
       {.$name}
   }
   ## print(sort_by_tract_length(mutant_) %>% length())
+  red <- RColorBrewer::brewer.pal(n = 4, "Set1")[1]
+  blue <- RColorBrewer::brewer.pal(n = 4, "Set1")[2]
+  green <- RColorBrewer::brewer.pal(n = 4, "Set1")[3]
+  violet <- RColorBrewer::brewer.pal(n = 4, "Set1")[4]
 
   data %>%
     group_by(name, mutant) %>%
@@ -250,6 +255,11 @@ plot_align <- function(data, mutant_) {
     ggplot(aes(x = factor(refp),
                y = factor(name, levels = sort_by_tract_length(mut=mutant_)))) +
     geom_point(aes(color = sens, size = qual, alpha=qual)) +
+    ## add the ref seq
+    geom_text(aes(label = refb, x = factor(refp), y = -3), color = red, vjust = -0.5) +
+    ## add the donneur seq
+    geom_text(aes(label = snpb, x = factor(refp), y = length(sort_by_tract_length(mutant_)) + 5),
+              color = blue, vjust = 1.5) +
     scale_color_brewer(palette = "Set1") +
     ## scale_color_viridis( discrete = TRUE,  end=0.95 ) +
     scale_alpha( range=c(1/5, 0.8), guide=FALSE ) +
@@ -264,6 +274,8 @@ plot_align <- function(data, mutant_) {
                                     colour = scales::alpha("gray", 0)),
           panel.grid.major.y = element_line(size = 0.1, linetype = "dotted"))
 }
+
+snp %>% plot_align("ws")
 
 plot_qual <- function(data, mutant_) {
   data %>%
@@ -414,8 +426,6 @@ make_genotype <- function(data, mutant_, qual_ = 30) {
     summarise(geno = toString(geno) %>% gsub(", ", "", .))
 }
 
-make_genotype(snp, c("sw", "ws"), 30)
-
 #' La fonction suivante permet de compter le nombre d'anomalies, autrement dit
 #' de SNP inattendus dans les traces de conversion. Renvoit une `tbl_df`
 #' @param data : le jeu de donné snp
@@ -441,6 +451,7 @@ count_kmer <- function(data, kmer) {
     filter(anom > 0)
 }
 
+#' Compte les doublets des séquences propres.
 count_doublet <- function(data, mut, kmer) {
   data %>%
     keep_clean_only() %>%
@@ -451,8 +462,9 @@ count_doublet <- function(data, mut, kmer) {
     }
 }
 
-snp %>% count_doublet(mut = "ws", "WWW")
-snp %>% count_doublet(mut = "ws", "SSS")
+ws_et_sw = c("ws", "sw")
+snp %>% count_doublet(mut = ws_et_sw, "WW")
+snp %>% count_doublet(mut = ws_et_sw, "SS")
 
 #' Si on compte le nombre de positions WWW, on en a 3 dans la manip sw :
 snp %>% keep_clean_only() %>% make_genotype(c("ws", "sw"), qual_ = 0) %>% count_kmer("WWW") #%>% knitr::kable()
@@ -473,6 +485,9 @@ snp %>% make_genotype("s") %>% count_kmer("WSW")
 #' que Laurent voyait déjà sur les alignements:
 snp %>% make_genotype("w", qual_ = 0) %>% count_kmer("WSW") %>% knitr::kable()
 snp %>% make_genotype("s", qual_ = 0) %>% count_kmer("SWS") %>% knitr::kable()
+
+snp %>% count_doublet("w", "WSW")
+snp %>% count_doublet("s", "SWS")
 
 #' # Quantification du rapport en base
 #'
@@ -536,11 +551,13 @@ snp %>%
   stat_summary(fun.y = mean, geom = "point", color = "black", shape = "¦",
                size = 6) +
   facet_grid(mutant ~ .) +
-  labs(y = "% GC", x = "") +
+  labs(y = "% GC", x = "", title = "Comparaison des taux de GC") +
   scale_color_brewer(palette = "Set1") +
-  coord_flip()
+  coord_flip() +
+  theme(text = element_text(family = "Palatino"))
 
 snp %>%
+  keep_clean_only() %>%
   get_gc_content()  %>%
   set_mutant_factor() %>%
   filter(name != "psw21") %>%
@@ -551,7 +568,10 @@ snp %>%
   geom_line(aes(group = name), alpha = 0.3) +
   scale_color_brewer(palette = "Set1") +
   labs(x = "", y = "%GC", color = "Donneur :") +
-  legend_position()
+  legend_position() +
+  theme(text = element_text(family = "Ubuntu Light"))
+
+## fonts()
 
 snp %>%
   set_mutant_factor() %>%
@@ -571,3 +591,5 @@ snp %>%
   labs(y = "", x = "", shape = "Séquence :", color = "Donneur :") +
   coord_flip() +
   legend_position()
+
+sessionInfo()
