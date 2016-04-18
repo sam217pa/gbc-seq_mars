@@ -79,10 +79,9 @@ fte_theme <- function() {
 theme_set(theme_bw() + fte_theme())
 #
 legend_position <- function(x=NULL, y=NULL) {
-  custom_legend <-
-    theme(legend.margin = unit(-0.3,"lines"),
-          legend.key = element_rect(fill = scales::alpha("gray", 0),
-                                    colour = scales::alpha("gray", 0)))
+  custom_legend <- theme(legend.margin = unit(-0.3,"lines"),
+                         legend.key = element_rect(fill = scales::alpha("gray", 0),
+                                                   colour = scales::alpha("gray", 0)))
 
   if (is.null(x) & is.null(y)) custom_legend + theme(legend.position = "bottom")
   else custom_legend + theme(legend.position = c(x, y))
@@ -362,6 +361,30 @@ snp %>%
 #'
 #' Pour la manip WS et SW, le but est de compter les positions où on voit des alternances de WWW ou SSS.
 
+#' Certaines séquences ne sont pas des plus propres. On peut certainement les
+#' virer pour ne garder que les bonnes séquences. Comme pour le cas de la
+#' séquence psw21.
+
+#+ mean_qual, fig.margin = TRUE
+snp %>%
+  group_by(name) %>%
+  summarise(median = median(qual)) %>%
+  qplot(data = . , median, binwidth = 1) +
+  geom_vline(xintercept = 40, color = "red")
+
+#' Dans la fonction suivante, je me suis donc dit qu'il était possible de ne
+#' garder que les séquences dont la qualité médianne est supérieure à 40.
+keep_clean_only <- function(data, qual_ = 40) {
+
+  get_dirty_seq <- function(data)
+    group_by(data, name) %>%
+    summarise(median = median(qual)) %>%
+    filter(median < qual_) %>%
+    select(name) %>% unlist()
+
+  data %>%
+    filter(!(name %in% get_dirty_seq(data)))
+}
 
 #' La fonction suivante renvoit un `tbl_df` avec le nom, le type de mutant, le
 #' genotype.
@@ -381,13 +404,17 @@ make_genotype <- function(data, mutant_, qual_ = 30) {
 
 
   data %>%
-    filter(cons == "x" | cons == "X", name != "psw21", qual > qual_) %>%
+    filter(cons == "x" | cons == "X", name != "psw21") %>%
     filter(mutant %in% mutant_) %>%
     rowwise() %>%
+    # convertit les bases d'une qualité inférieure à qual_ en N
+    mutate(seqb = ifelse(qual < qual_, "N", seqb )) %>%
     mutate(geno = weak_or_strong(seqb)) %>%
     ungroup() %>% group_by(name, mutant) %>%
     summarise(geno = toString(geno) %>% gsub(", ", "", .))
 }
+
+make_genotype(snp, c("sw", "ws"), 30)
 
 #' La fonction suivante permet de compter le nombre d'anomalies, autrement dit
 #' de SNP inattendus dans les traces de conversion. Renvoit une `tbl_df`
@@ -414,13 +441,32 @@ count_kmer <- function(data, kmer) {
     filter(anom > 0)
 }
 
+count_doublet <- function(data, mut, kmer) {
+  data %>%
+    keep_clean_only() %>%
+    make_genotype(mut) %>%
+    count_kmer(kmer) %>% {
+      if (nrow( . ) > 0) select(., anom) %>% sum()
+      else 0
+    }
+}
+
+snp %>% count_doublet(mut = "ws", "WWW")
+snp %>% count_doublet(mut = "ws", "SSS")
+
 #' Si on compte le nombre de positions WWW, on en a 3 dans la manip sw :
-snp %>% make_genotype(c("ws", "sw")) %>% count_kmer("WWW") %>% knitr::kable()
+snp %>% keep_clean_only() %>% make_genotype(c("ws", "sw"), qual_ = 0) %>% count_kmer("WWW") #%>% knitr::kable()
 #' Si on compte le nombre de marqueurs SSS, on en a 9 sur les deux manips :
-snp %>% make_genotype(c("ws", "sw")) %>% count_kmer("SSS") %>% knitr::kable()
+snp %>% make_genotype(c("ws", "sw"), qual_ = 0) %>% count_kmer("SSS") %>% select(anom) %>% sum()
+#' Si on compte seulement les doublets manips par manips :
+snp %>% make_genotype(c("ws")) %>% count_kmer("WWW") #%>% select(anom) %>% sum()
+snp %>% make_genotype(c("ws")) %>% count_kmer("SS") %>% select(anom) %>% sum()
+snp %>% make_genotype(c("sw")) %>% count_kmer("SS") %>% select(anom) %>% sum()
+snp %>% make_genotype(c("sw")) %>% count_kmer("WW") %>% select(anom) %>% sum()
+
 #' Les mêmes comptages pour les manips précédentes confirment ce qu'on savait déjà :
-snp %>% make_genotype("w" ) %>% count_kmer("WSW") %>% knitr::kable()
-snp %>% make_genotype("s" ) %>% count_kmer("WSW")
+snp %>% make_genotype("w") %>% count_kmer("WSW") %>% knitr::kable()
+snp %>% make_genotype("s") %>% count_kmer("WSW")
                                         # peanuts.
 
 #' Les mêmes comptages sans filtrer sur la qualité, on retrouve les 6 positions
