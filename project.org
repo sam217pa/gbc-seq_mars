@@ -11,7 +11,7 @@ analyses. Rien ne doit toucher au dossier =raw=.
 J'ai ensuite utilisé le script [[./src/sort_into_dir.sh]] pour classer les
 fichiers selon leur extension.
 
-#+BEGIN_SRC sh :tangle src/sort_into_dir.sh
+#+BEGIN_SRC sh :tangle no
 #!/bin/bash
 
 cd data/ws
@@ -39,7 +39,7 @@ globale des séquences. Je les ai donc converties en fastq avec le
 script [[./src/ab1_to_fastq.sh]], et j'ai utilisé ~fastqc~ pour
 représenter la qualité globale via le script [[./src/quality_control.sh]].
 
-#+BEGIN_SRC sh :tangle src/ab1_to_fastq.sh
+#+BEGIN_SRC sh :tangle no
 #!/bin/bash
 
 # transforme en fastq
@@ -80,7 +80,7 @@ done
 J'ai utilisé ~fastqc~ pour représenter la qualité globale via le
 script [[./src/quality_control.sh]].
 
-#+BEGIN_SRC sh :tangle src/quality_control.sh
+#+BEGIN_SRC sh :tangle no
 #!/bin/bash
 
 # contrôle qualité des séquences.
@@ -126,7 +126,7 @@ J'ai rapidement analysé la sortie du SNP calling effectué par GATC,
 mais il manque des données. Je vais refaire le SNP calling moi-même,
 en utilisant dans un premier temps ssaha2.
 
-#+BEGIN_SRC R :tangle anl/gatc_snpcall/snp_call.r :exports none
+#+BEGIN_SRC R :tangle no :exports none
   #' ---
   #' title: "Rapide analyse des SNP"
   #' author: "Samuel BARRETO"
@@ -232,7 +232,7 @@ html là [[./anl/gatc_snpcall/snp_call.html]].
 J'ai utilisé le programme bbduk pour trimmer les séquences de faible
 qualité.
 
-#+BEGIN_SRC sh :tangle src/qtrim.sh
+#+BEGIN_SRC sh :tangle no
   #!/bin/bash
 
   #' -qtrim=rl : quality trim right and left
@@ -273,7 +273,7 @@ qualité.
 
 ** Contrôle qualité des séquences trimmées
 
-#+begin_src sh :tangle src/qtrim_qc.sh
+#+begin_src sh :tangle no
   #!/usr/bin/env bash
 
   cd data
@@ -297,7 +297,7 @@ bases qu'on veut analyser sont de bonne qualité. C'est donc plutôt bon signe.
 
 ** Pooling des séquences dans un seul fastq
 
-#+BEGIN_SRC sh :tangle src/pool_trim.sh
+#+BEGIN_SRC sh :tangle no
   #!/usr/bin/env bash
 
   cat data/sw/sw_untrimmed.fastq.trim data/ws/ws_untrimmed.fastq.trim > data/trimmed.fastq
@@ -309,7 +309,7 @@ bases qu'on veut analyser sont de bonne qualité. C'est donc plutôt bon signe.
 Pour les analyses dans seaview, il faut un fichier fasta. Je lui
 ajoute la référence.
 
-#+BEGIN_SRC sh :tangle src/trim_to_fasta.sh
+#+BEGIN_SRC sh :tangle no
 #!/usr/bin/env bash
 
 seqret -sformat fastq -osformat fasta -auto -stdout \
@@ -343,7 +343,7 @@ Il est très important que les fichiers fasta de référence soit formattés de 
 bonne façon, sinon ssahaSNP ne sort pas les bonnes valeurs dans les lignes de
 tableau.
 
-#+begin_src sh :tangle src/snp_call.sh
+#+begin_src sh :tangle no
    #!/usr/bin/env bash
 
    # Variant calling using ssaha2 and ssahaSNP
@@ -386,7 +386,7 @@ Le script est là : [[./src/snp_call.sh]].
 Les spectrogrammes contiennent l'info permettant de relier à un
 identifiant de séquence le nom expérimental qu'on lui a attribué.
 
-#+BEGIN_SRC python :tangle src/make_id_table.py
+#+BEGIN_SRC python :tangle no
   #!/usr/bin/env python
 
   from Bio import SeqIO
@@ -419,7 +419,7 @@ identifiant de séquence le nom expérimental qu'on lui a attribué.
 #+END_SRC
 
 ** Analyses des résultats de snp calling
-#+BEGIN_SRC R :tangle anl/snp_call/snp_call.r :exports none
+#+BEGIN_SRC R :tangle no :exports none
 #' ---
 #' title: Analyse globale des SNP
 #' author: Samuel BARRETO
@@ -1246,7 +1246,7 @@ def clean_output(input, phd, output, reverse=False):
 
 Le script suivant est un script pour déployer =phruscle=.
 
-#+BEGIN_SRC python :tangle setup.py
+#+BEGIN_SRC python :tangle no
 from setuptools import setup, find_packages
 
 setup(name="phruscle",
@@ -1302,7 +1302,7 @@ recréer l'alignement entre la séquence sauvage et la séquence snp de WS et SW
 J'utilise muscle pour faire l'alignement entre la séquence sauvage et les
 séquences SW et WS.
 
-#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/make_ref
+#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle no
 muscle \
     -profile \
     -quiet \
@@ -1334,7 +1334,7 @@ muscle \
 
 *** run phruscle on it
 
-#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle src/phruscler
+#+BEGIN_SRC sh :results none :shebang "#!/usr/bin/env bash" :tangle no
 ROOT=`pwd`
 
 # ------------------------------------------------------------------------------
@@ -1413,7 +1413,6 @@ cd ../../
 csvstack ws/aln/*.csv sw/aln/*.csv s_w/aln/*.csv > phruscle_snpcall.csv
 #+END_SRC
 
-
 *** analyses complémentaires
 Aujourd'hui [2016-04-15 Fri] nous avons discuté avec Laurent, Vincent et Franck
 de la façon optimale de conduire la suite des analyses.
@@ -1465,7 +1464,7 @@ chmod +x test/assert.sh
 
 Le script pour tester les résultats, via =make test=.
 
-#+BEGIN_SRC sh :tangle test/test.sh
+#+BEGIN_SRC sh :tangle no
   #!/bin/bash
 
   # cette fonction renvoit le nombre de séquence dans un fichier fastq poolé.

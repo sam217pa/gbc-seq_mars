@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+mkdir data/aln
+cd data/aln
+
+# interactive only
+cd ~/stage/seq_mars/data/aln
+
+rev_comp () {
+    fasta_formatter -i $1 | fastx_reverse_complement
+}
+
+cat_ref () {
+  cat <( rev_comp ../../raw/ref/reference.fasta ) <( rev_comp $1 )
+}
+
+# 1. la référénce 2. le gs 3. la séquence expérimentale
+run_muscle () {
+    muscle -quiet \
+           -in <(cat <( cat_ref $1 ) $2 | sed 's/>/\n>/' | sed '/^$/d' ) \
+           -out $2.aln
+}
+
+run_phruscle () {
+    phruscle table                                       \
+             --input `basename $1`.seq.aln               \
+             --phd `basename $1`.phd.1                   \
+             --output `basename $1`.csv
+    echo "Ran phruscle table on $1"
+}
+
+# phred -st fasta -trim_alt "" -trim_cutoff 0.10 -trim_fasta -trim_phd -s -p -id ../spectro/
+
+## test
+run_muscle ../../raw/ref/strong-weak.fasta pws1-1073bis.ab1.seq
+run_phruscle pws1-1073bis.ab1
+## /test
+
+for file in ../spectro/psw*.ab1
+do
+    run_muscle ../../raw/ref/strong-weak.fasta `basename $file`.seq
+    run_phruscle `basename $file`
+done
+
+# for file in ../spectro/pws*.ab1
+# do
+#     run_muscle ../../raw/ref/weak-strong.fasta `basename $file`.seq
+#     run_phruscle `basename $file`
+# done
+
+# for file in ../spectro/pS*.ab1
+# do
+#     run_muscle ../../raw/ref/strong.fasta `basename $file`.seq
+#     run_phruscle `basename $file`
+# done
+
+# for file in ../spectro/pW*.ab1
+# do
+#     run_muscle ../../raw/ref/weak.fasta `basename $file`.seq
+#     run_phruscle `basename $file`
+# done
+
+## combine
+
+csvstack *.csv > ../phruscle_snpcall.csv

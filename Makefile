@@ -16,16 +16,12 @@ anl/phruscle_call/phruscle_call.html: anl/phruscle_call/phruscle_call.R data/phr
 	R --vanilla -e "rmarkdown::render('$<')"
 	git stage $< $@
 
-data/phruscle_snpcall.csv: src/phruscler phruscle.py src/make_ref data/sw/seq
-	mkdir data/ws/aln
-	mkdir data/sw/aln
-	mkdir data/s_w/aln
-	src/make_ref
+data/phruscle_snpcall.csv: src/phruscler phruscle.py data/sw/seq
 	$<
 
 .PHONY: clean_phruscle
 phruscle_clean:
-	rm -r data/sw/aln data/ws/aln data/s_w/aln data/phruscle_snpcall.csv
+	rm -r data/aln data/phruscle_snpcall.csv
 ## </phruscle>
 
 ## snp calling via ssahaSNP

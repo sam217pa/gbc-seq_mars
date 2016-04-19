@@ -64,8 +64,10 @@ fte_theme <- function() {
       strip.text.y = element_text(angle = 0, size = 8),
       ## Format the legend, but hide by default
       legend.position="none",
-      legend.background = element_rect(fill = scales::alpha(color.background, 0.5)),
+      legend.background = element_blank(),
       legend.text = element_text(size=9,color=color.axis.title),
+      legend.key = element_rect(fill = scales::alpha("gray", 0),
+                                colour = scales::alpha("gray", 0)),
       ## Set title and axis labels, and format these and tick marks
       plot.title = element_text(color = color.title, size = 14, face = "bold", vjust = 1.25, hjust = 0, family = "Ubuntu"),
       axis.text.x = element_text(size = 7,color = color.axis.text),
@@ -83,15 +85,13 @@ legend_position <- function(x=NULL, y=NULL) {
   custom_legend <- theme(legend.margin = unit(-0.3,"lines"),
                          legend.key = element_rect(fill = scales::alpha("gray", 0),
                                                    colour = scales::alpha("gray", 0)))
-
   if (is.null(x) & is.null(y)) custom_legend + theme(legend.position = "bottom")
   else custom_legend + theme(legend.position = c(x, y))
 }
 #
-#
 data_location <- "../../data/phruscle_snpcall.csv"
 #
-snp <- read_csv(data_location) %>%
+snp <- read_csv(data_location, col_types = "ccciciccid", trim_ws = TRUE) %>%
   mutate(
     name = gsub("-1073.+$", "", name),
     base = toupper(base)#,
@@ -111,9 +111,11 @@ snp <- snp %>%
   summarise(count = n()) %>%
   rowwise() %>%
   mutate(mutant=find_mutant(name)) %>%
-  inner_join(snp, .)
+  inner_join(snp, .) %>%
+  filter(mutant != "")
 
-#'
+summary(snp$qual)
+
 #' J'ai donc obtenu un tableau de donnée de la forme suivante, où :
 #'
 #' - `cons`: un code maison pour déterminer le _consensus_. `.` si les trois
@@ -129,6 +131,8 @@ snp <- snp %>%
 #' - `qual`: sa qualité.
 #' - `phase`: la position sur le spectrogramme.
 #' - `mutant`: ordinal, la manip.
+#'
+#' Vincent appelle ça joliment un alignement pairwise en colonne.
 
 head(snp)
 
@@ -157,6 +161,8 @@ snp %>%
 #' bien toujours la même que la base `seqb`.
 
 FALSE %in% (snp$base == snp$seqb)
+
+filter(snp, cons == "X")
 
 #' Plutôt bon signe ! Phruscle a fonctionné comme il faut, _ie_ toutes les bases
 #' qu'on a sorties dans nos alignements ont une correspondance dans le fichier
@@ -233,8 +239,8 @@ plot_align <- function(data, mutant_) {
     data %>%
       filter(mutant == mut) %>%
       group_by(name, mutant) %>%
-      filter(cons == "x") %>%
-      summarise(len = max(refp) - min(refp)) %>%
+      filter(cons == "x") %>%           # dernière position correspondant au donneur
+      summarise(len = min(refp)) %>%
       ungroup() %>%
       arrange(len) %>%
       {.$name}
@@ -255,27 +261,33 @@ plot_align <- function(data, mutant_) {
     ggplot(aes(x = factor(refp),
                y = factor(name, levels = sort_by_tract_length(mut=mutant_)))) +
     geom_point(aes(color = sens, size = qual, alpha=qual)) +
-    ## add the ref seq
-    geom_text(aes(label = refb, x = factor(refp), y = -3), color = red, vjust = -0.5) +
     ## add the donneur seq
-    geom_text(aes(label = snpb, x = factor(refp), y = length(sort_by_tract_length(mutant_)) + 5),
-              color = blue, vjust = 1.5) +
-    scale_color_brewer(palette = "Set1") +
-    ## scale_color_viridis( discrete = TRUE,  end=0.95 ) +
+    geom_text(aes(label = snpb, x = factor(refp), y = -3), color = red,
+              vjust = -0.5, size = 2, family = "Ubuntu Light") +
+    ## add the ref seq
+    geom_text(aes(label = refb, x = factor(refp), y = length(sort_by_tract_length(mutant_)) + 10),
+              color = blue, vjust = 6.5, size = 2, family = "Ubuntu Light") +
+    scale_color_brewer(palette = "Set1", guide = "none") +
     scale_alpha( range=c(1/5, 0.8), guide=FALSE ) +
     scale_size(range = c(1, 3), breaks = c(10, 50),
-               labels = c("10", "50")) +
-    labs(x = "Position sur la référence", y = "", color = "Remplacement",
-         size = "Qualité",
+               labels = c("Faible", "Forte")) +
+    labs(x = "Position sur la référence", y = "", size = "Qualité",
          title = paste("Alignement pour la manip", toupper(mutant_))) +
-    theme(legend.position = "top",
-          legend.margin = unit(-0.3,"lines"),
-          legend.key = element_rect(fill = scales::alpha("gray", 0),
-                                    colour = scales::alpha("gray", 0)),
-          panel.grid.major.y = element_line(size = 0.1, linetype = "dotted"))
+    theme(legend.direction = "horizontal",
+          ## legend.position  = c(0.8, -0.2),
+          legend.margin = unit(0,"lines"),
+          ## legend.key = element_rect(fill = scales::alpha("gray", 0),
+          ##                           colour = scales::alpha("gray", 0)),
+      panel.grid.major.y = element_line(size = 0.1, linetype = "dotted")) +
+    legend_position(0.8, 0.98)
 }
 
 snp %>% plot_align("ws")
+
+## snp %>% plot_align("w")
+snp
+snp %>%
+  filter(cons == "x" | cons == "X")
 
 plot_qual <- function(data, mutant_) {
   data %>%

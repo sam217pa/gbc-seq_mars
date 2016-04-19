@@ -212,6 +212,7 @@ def run_phruscle(input, ref, cutoff, reverse, clustalw):
     help=
     "Reverse the phd file. Useful when reference and sequence are not in the same direction."
 )
+
 def clean_output(input, phd, output, reverse=False):
     """This programme takes a fasta alignment between the experimental sequence and the
     reference alignment, find the quality of the base call in the phd file, and outputs it
@@ -240,9 +241,9 @@ def clean_output(input, phd, output, reverse=False):
             return AlignIO.read(sequence, "fasta")[index]
 
         return {
-            'exp': str(read_seq(align, 2).seq),  # la séquence expérimentale
-            'snp': str(read_seq(align, 1).seq),  # le gene synthétique
-            'wt': str(read_seq(align, 0).seq)  # la séquence de référence
+            'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
+            'snp': str(read_seq(align, 2).seq),  # le gene synthétique
+            'wt': str(read_seq(align, 1).seq)  # la séquence de référence
         }
 
     def are_the_same(seq_list):
@@ -253,7 +254,7 @@ def clean_output(input, phd, output, reverse=False):
         """
         exp, snp, wt = seq_list
 
-        if exp == '-' or snp == '-':  # si la base est trimmée ou non alignée
+        if exp == '-':  # si la base est trimmée ou non alignée
             return '-'
         elif exp == snp and snp == wt:  # si les trois bases sont identiques
             return '.'

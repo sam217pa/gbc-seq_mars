@@ -1,3 +1,17 @@
 raw/
 data/
 /.Rhistory
+bin/*
+lib/*
+*.pyc
+tmp/*
+venv/*
+/.Python
+*.Rhistory
+*.egg-info
+*.RData
+*_cache
+*_files
+*.csv
+*.pdf
+*.Rhistory

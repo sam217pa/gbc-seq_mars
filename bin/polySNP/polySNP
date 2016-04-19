@@ -693,43 +693,44 @@ if ($go == 2){ ## IF BOTH INPUT FILES EXIST
 
 
 
-else { ## (X) PRINT INFO
-    print "A PERL script for outputting a CSV listing of SNP peak areas (version 1.0).\n\n";
-    print "USAGE: polySNP  -r reference_file  -t trace_file  [-s standard_curve_file]  [-l]  [-a]  [-p 0|1|2|3]  [-c 0.XX]\n\n";
-    print "\t\"reference_file\" is a FASTA format file containing two aligned sequences\n";
-    print "\t(SNPs will be inferred)\n\n";
-    print "\t\"trace_file\" is a chromatogram file readable by PHRED or convert_trace\n\n";
-    print "\t\"standard_curve_file\" is a CSV text file containing reference\n";
-    print "\tposition (in \"reference_file\"), reference base,\n";
-    print "\tslope (decimal notation), y-intercept\n\n";
-    print "\t-l outputs a line of data labels before outputting the data\n\n";
-    print "\t-a outputs the alignment along with the data\n\n";
-    print "\t-p 0 base call and trim with PHRED, use PHRED values for peak area\n";
-    print "\tmeasurement (default)\n";
-    print "\t-p 1 base call and trim with PHRED, use PHRED values for peak height\n";
-    print "\tmeasurement\n";
-    print "\t-p 2 base call and trim with PHRED, use Bio::SCF values for peak height\n";
-    print "\tmeasurment\n";
-    print "\t-p 3 use existing base calls, trim with qclip, use Bio::SCF values for\n";
-    print "\tpeak height measurement\n\n";
-    print "\tFor -p 0, 1, or 2 an optional -c 0.XX argument can be appended to\n";
-    print "\tspecify the PHRED \"-trim_cutoff\"  value. If no -c 0.XX value is\n";
-    print "\tspecified, the script defaults to 0.10.\n\n";
-    print "Warning: this script assumes infile extensions have meaning.\n";
-    print "Requirements: MUSCLE; PHRED is required for -p 0, 1, or 2;\n";
-    print "BIO:SCF is required for -p 2, or 3; for -p 3 qclip is required and\n";
-    print "convert_trace (Staden package) may be required.\n\n";
-    print "This program is free software; you can redistribute it and/or modify\n";
-    print "it under the terms of the GNU General Public License as published by\n";
-    print "the Free Software Foundation; either version 2 of the License, or\n";
-    print "(at your option) any later version.\n";
-    print "This program is distributed in the hope that it will be useful,\n";
-    print "but WITHOUT ANY WARRANTY; without even the implied warranty of\n";
-    print "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n";
-    print "GNU General Public License for more details.\n\n";
-    print "Copyright 2006 Damon P. Little.\n";
-    print "Please cite Little, D. P. and G. S. Hall. 2006. polySNP: an analysis tool \nfor quantitative sequencing. Program distributed by the authors.\n";
-}
+# (X) else {
+# (X)     ## (X) PRINT INFO
+# (X)     print "A PERL script for outputting a CSV listing of SNP peak areas (version 1.0).\n\n";
+# (X)     print "USAGE: polySNP  -r reference_file  -t trace_file  [-s standard_curve_file]  [-l]  [-a]  [-p 0|1|2|3]  [-c 0.XX]\n\n";
+# (X)     print "\t\"reference_file\" is a FASTA format file containing two aligned sequences\n";
+# (X)     print "\t(SNPs will be inferred)\n\n";
+# (X)     print "\t\"trace_file\" is a chromatogram file readable by PHRED or convert_trace\n\n";
+# (X)     print "\t\"standard_curve_file\" is a CSV text file containing reference\n";
+# (X)     print "\tposition (in \"reference_file\"), reference base,\n";
+# (X)     print "\tslope (decimal notation), y-intercept\n\n";
+# (X)     print "\t-l outputs a line of data labels before outputting the data\n\n";
+# (X)     print "\t-a outputs the alignment along with the data\n\n";
+# (X)     print "\t-p 0 base call and trim with PHRED, use PHRED values for peak area\n";
+# (X)     print "\tmeasurement (default)\n";
+# (X)     print "\t-p 1 base call and trim with PHRED, use PHRED values for peak height\n";
+# (X)     print "\tmeasurement\n";
+# (X)     print "\t-p 2 base call and trim with PHRED, use Bio::SCF values for peak height\n";
+# (X)     print "\tmeasurment\n";
+# (X)     print "\t-p 3 use existing base calls, trim with qclip, use Bio::SCF values for\n";
+# (X)     print "\tpeak height measurement\n\n";
+# (X)     print "\tFor -p 0, 1, or 2 an optional -c 0.XX argument can be appended to\n";
+# (X)     print "\tspecify the PHRED \"-trim_cutoff\"  value. If no -c 0.XX value is\n";
+# (X)     print "\tspecified, the script defaults to 0.10.\n\n";
+# (X)     print "Warning: this script assumes infile extensions have meaning.\n";
+# (X)     print "Requirements: MUSCLE; PHRED is required for -p 0, 1, or 2;\n";
+# (X)     print "BIO:SCF is required for -p 2, or 3; for -p 3 qclip is required and\n";
+# (X)     print "convert_trace (Staden package) may be required.\n\n";
+# (X)     print "This program is free software; you can redistribute it and/or modify\n";
+# (X)     print "it under the terms of the GNU General Public License as published by\n";
+# (X)     print "the Free Software Foundation; either version 2 of the License, or\n";
+# (X)     print "(at your option) any later version.\n";
+# (X)     print "This program is distributed in the hope that it will be useful,\n";
+# (X)     print "but WITHOUT ANY WARRANTY; without even the implied warranty of\n";
+# (X)     print "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n";
+# (X)     print "GNU General Public License for more details.\n\n";
+# (X)     print "Copyright 2006 Damon P. Little.\n";
+# (X)     print "Please cite Little, D. P. and G. S. Hall. 2006. polySNP: an analysis tool \nfor quantitative sequencing. Program distributed by the authors.\n";
+# (X) }
 
 
 

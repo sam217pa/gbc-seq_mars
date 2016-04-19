@@ -19,7 +19,7 @@ done
 cd ../sw
 
 # TEMPORAIRE, élimine le fichier .ab1 tendancieux pour l'instant
-rm spectro/psw76-1073bis.ab1
+# rm spectro/psw76-1073bis.ab1
 
 touch sw_untrimmed.fastq
 

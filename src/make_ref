@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+cd ~/stage/seq_mars
+
+refdir=`pwd`/raw/ref
+
+rev_comp () {
+    fasta_formatter -i $1 | fastx_reverse_complement
+}
+
+cat_both_seq () {
+    cat <(rev_comp $refdir/$1 ) <(rev_comp $refdir/reference.fasta) | \
+        sed 's/>/\n>/g' | sed '/^$/d'
+}
+
+muscle -quiet -in <( cat_both_seq strong-weak.fasta ) -out $refdir/aln-sw-ref.fst
+
+muscle -quiet -in <(cat $refdir/weak-strong.fasta $refdir/reference.fasta | sed 's/>/\n>/g' | sed '/^$/d' ) -out $refdir/aln-ws-ref.fst
+muscle -quiet -in <(cat $refdir/strong.fasta      $refdir/reference.fasta | sed 's/>/\n>/g' | sed '/^$/d' ) -out $refdir/aln-s-ref.fst
+muscle -quiet -in <(cat $refdir/weak.fasta        $refdir/reference.fasta | sed 's/>/\n>/g' | sed '/^$/d' ) -out $refdir/aln-w-ref.fst
+
+# muscle \
+#     -profile \
+#     -quiet \
+#     -in1 $refdir/weak-strong.fasta \
+#     -in2 $refdir/reference1073bis-1392.fasta \
+#     -out $refdir/aln-ws-ref.fst
+
+# muscle \
+#     -profile \
+#     -quiet \
+#     -in1 $refdir/strong.fasta \
+#     -in2 $refdir/reference1073bis-1392.fasta \
+#     -out $refdir/aln-s-ref.fst
+
+# muscle \
+#     -profile \
+#     -quiet \
+#     -in1 $refdir/weak.fasta \
+#     -in2 $refdir/reference1073bis-1392.fasta \
+#     hout $refdir/aln-w-ref.fst
