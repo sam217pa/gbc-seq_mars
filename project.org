@@ -854,7 +854,7 @@ snp %>%
 ## (X)   facet_grid( mutant )
 #+END_SRC
 
-* SNP calling précis [0%]
+* SNP calling précis
 
 ** phred + muscle = phruscle !
 Le SNP calling via ssahaSNP ne permet pas de connaître l'ensemble des
@@ -1413,36 +1413,36 @@ cd ../../
 csvstack ws/aln/*.csv sw/aln/*.csv s_w/aln/*.csv > phruscle_snpcall.csv
 #+END_SRC
 
-*** analyses complémentaires
+*** analyses complémentaires [6/6]
 Aujourd'hui [2016-04-15 Fri] nous avons discuté avec Laurent, Vincent et Franck
 de la façon optimale de conduire la suite des analyses.
 
 On s'est rendu compte de plusieurs choses.
 
-1. On se demande où est partie la première (ou la dernière ?) position de SNP
+1. [X] On se demande où est partie la première (ou la dernière ?) position de SNP
    qu'on voit sur les alignements WS mais pas sur les alignements SW. Il faut
    donc essayer de vérifier dans les alignements pairwise si on a bien notre
    premier SNP.
 2. il faut essayer de représenter sur un graphe les effectifs de point de
    bascule.
-3. On peut avoir différentes infos : on peut compter les doublets SS et WW dans
+3. [X] On peut avoir différentes infos : on peut compter les doublets SS et WW dans
    les manips SW et WS pour connaître les effectifs qui switchent à un endroit
    donné, et les triplets correspondent aux évènements complexes. On peut
    résumer ça par la pseudo équation =nombre de doublet total = nombre de
    doublet en fin de conversion + nombre de restauration du genotype parental=.
-4. sur la figure des alignements, il serait judicieux de représenter quelque
-   part le génotype parental, et le génotype du donneur. On veut également
-   représenter la trace de conversion par du bleu tout le temps, et le génotype
-   parental par du rouge. On aurait de ce fait les mêmes codes couleurs pour
-   toutes les manips.
-5. pour compter les cas de tracts complexes, /on ne doit pas filtrer/ sur la
+4. [X] sur la figure des alignements, il serait judicieux de représenter quelque
+   part le génotype parental, et le génotype du donneur.
+5. [X] On veut également représenter la trace de conversion par du bleu tout le
+   temps, et le génotype parental par du rouge. On aurait de ce fait les mêmes
+   codes couleurs pour toutes les manips.
+6. [X] pour compter les cas de tracts complexes, /on ne doit pas filtrer/ sur la
    qualité avant de déterminer le génotype, sinon on affecte le génotype inféré,
    et donc les cas complexes. On peut donc remplacer les bases de mauvaises
    qualité par des N.
-6. Pour différencier les cas de restauration des cas "normaux", on peut
+7. [X] Pour différencier les cas de restauration des cas "normaux", on peut
    représenter les points, en gardant le même code couleur (donneur / receveur)
    par des ~+~ ou des carrés.
-7. On peut éviter de parler de S, W, SW et WS, mais parler de GC+, AT+ etc… Pour
+8. On peut éviter de parler de S, W, SW et WS, mais parler de GC+, AT+ etc… Pour
    rester clean dans le discours.
 
 On veut également essayer de mettre au point un schéma pour représenter de façon

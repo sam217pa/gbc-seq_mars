@@ -241,9 +241,9 @@ def clean_output(input, phd, output, reverse=False):
             return AlignIO.read(sequence, "fasta")[index]
 
         return {
-            'exp': str(read_seq(align, 0).seq),  # la séquence expérimentale
-            'snp': str(read_seq(align, 2).seq),  # le gene synthétique
-            'wt': str(read_seq(align, 1).seq)  # la séquence de référence
+            'exp': str(read_seq(align, 2).seq),  # la séquence expérimentale
+            'snp': str(read_seq(align, 1).seq),  # le gene synthétique
+            'wt': str(read_seq(align, 0).seq)  # la séquence de référence
         }
 
     def are_the_same(seq_list):

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
+# interactive only
+# cd ~/stage/seq_mars/
+
 mkdir data/aln
 cd data/aln
-
-# interactive only
-cd ~/stage/seq_mars/data/aln
 
 rev_comp () {
     fasta_formatter -i $1 | fastx_reverse_complement
@@ -16,8 +16,9 @@ cat_ref () {
 
 # 1. la référénce 2. le gs 3. la séquence expérimentale
 run_muscle () {
-    muscle -quiet \
-           -in <(cat <( cat_ref $1 ) $2 | sed 's/>/\n>/' | sed '/^$/d' ) \
+    muscle -quiet -profile \
+           -in1 <(cat <( cat_ref $1 ) | sed 's/>/\n>/' | sed '/^$/d' ) \
+           -in2 $2 \
            -out $2.aln
 }
 
@@ -29,11 +30,11 @@ run_phruscle () {
     echo "Ran phruscle table on $1"
 }
 
-# phred -st fasta -trim_alt "" -trim_cutoff 0.10 -trim_fasta -trim_phd -s -p -id ../spectro/
+phred -st fasta -trim_alt "" -trim_cutoff 0.10 -trim_fasta -trim_phd -s -p -id ../spectro/
 
 ## test
-run_muscle ../../raw/ref/strong-weak.fasta pws1-1073bis.ab1.seq
-run_phruscle pws1-1073bis.ab1
+# run_muscle ../../raw/ref/weak-strong.fasta pws1-1073bis.ab1.seq
+# run_phruscle pws1-1073bis.ab1
 ## /test
 
 for file in ../spectro/psw*.ab1
@@ -42,23 +43,23 @@ do
     run_phruscle `basename $file`
 done
 
-# for file in ../spectro/pws*.ab1
-# do
-#     run_muscle ../../raw/ref/weak-strong.fasta `basename $file`.seq
-#     run_phruscle `basename $file`
-# done
+for file in ../spectro/pws*.ab1
+do
+    run_muscle ../../raw/ref/weak-strong.fasta `basename $file`.seq
+    run_phruscle `basename $file`
+done
 
-# for file in ../spectro/pS*.ab1
-# do
-#     run_muscle ../../raw/ref/strong.fasta `basename $file`.seq
-#     run_phruscle `basename $file`
-# done
+for file in ../spectro/pS*.ab1
+do
+    run_muscle ../../raw/ref/strong.fasta `basename $file`.seq
+    run_phruscle `basename $file`
+done
 
-# for file in ../spectro/pW*.ab1
-# do
-#     run_muscle ../../raw/ref/weak.fasta `basename $file`.seq
-#     run_phruscle `basename $file`
-# done
+for file in ../spectro/pW*.ab1
+do
+    run_muscle ../../raw/ref/weak.fasta `basename $file`.seq
+    run_phruscle `basename $file`
+done
 
 ## combine
 

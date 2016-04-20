@@ -78,9 +78,9 @@ data/sw/sw_untrimmed.fastq: ab1_to_fastq.sh data/sw/seq
 data/sw/seq: | sort_into_dir.sh data
 	bash src/sort_into_dir.sh
 
-.PHONY: tangle
-tangle: README.org | data
-	orgtangle $<
+# .PHONY: tangle
+# tangle: README.org | data
+# 	orgtangle $<
 
 data:
 	mkdir -p data/{ws,sw,csv} anl/{gatc_snpcall,snp_call}
