@@ -69,25 +69,46 @@ plot_align <- function(data, mutant_) {
 
     data$tract[is.na(data$tract)] <- FALSE
 
-    ggplot(data = data, aes(x = factor(refp), y = name)) +
+    first_snp <- filter(snp, cons == "X") %>% summarise(min = min(refp))
+    last_snp <- filter(snp, cons == "x") %>% summarise(max = max(refp))
+
+    ggplot(data = data, aes(x = refp, y = name)) +
         geom_point(aes(color = tract, size = qual, alpha=qual)) +
         ## représente les cas complexes
         geom_point(data = is_restoration(data, mutant_),
                    aes(alpha = qual), color = green, size = 5) +
         ## représente la séquence du donneur
-        geom_text(aes(label = snpb, x = factor(refp), y = -3), color = blue,
+        geom_text(aes(label = snpb, x = refp, y = -3), color = blue,
                   vjust = -0.5, size = 2, family = "Ubuntu Light") +
         annotate("text", x = 1.2, y = -0.8, label = "Donneur : ", color = blue, size = 2 ) +
         ## représente la séquence du receveur.
-        geom_text(aes(label = refb, x = factor(refp),
+        geom_text(aes(label = refb, x = refp,
                       y = length(sort_by_tract_length(mutant_)) + 10),
                   color = red, vjust = 9, size = 2, family = "Ubuntu Light") +
+        ## j'ai tenté de représenter les séquences par des segments de couleur,
+        ## mais je trouve que ça perturbe la lecture. On a un effet moiré pas du
+        ## tout attendu, qui n'apporte rien.
+        ##
+        ## geom_segment(data =
+        ##                  filter(data, cons == "x") %>%
+        ##                  group_by(name) %>%
+        ##                  summarise(max = max(refp), min = min(refp)),
+        ##              aes(x = max, xend = min, y = name, yend = name),
+        ##              color = blue, alpha = 0.2) +
+        ## geom_segment(data =
+        ##                  filter(data, cons == "X") %>%
+        ##                  group_by(name) %>%
+        ##                  summarise(max = max(refp), min = min(refp)),
+        ##              aes(x = max, xend = min, y = name, yend = name),
+        ##              color = red, alpha = 0.2) +
         annotate("text", x = 1.2, y = length(sort_by_tract_length(mutant_)) + 5,
                  label = "Receveur : ", color = red, size = 2 ) +
         scale_color_brewer(palette = "Set1", guide = "none") +
         scale_alpha( range=c(1/5, 0.8), guide=FALSE ) +
         scale_size(range = c(0.5, 2), breaks = c(10, 50),
                    labels = c("Faible", "Forte")) +
+        scale_x_continuous(breaks = extended_range_breaks()(data$refp)) +
+        coord_cartesian(xlim = c(first_snp, last_snp)) +
         labs(x = "", y = "", size = "Qualité",
              title = paste("Alignement pour la manip", toupper(mutant_))) +
         theme(legend.direction = "horizontal",

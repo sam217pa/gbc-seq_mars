@@ -122,3 +122,19 @@ set_seq_factor <- function(data) {
 set_base_factor <- function(data) {
     mutate(data, base = factor(base, levels = c("G", "C", "T", "A")))
 }
+
+get_gc_content <- function(data, mut=NULL, tidy = TRUE) {
+    clean_seq <- function(x) toString(x) %>% gsub(", ", "", . )
+
+    get_gc_rate <- function(dna_seq) {
+
+    }
+    if (is.null(mut)) mut <- c("ws", "sw", "w", "s")
+
+    gc_content <- data %>% filter(mutant %in% mut) %>% group_by(name, mutant) %>%
+        summarise(exp = seqinr::GC(seqb),
+                  snp = seqinr::GC(snpb),
+                  ref = seqinr::GC(refb))
+    if (tidy) gc_content %>% tidyr::gather("type", "GC", 3:5)
+    else gc_content
+}
