@@ -39,10 +39,15 @@ library(viridis)
 library(ggthemes)
 library(cowplot)
 library(extrafont)
-source("set_theme.R")
+library(gcbiasr)
+
+set_gcbiasr_theme()
+
 source("load_data.R")
+
+snp <- read_phruscle("../../data/phruscle_snpcall.csv")
+
 source("analysis_function.R")
-source("plot_align.R")
 
 #' J'ai donc obtenu un tableau de donnée de la forme suivante, où :
 #'
@@ -51,15 +56,18 @@ source("plot_align.R")
 #'   si la base séquencée est la base sauvage, `N` si c'est encore autre chose.
 #' - `name`: le nom expérimental de la séquence
 #' - `refb`: la base de référence
-#' - `refp`: la position sur la référence.
-#' - `seqb`: le reverse complement de la base séquencée.
-#' - `seqp`: la position sur la séquence expérimentale.
+#' - `expb`: la base séquencée.
 #' - `snpb`: la base sur le gène synthétique introduit.
-#' - `base`: la base séquenceé.
+#' - `refp`: la position sur la référence.
+#' - `expp`: la position sur la séquence expérimentale.
 #' - `qual`: sa qualité.
-#' - `phase`: la position sur le spectrogramme.
 #' - `mutant`: ordinal, la manip.
-#'
+#' - `lastmp`: last marker position. 
+#' - `switchp`: la position de bascule. 
+#' - `switchb`: la base à la position de bascule. 
+#' - `inconv`: logical, TRUE si la base est dans la trace de conversion.
+#' - `isrestor`: logical, TRUE si la base est dans la trace de conversion, est
+#' un marqueur et correspond à l'haplotype du donneur.
 #' Vincent appelle ça joliment un alignement pairwise en colonne.
 
 head(snp)
@@ -176,9 +184,10 @@ snp %>%
     geom_histogram(binwidth = 1)
 snp
 
+## "cuicui"
 ## filter(snp, cons == "x") %>% summarise(min = min(refp))
 
-snp %>% plot_align("ws")
+## snp %>% plot_align("ws")
 #+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
 snp %>% plot_align_qual("ws")
 
@@ -199,8 +208,10 @@ plot_grid(
     snp %>% plot_align("sw"),
     labels = c("A", "B", "C", "D"), ncol = 2
 )
+
+
 ## interactive only
-save_as_a3("plot_align_moire.pdf")
+## save_as_a3("plot_align_moire.pdf")
 
 #' # Comparaison des longueurs de trace de conversion
 #'
@@ -360,5 +371,20 @@ snp %>%
     filter(name == "pS10")
 
 ## /wip
+
+## /* wip
+snp %>%
+    ## get_marker_only() %>%
+    filter(cons == "x") %>%
+    mutate(trans = paste0(refb, seqb)) %>%
+    group_by(mutant, trans) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = trans, y = count, color = trans )) +
+    geom_point() +
+    facet_grid( mutant ~ .) +
+    coord_flip()
+
+
+## */
 
 sessionInfo()
