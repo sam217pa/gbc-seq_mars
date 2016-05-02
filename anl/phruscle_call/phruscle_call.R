@@ -40,14 +40,8 @@ library(ggthemes)
 library(cowplot)
 library(extrafont)
 library(gcbiasr)
-
 set_gcbiasr_theme()
-
-source("load_data.R")
-
 snp <- read_phruscle("../../data/phruscle_snpcall.csv")
-
-source("analysis_function.R")
 
 #' J'ai donc obtenu un tableau de donnée de la forme suivante, où :
 #'
@@ -62,9 +56,9 @@ source("analysis_function.R")
 #' - `expp`: la position sur la séquence expérimentale.
 #' - `qual`: sa qualité.
 #' - `mutant`: ordinal, la manip.
-#' - `lastmp`: last marker position. 
-#' - `switchp`: la position de bascule. 
-#' - `switchb`: la base à la position de bascule. 
+#' - `lastmp`: last marker position.
+#' - `switchp`: la position de bascule.
+#' - `switchb`: la base à la position de bascule.
 #' - `inconv`: logical, TRUE si la base est dans la trace de conversion.
 #' - `isrestor`: logical, TRUE si la base est dans la trace de conversion, est
 #' un marqueur et correspond à l'haplotype du donneur.
@@ -90,20 +84,32 @@ snp %>%
     summarise(count = n()) %>%
     knitr::kable(align = "c")
 
-#+ pos_number1, fig.margin=TRUE
-snp %>%
+#+ pos_number1, fig.margin=TRUE, cache = TRUE
+plot_grid(
+    snp %>%
     group_by(mutant, name) %>%
     summarise(count = n()) %>%
-    ggplot(data = ., aes(x = count )) +
+    ggplot(aes(x = count, fill = mutant)) +
+    geom_histogram(binwidth = 1) +
+    scale_fill_brewer(palette = "Set1") +
+    labs(x = "Nombre de positions", y = "",
+         title = "Distribution de la longueur des séquences"),
+    snp %>%
+    keep_clean_only() %>%
+    group_by(mutant, name) %>%
+    summarise(count = n())  %>%
+    ggplot(aes(x = count, fill = mutant)) +
     geom_histogram(binwidth = 1) +
     labs(x = "Nombre de positions", y = "",
-         title = "Distribution du nombre\nde positions par séquence")
+         title = "Distribution de la longueur des séquences filtrées") +
+    ## coord_cartesian(xlim = c(660, 800)) +
+    scale_fill_brewer(palette = "Set1"),
+    ncol = 1
+)
 
 #' J'ai voulu déterminer s'il existe des bases dans les sorties de phruscle qui
 #' ne correspondent pas aux sorties de phd. Autrement dit si la base `base` est
-#' bien toujours la même que la base `seqb`.
-
-FALSE %in% (snp$base == snp$seqb)
+#' bien toujours la même que la base `expb`.
 
 #' Plutôt bon signe ! Phruscle a fonctionné comme il faut, _ie_ toutes les bases
 #' qu'on a sorties dans nos alignements ont une correspondance dans le fichier
@@ -122,18 +128,14 @@ snp %>%
 #' J'ai regardé séquence par séquence les variation de qualité le long de la
 #' séquence :
 
-#+ qual1, fig.fullwidth=TRUE, fig.width=15
-snp %>%
-    ggplot(data = ., aes(x = refp, y = qual, color = qual )) +
-    geom_point(alpha = 0.1, size = 0.1) +
-    geom_line(aes(group = name), alpha = 1/20, size = 0.1 ) +
-    scale_color_viridis()
+#+ qual1, fig.fullwidth=TRUE, fig.width=15, cache = TRUE
+quality_control(snp)
 
-#+ qual2, fig.margin=TRUE, fig.cap="Position des bases de qualité < 30"
-snp %>%
-    filter(qual < 30) %>%
-    ggplot(data = ., aes(x = refp, y = qual )) +
-    geom_point(alpha = 0.1, size = 0.1)
+#' Comme attendu, la qualité est moindre en fin de run, et plutôt bonne au
+#' début^[On séquence de gauche à droite, la cassette de résistance est en 3'].
+#' Ce sont des séquences trimmées par phd. On n'est pas obligé de trimmer, mais
+#' ça permet de ne garder que les séquences qui vallent le coup. Peut-être
+#' refaire les analyses avec les séquences non trimmées.
 
 #' Certaines séquences ne sont pas des plus propres. On peut certainement les
 #' virer pour ne garder que les bonnes séquences. Comme pour le cas de la
@@ -157,14 +159,11 @@ snp %>%
     qplot(data = . , mean, binwidth = 0.1) +
     geom_vline(xintercept = 40, color = "red")
 
-#' Comme attendu, la qualité est moindre en fin de run, et plutôt bonne au
-#' début^[On séquence de gauche à droite, la cassette de résistance est en 3'].
-#' Ce sont des séquences trimmées par phd. On n'est pas obligé de trimmer, mais
-#' ça permet de ne garder que les séquences qui vallent le coup. Peut-être
-#' refaire les analyses avec les séquences non trimmées.
-
+#' Après avoir appliqué tout ça, on a perdu `r n_distinct(keep_clean_only(snp, qual = 0)$name) -  n_distinct(keep_clean_only(snp)$name)` séquences
+#'
+#'
 #' # Distribution de la longueur des séquences.
-
+#'
 #' Comme attendu, la longueur des séquences est plus élevée avec les
 #' constructions SW et WS, puisqu'on a placé l'amorce légérèment en amont de la
 #' construction.
@@ -182,36 +181,30 @@ snp %>%
     ## filter(refp < 750 & refp > 40) %>%
     ggplot(aes(x = refp)) +
     geom_histogram(binwidth = 1)
-snp
 
-## "cuicui"
-## filter(snp, cons == "x") %>% summarise(min = min(refp))
+#' # Analyses visuelles des traces de conversion
 
-## snp %>% plot_align("ws")
-#+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
-snp %>% plot_align_qual("ws")
+#+ ws_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+plot_align(snp, "ws")
 
-#+ sw_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
-snp %>% plot_align_qual("sw")
+#+ sw_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+plot_align(snp, "sw")
 
-#+ s_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
-snp %>% plot_align_qual("s")
+#+ s_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+plot_align(snp, "s")
 
-#+ w_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10, cache=FALSE
-snp %>% plot_align_qual("w")
+#+ w_tract, fig.fullwidth=TRUE, fig.width=8, fig.height=10
+plot_align(snp, "w")
 
-#+ align1, fig.fullwidth=TRUE, fig.width=21, fig.height=21, cache=FALSE
+#+ align1, fig.fullwidth=TRUE, fig.width=21, fig.height=21
 plot_grid(
-    snp %>% plot_align("s"),
-    snp %>% plot_align("w"),
-    snp %>% plot_align("ws"),
-    snp %>% plot_align("sw"),
-    labels = c("A", "B", "C", "D"), ncol = 2
+    snp %>% plot_align("s") + theme(legend.position = "bottom")
+   ,snp %>% plot_align("w") + theme(legend.position = "bottom")
+   ,snp %>% plot_align("ws") + theme(legend.position = "bottom")
+   ,snp %>% plot_align("sw") + theme(legend.position = "bottom")
+   ,labels = c("A", "B", "C", "D")
+   ,ncol = 4
 )
-
-
-## interactive only
-## save_as_a3("plot_align_moire.pdf")
 
 #' # Comparaison des longueurs de trace de conversion
 #'
@@ -240,23 +233,13 @@ snp %>%
     summarise(mean_len = mean(len)) %>%
     knitr::kable(align = "c")
 
-#+ len_distrib2, fig.margin=TRUE
-snp %>%
-    filter(cons == "x") %>%
-    group_by(name, mutant) %>%
-    summarise(len = max(refp) - min(refp) ) %>%
-    ggplot(data = ., aes(x = len, fill = mutant )) +
-    geom_histogram(binwidth = 5, position = "dodge") +
-    facet_grid(mutant ~ .) +
-    scale_fill_brewer(palette = "Set1") +
-    labs(x = "Longueur de trace de conversion",
-         y = "",
-         title = "Distribution des\nlongueurs de trace de conversion")
+#+ bascul1, fig.fullwidth=TRUE, fig.width=15
+plot_conv_len(snp)
 
 #' Pour l'instant on ne voit quand même pas grand chose de flagrant. Il
 #' semblerait même que les plasmides `S` introduisent des traces de conversion
 #' plus courtes, même si rien de quantifié pour l'instant.
-
+#'
 #' # Comptage des alternances SNP SS et WW
 #'
 #' ## Comptage des doublets
@@ -274,49 +257,16 @@ snp %>%
 #' complexes se manifestent par des *triplets* (GC)(GC)(GC) ou (AT)(AT)(AT) dans
 #' la trace de conversion, où le SNP médian correspond au génotype parental.
 
+#+ doublet, fig.margin = TRUE
+knitr::kable(count_last_snp(snp))
+plot(count_last_snp(snp))
 
-ws_et_sw = c("ws", "sw")
-w_et_s = c("w", "s")
+#+ restor, fig.margin = TRUE
+knitr::kable(count_restor(snp))
+plot(count_restor(snp))
 
-#' Dans les manips ws et sw, on a
-#' `r snp %>% count_doublet(mut = ws_et_sw, "WW")` doublets WW contre
-#' `r snp %>% count_doublet(mut = ws_et_sw, "SS")` doublets SS.
-#'
-#' Si on sépare manip par manip, on a
-#' `r snp %>% count_doublet(mut = "ws", "WW")` doublets WW dans la manip WS
-#' contre `r snp %>% count_doublet(mut = "ws", "SS")` doublets SS, et
-#' `r snp %>% count_doublet(mut = "sw", "WW")` doublets WW dans la manip sw
-#' contre `r snp %>% count_doublet(mut = "sw", "SS")` SS.
-#'
-#' Si on compte les triplets, autrement dits les cas complexes, on a
-#' `r snp %>% count_doublet(mut = ws_et_sw, "SSS")` triplets SSS dans les manips
-#' alternants, et `r snp %>% count_doublet(mut = ws_et_sw, "WWW")` WWW.
-#'
-#' Dans les manips sans alternance, on a
-#' `r snp %>% count_doublet(mut = w_et_s, "WSW")` WSW et
-#' `r snp %>% count_doublet(mut = w_et_s, "SWS")` SWS.
 #'
 
-#' On peut représenter ça de façon graphique par la méthode suivante.
-#'
-
-
-#+ bascul1, fig.fullwidth=TRUE, fig.width=15
-snp %>%
-    keep_clean_only() %>%
-    filter(cons == "x") %>%
-    group_by(name) %>%
-    summarise(bascul = min(refp)) %>%
-    inner_join(snp, .) %>%
-    filter(refp == bascul) %>%
-    rowwise() %>% mutate(sens = find_polarity(refb, seqb)) %>%
-    set_mutant_factor() %>%
-    ggplot(aes(x = refp, fill = sens)) +
-    geom_histogram(binwidth  = 10, position = "dodge") +
-    facet_grid( ~mutant) +
-    scale_fill_brewer(palette = "Set1", labels = c("vers AT", "vers GC")) +
-    labs(x = "Position sur la référence", y = "", color = "", fill = "") +
-    legend_position(0.9, 0.6)
 
 #'
 #'
@@ -330,61 +280,9 @@ snp %>%
 #' dans les manips SW et WS.
 #'
 
-snp %>%
-    get_gc_content() %>%
-    filter(name != "psw21") %>%
-    mutate(mutant = factor(mutant, levels = c("s", "w", "sw", "ws"))) %>%
-    ## group_by(mutant, type) %>%
-    ## summarise(gc_mean = mean(GC)) %>%
-    ggplot(aes(y = GC,
-               x = factor(type, levels = c("snp", "exp", "ref"),
-                          labels = c("Donneur", "Expérimental", "Receveur")))) +
-    geom_jitter(aes(color = mutant), width = 1/4, alpha = 1/3, size = 1) +
-    geom_line(aes(group = name, color = mutant), alpha = 1/20) +
-    stat_summary(fun.y = mean, geom = "point", color = "black", shape = "¦",
-                 size = 6) +
-    facet_grid(mutant ~ .) +
-    labs(y = "% GC", x = "", title = "Comparaison des taux de GC") +
-    scale_color_brewer(palette = "Set1") +
-    coord_flip()
+get_gc_content(data = snp) %>% plot()
 
 #' # Enquête de néomutation
 #'
 
-is_inside_conv <- function(data, mut) {
-  data %>%
-      filter(mutant %in% mut, cons == "x") %>%
-      group_by(name) %>%
-      summarise(bascul = min(refp)) %>%
-      inner_join(data, ., by = "name") %>%
-      keep_clean_only() %>%
-      ## garde les positions après le point de switch qui correspondent au génotype parental.
-      filter(refp > bascul, cons == "X" | cons == "x") %>%
-      mutate(tract = TRUE) %>%
-      select(name, bascul, refp, tract) %>%
-      left_join(data, .)
-}
-
-## wip
-snp %>%
-    is_inside_conv(c("ws", "sw", "s", "w")) %>%
-    filter(name == "pS10")
-
-## /wip
-
-## /* wip
-snp %>%
-    ## get_marker_only() %>%
-    filter(cons == "x") %>%
-    mutate(trans = paste0(refb, seqb)) %>%
-    group_by(mutant, trans) %>%
-    summarise(count = n()) %>%
-    ggplot(aes(x = trans, y = count, color = trans )) +
-    geom_point() +
-    facet_grid( mutant ~ .) +
-    coord_flip()
-
-
-## */
-
-sessionInfo()
+devtools::session_info()
